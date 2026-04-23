@@ -2,107 +2,38 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SuperCoach AI Pro</title>
+<title>SuperCoach AI</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-body {
-  margin:0;
-  font-family: Arial;
-  background:#0b0f14;
-  color:white;
-}
+body { margin:0; font-family:Arial; background:#0b0f14; color:white; }
+header { padding:16px; text-align:center; background:linear-gradient(90deg,#00c46a,#00a3ff); font-weight:bold; }
 
-header {
-  padding:18px;
-  text-align:center;
-  font-weight:bold;
-  background:linear-gradient(90deg,#00c46a,#00a3ff);
-}
+.container { max-width:700px; margin:auto; padding:14px; }
 
-/* LAYOUT */
-.container {
-  max-width:700px;
-  margin:auto;
-  padding:14px;
-}
+.nav { display:flex; gap:6px; margin:12px 0; }
+.nav button { flex:1; padding:10px; border:none; border-radius:10px; background:#1b1f2a; color:white; }
 
-/* NAV FIXED */
-.nav {
-  display:flex;
-  gap:6px;
-  margin:12px 0;
-}
+.card { background:#141a24; border:1px solid #243042; border-radius:14px; padding:14px; margin:12px 0; }
 
-.nav button {
-  flex:1;
-  padding:10px;
-  border:none;
-  border-radius:10px;
-  background:#1b1f2a;
-  color:white;
-}
+input { width:100%; padding:12px; border-radius:10px; border:1px solid #2a3445; background:#0e131c; color:white; }
 
-/* CARDS */
-.card {
-  background:#141a24;
-  border:1px solid #243042;
-  border-radius:14px;
-  padding:14px;
-  margin:12px 0;
-}
+button { width:100%; padding:12px; margin-top:10px; border:none; border-radius:10px; background:linear-gradient(90deg,#00c46a,#00a3ff); font-weight:bold; color:black; }
 
-/* INPUT */
-input {
-  width:100%;
-  padding:12px;
-  border-radius:10px;
-  border:1px solid #2a3445;
-  background:#0e131c;
-  color:white;
-}
-
-/* BUTTON */
-button {
-  width:100%;
-  padding:12px;
-  margin-top:10px;
-  border:none;
-  border-radius:10px;
-  background:linear-gradient(90deg,#00c46a,#00a3ff);
-  font-weight:bold;
-  color:black;
-}
-
-/* SECTIONS FIX */
 .section { display:none; }
 .active { display:block; }
 
-/* KPI CARDS */
-.kpiGrid {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-
-.kpi {
-  background:#0e131c;
-  padding:10px;
-  border-radius:10px;
-  border:1px solid #2a3445;
-}
-
-.rankCard {
-  padding:10px;
-  border-bottom:1px solid #2a3445;
-}
+.small { font-size:12px; opacity:0.7; }
 </style>
 </head>
 
 <body>
 
-<header>🏉 SuperCoach AI Dashboard</header>
+<header>
+🏉 SuperCoach AI
+<div class="small">Build v1.0.0</div>
+</header>
 
 <div class="container">
 
@@ -114,51 +45,44 @@ button {
 <button onclick="show('captain')">Captain</button>
 </div>
 
-<!-- DASHBOARD -->
 <div id="dashboard" class="section active card">
-<h3>📊 Team Overview</h3>
-
-<div id="kpis" class="kpiGrid"></div>
-
+<h3>Dashboard</h3>
+<div id="kpis"></div>
 <canvas id="chart"></canvas>
 </div>
 
-<!-- ANALYSIS -->
 <div id="analysis" class="section card">
-<h3>Player Analysis</h3>
-<input id="player" placeholder="player name">
-<button onclick="analyse()">Analyse</button>
+<h3>Analysis</h3>
+<input id="player" placeholder="player">
+<button onclick="analyse()">Run</button>
 <p id="result"></p>
 </div>
 
-<!-- SQUAD -->
 <div id="squad" class="section card">
-<h3>Squad Builder</h3>
-<input id="squadInput" placeholder="add player">
+<h3>Squad</h3>
+<input id="squadInput">
 <button onclick="addPlayer()">Add</button>
 <div id="squadList"></div>
 <p id="squadStats"></p>
 </div>
 
-<!-- TRADE -->
 <div id="trade" class="section card">
-<h3>Trade AI</h3>
-<input id="tradeInput" placeholder="player">
+<h3>Trade</h3>
+<input id="tradeInput">
 <button onclick="trade()">Run</button>
 <p id="tradeResult"></p>
 </div>
 
-<!-- CAPTAIN -->
 <div id="captain" class="section card">
-<h3>Captain Pick</h3>
-<button onclick="captain()">Find Best Captain</button>
+<h3>Captain</h3>
+<button onclick="captain()">Find</button>
 <p id="captainResult"></p>
 </div>
 
 </div>
 
-<script src="players.js"></script>
-<script src="app.js"></script>
+<script src="players.js?v=1"></script>
+<script src="app.js?v=1"></script>
 
 </body>
 </html>
