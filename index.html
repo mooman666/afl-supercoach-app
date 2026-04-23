@@ -8,41 +8,49 @@
 body {
   margin:0;
   font-family: Arial;
-  background:#0f0f0f;
+  background:#0b0b0b;
   color:white;
-  text-align:center;
 }
 
 header {
   background:#00c46a;
-  padding:18px;
+  padding:16px;
   font-size:20px;
   font-weight:bold;
+  text-align:center;
 }
 
 .container {
-  padding:10px;
+  padding:12px;
 }
 
 .card {
-  background:#1c1c1c;
-  margin:12px;
+  background:#1a1a1a;
+  margin:12px 0;
   padding:15px;
-  border-radius:10px;
+  border-radius:12px;
+  border:1px solid #222;
+}
+
+h3 {
+  margin-top:0;
 }
 
 input {
-  padding:10px;
-  width:80%;
-  margin:5px;
+  width:92%;
+  padding:12px;
+  margin:6px 0;
+  border-radius:8px;
+  border:none;
 }
 
 button {
-  padding:10px;
-  width:85%;
-  margin:5px;
+  width:100%;
+  padding:12px;
+  margin-top:8px;
   background:#00c46a;
   border:none;
+  border-radius:8px;
   font-weight:bold;
 }
 
@@ -50,34 +58,48 @@ ul {
   list-style:none;
   padding:0;
 }
+
+li {
+  padding:6px 0;
+  border-bottom:1px solid #333;
+}
+
+.tag {
+  display:inline-block;
+  padding:4px 8px;
+  margin-top:6px;
+  border-radius:6px;
+  font-size:12px;
+  background:#333;
+}
 </style>
 </head>
 
 <body>
 
-<header>🏉 AFL SuperCoach AI MVP</header>
+<header>🏉 AFL SuperCoach AI Dashboard</header>
 
 <div class="container">
 
 <!-- PLAYER ANALYSIS -->
 <div class="card">
-<h2>Player Analysis</h2>
+<h3>Player Analysis</h3>
 <input id="player" placeholder="neale, cripps, gawn">
-<button onclick="analyse()">Analyse</button>
+<button onclick="analyse()">Analyse Player</button>
 <p id="result"></p>
 </div>
 
 <!-- SQUAD -->
 <div class="card">
-<h2>Squad Builder</h2>
+<h3>Your Squad</h3>
 <input id="squadInput" placeholder="add player">
-<button onclick="addPlayer()">Add to Squad</button>
+<button onclick="addPlayer()">Add Player</button>
 <ul id="squadList"></ul>
 </div>
 
-<!-- COMPARE -->
+<!-- CAPTAIN COMPARE -->
 <div class="card">
-<h2>Captain Compare</h2>
+<h3>Captain Compare</h3>
 <input id="p1" placeholder="player 1">
 <input id="p2" placeholder="player 2">
 <button onclick="compare()">Compare</button>
@@ -97,7 +119,8 @@ const players = {
   serong: 110,
   bontempelli: 118,
   dawson: 109,
-  rowell: 106
+  rowell: 106,
+  mills: 111
 };
 
 let squad = [];
@@ -107,19 +130,22 @@ function analyse() {
   let p = document.getElementById("player").value.toLowerCase();
 
   if (!players[p]) {
-    document.getElementById("result").innerText = "No data found";
+    document.getElementById("result").innerHTML = "❌ No data found";
     return;
   }
 
   let score = players[p];
-  let msg = "WATCH";
+  let tag = "";
 
-  if (score >= 120) msg = "🔥 ELITE CAPTAIN OPTION";
-  else if (score >= 110) msg = "📈 PREMIUM HOLD";
-  else if (score < 100) msg = "⚠️ TRADE OUT";
+  if (score >= 120) tag = "🔥 ELITE CAPTAIN";
+  else if (score >= 110) tag = "📈 PREMIUM PICK";
+  else if (score < 100) tag = "⚠️ TRADE OUT";
+  else tag = "✔ SOLID OPTION";
 
-  document.getElementById("result").innerText =
-    p.toUpperCase() + " → " + score + " (" + msg + ")";
+  document.getElementById("result").innerHTML =
+    `<b>${p.toUpperCase()}</b><br>
+    Avg: ${score}<br>
+    <span class="tag">${tag}</span>`;
 }
 
 // ---------------- SQUAD ----------------
@@ -137,7 +163,7 @@ function renderSquad() {
 
   squad.forEach(p => {
     let li = document.createElement("li");
-    li.innerText = p.toUpperCase();
+    li.textContent = "🏉 " + p.toUpperCase();
     list.appendChild(li);
   });
 }
@@ -154,10 +180,10 @@ function compare() {
 
   let winner = players[a] > players[b] ? a : b;
 
-  document.getElementById("compareResult").innerText =
-    a.toUpperCase() + ": " + players[a] + " | " +
-    b.toUpperCase() + ": " + players[b] +
-    "\n🏆 Best Captain: " + winner.toUpperCase();
+  document.getElementById("compareResult").innerHTML =
+    `${a.toUpperCase()}: ${players[a]}<br>
+     ${b.toUpperCase()}: ${players[b]}<br><br>
+     🏆 Best Captain: <b>${winner.toUpperCase()}</b>`;
 }
 
 </script>
