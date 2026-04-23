@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AFL SuperCoach AI</title>
+
+<style>
+body {
+  margin:0;
+  font-family: Arial;
+  background:#0f0f0f;
+  color:white;
+  text-align:center;
+}
+
+header {
+  background:#00c46a;
+  padding:18px;
+  font-size:20px;
+  font-weight:bold;
+}
+
+.container {
+  padding:10px;
+}
+
+.card {
+  background:#1c1c1c;
+  margin:12px;
+  padding:15px;
+  border-radius:10px;
+}
+
+input {
+  padding:10px;
+  width:80%;
+  margin:5px;
+}
+
+button {
+  padding:10px;
+  width:85%;
+  margin:5px;
+  background:#00c46a;
+  border:none;
+  font-weight:bold;
+}
+
+ul {
+  list-style:none;
+  padding:0;
+}
+</style>
+</head>
+
+<body>
+
+<header>🏉 AFL SuperCoach AI MVP</header>
+
+<div class="container">
+
+<!-- PLAYER ANALYSIS -->
+<div class="card">
+<h2>Player Analysis</h2>
+<input id="player" placeholder="neale, cripps, gawn">
+<button onclick="analyse()">Analyse</button>
+<p id="result"></p>
+</div>
+
+<!-- SQUAD -->
+<div class="card">
+<h2>Squad Builder</h2>
+<input id="squadInput" placeholder="add player">
+<button onclick="addPlayer()">Add to Squad</button>
+<ul id="squadList"></ul>
+</div>
+
+<!-- COMPARE -->
+<div class="card">
+<h2>Captain Compare</h2>
+<input id="p1" placeholder="player 1">
+<input id="p2" placeholder="player 2">
+<button onclick="compare()">Compare</button>
+<p id="compareResult"></p>
+</div>
+
+</div>
+
+<script>
+
+// ---------------- DATA ----------------
+const players = {
+  neale: 121,
+  cripps: 115,
+  gawn: 108,
+  brayshaw: 112,
+  serong: 110,
+  bontempelli: 118,
+  dawson: 109,
+  rowell: 106
+};
+
+let squad = [];
+
+// ---------------- ANALYSE ----------------
+function analyse() {
+  let p = document.getElementById("player").value.toLowerCase();
+
+  if (!players[p]) {
+    document.getElementById("result").innerText = "No data found";
+    return;
+  }
+
+  let score = players[p];
+  let msg = "WATCH";
+
+  if (score >= 120) msg = "🔥 ELITE CAPTAIN OPTION";
+  else if (score >= 110) msg = "📈 PREMIUM HOLD";
+  else if (score < 100) msg = "⚠️ TRADE OUT";
+
+  document.getElementById("result").innerText =
+    p.toUpperCase() + " → " + score + " (" + msg + ")";
+}
+
+// ---------------- SQUAD ----------------
+function addPlayer() {
+  let p = document.getElementById("squadInput").value.toLowerCase();
+  if (!p) return;
+
+  squad.push(p);
+  renderSquad();
+}
+
+function renderSquad() {
+  let list = document.getElementById("squadList");
+  list.innerHTML = "";
+
+  squad.forEach(p => {
+    let li = document.createElement("li");
+    li.innerText = p.toUpperCase();
+    list.appendChild(li);
+  });
+}
+
+// ---------------- COMPARE ----------------
+function compare() {
+  let a = document.getElementById("p1").value.toLowerCase();
+  let b = document.getElementById("p2").value.toLowerCase();
+
+  if (!players[a] || !players[b]) {
+    document.getElementById("compareResult").innerText = "Player not found";
+    return;
+  }
+
+  let winner = players[a] > players[b] ? a : b;
+
+  document.getElementById("compareResult").innerText =
+    a.toUpperCase() + ": " + players[a] + " | " +
+    b.toUpperCase() + ": " + players[b] +
+    "\n🏆 Best Captain: " + winner.toUpperCase();
+}
+
+</script>
+
+</body>
+</html>
