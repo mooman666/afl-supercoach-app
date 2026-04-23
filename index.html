@@ -5,60 +5,72 @@
 <title>AFL SuperCoach Pro</title>
 
 <style>
-body { margin:0; font-family: Arial; background:#0b0b0b; color:white; }
+body {
+  margin:0;
+  font-family: Arial;
+  background: linear-gradient(180deg, #070707, #121212);
+  color:white;
+}
 
 header {
-  background:#00c46a;
-  padding:16px;
+  background: linear-gradient(90deg, #00c46a, #00a3ff);
+  padding:18px;
   text-align:center;
   font-size:20px;
   font-weight:bold;
+  letter-spacing:1px;
 }
 
-.container { padding:12px; }
+.container {
+  padding:14px;
+}
 
 .nav {
   display:flex;
   gap:6px;
-  margin-bottom:10px;
+  margin-bottom:12px;
 }
 
 .nav button {
   flex:1;
-  padding:10px;
-  background:#222;
-  border:none;
+  padding:12px;
+  background:#1b1b1b;
+  border:1px solid #2a2a2a;
   color:white;
-  border-radius:8px;
+  border-radius:10px;
 }
 
 .card {
-  background:#1a1a1a;
-  margin:10px 0;
-  padding:14px;
-  border-radius:12px;
+  background: rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  margin:12px 0;
+  padding:16px;
+  border-radius:14px;
+  backdrop-filter: blur(6px);
 }
 
 input {
-  width:92%;
+  width:95%;
   padding:12px;
-  margin:6px 0;
-  border-radius:8px;
-  border:none;
+  border-radius:10px;
+  border:1px solid #333;
+  background:#0f0f0f;
+  color:white;
 }
 
 button {
   width:100%;
   padding:12px;
-  margin-top:8px;
-  background:#00c46a;
+  margin-top:10px;
+  background: linear-gradient(90deg, #00c46a, #00a3ff);
   border:none;
-  border-radius:8px;
+  border-radius:10px;
   font-weight:bold;
+  color:black;
 }
 
 ul { list-style:none; padding:0; }
-li { padding:6px; border-bottom:1px solid #333; }
+li { padding:8px; border-bottom:1px solid #2a2a2a; }
 
 .section { display:none; }
 .active { display:block; }
