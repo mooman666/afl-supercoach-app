@@ -2,17 +2,18 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AFL SuperCoach Pro</title>
+<title>AFL SuperCoach AI</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 body {
   margin:0;
   font-family: Arial;
-  background:#0b0f14;
+  background: radial-gradient(circle at top, #0f1722, #05070a);
   color:white;
 }
 
-/* TOP DASHBOARD */
 header {
   background: linear-gradient(90deg, #00c46a, #00a3ff);
   padding:18px;
@@ -21,14 +22,21 @@ header {
   font-weight:bold;
 }
 
-/* APP WRAPPER */
 .container {
-  max-width:600px;
+  max-width:650px;
   margin:auto;
   padding:14px;
 }
 
-/* NAV */
+.card {
+  background: rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:16px;
+  padding:16px;
+  margin:12px 0;
+  backdrop-filter: blur(10px);
+}
+
 .nav {
   display:flex;
   gap:6px;
@@ -44,16 +52,6 @@ header {
   color:white;
 }
 
-/* CARDS (IMPORTANT UPGRADE) */
-.card {
-  background:#151b26;
-  border:1px solid #222b3a;
-  border-radius:14px;
-  padding:16px;
-  margin:12px 0;
-}
-
-/* INPUTS */
 input {
   width:100%;
   padding:12px;
@@ -64,7 +62,6 @@ input {
   color:white;
 }
 
-/* PRIMARY BUTTON */
 button {
   width:100%;
   padding:12px;
@@ -72,25 +69,30 @@ button {
   border:none;
   border-radius:10px;
   background: linear-gradient(90deg, #00c46a, #00a3ff);
-  color:black;
   font-weight:bold;
+  color:black;
 }
 
-/* LIST */
-ul { list-style:none; padding:0; }
-li {
-  padding:8px;
-  border-bottom:1px solid #2a3445;
-}
-
-/* SECTIONS */
 .section { display:none; }
 .active { display:block; }
 
-/* SMALL TEXT */
+img.hero {
+  width:100%;
+  border-radius:12px;
+  margin-top:10px;
+  opacity:0.9;
+}
+
 .small {
-  opacity:0.7;
   font-size:12px;
+  opacity:0.7;
+}
+
+canvas {
+  margin-top:10px;
+  background:#0b0f14;
+  border-radius:12px;
+  padding:10px;
 }
 </style>
 </head>
@@ -101,50 +103,57 @@ li {
 
 <div class="container">
 
+<!-- HERO GRAPHIC (AI IMAGE PLACEHOLDER) -->
 <div class="card">
-  <b>Quick Tip:</b>
-  <div class="small">Search a player to get BUY / SELL / HOLD advice</div>
+  <b>Live Intelligence Overview</b>
+  <div class="small">AI-powered AFL analytics engine</div>
+  <img class="hero" src="https://images.unsplash.com/photo-1511886929837-354d827aae26?auto=format&fit=crop&w=1000&q=60">
 </div>
 
 <div class="nav">
-<button onclick="show('analysis')">Analyse</button>
+<button onclick="show('dashboard')">Dashboard</button>
+<button onclick="show('analysis')">Analysis</button>
 <button onclick="show('squad')">Squad</button>
-<button onclick="show('trade')">Trade</button>
+<button onclick="show('trade')">Trades</button>
 <button onclick="show('captain')">Captain</button>
-<button onclick="show('news')">Feed</button>
 </div>
 
-<div id="analysis" class="section active card">
-<h3>Player Analysis</h3>
-<input id="player" placeholder="e.g. Neale">
-<button onclick="analyse()">Analyse Player</button>
+<!-- DASHBOARD -->
+<div id="dashboard" class="section active card">
+<h3>Team Performance</h3>
+<canvas id="teamChart"></canvas>
+</div>
+
+<!-- ANALYSIS -->
+<div id="analysis" class="section card">
+<h3>Player AI Analysis</h3>
+<input id="player" placeholder="type player name">
+<button onclick="analyse()">Analyse</button>
 <p id="result"></p>
 </div>
 
+<!-- SQUAD -->
 <div id="squad" class="section card">
-<h3>Squad</h3>
+<h3>Squad Builder</h3>
 <input id="squadInput" placeholder="add player">
 <button onclick="addPlayer()">Add</button>
 <ul id="squadList"></ul>
 <p id="squadStats"></p>
 </div>
 
+<!-- TRADE -->
 <div id="trade" class="section card">
-<h3>Trade Engine</h3>
+<h3>Trade Intelligence</h3>
 <input id="tradeInput" placeholder="player">
-<button onclick="trade()">Run Trade AI</button>
+<button onclick="trade()">Run AI Trade</button>
 <p id="tradeResult"></p>
 </div>
 
+<!-- CAPTAIN -->
 <div id="captain" class="section card">
-<h3>Captain Pick</h3>
+<h3>Captain AI Selector</h3>
 <button onclick="captain()">Find Best Captain</button>
 <p id="captainResult"></p>
-</div>
-
-<div id="news" class="section card">
-<h3>Insights Feed</h3>
-<div id="feed"></div>
 </div>
 
 </div>
@@ -153,4 +162,4 @@ li {
 <script src="app.js"></script>
 
 </body>
-</html>
+</html> 
