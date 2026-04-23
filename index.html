@@ -110,48 +110,53 @@ li {
 
 <script>
 
-// ---------------- DATA ----------------
+// ---------------- PLAYER DATA ----------------
 const players = {
-  neale: 121,
-  cripps: 115,
-  gawn: 108,
-  brayshaw: 112,
-  serong: 110,
-  bontempelli: 118,
-  dawson: 109,
-  rowell: 106,
-  mills: 111
+  neale: { avg: 121, pos: "MID", form: [118, 123, 120] },
+  cripps: { avg: 115, pos: "MID", form: [110, 117, 118] },
+  gawn: { avg: 108, pos: "RUC", form: [105, 112, 107] },
+  brayshaw: { avg: 112, pos: "MID", form: [109, 113, 114] },
+  serong: { avg: 110, pos: "MID", form: [108, 111, 112] },
+  bontempelli: { avg: 118, pos: "MID/FWD", form: [116, 119, 120] },
+  dawson: { avg: 109, pos: "DEF", form: [107, 110, 111] },
+  rowell: { avg: 106, pos: "MID", form: [104, 108, 106] },
+  mills: { avg: 111, pos: "DEF", form: [109, 112, 113] }
 };
 
 let squad = [];
 
-// ---------------- ANALYSE ----------------
+// ---------------- PLAYER ANALYSIS ----------------
 function analyse() {
   let p = document.getElementById("player").value.toLowerCase();
+  let data = players[p];
 
-  if (!players[p]) {
+  if (!data) {
     document.getElementById("result").innerHTML = "❌ No data found";
     return;
   }
 
-  let score = players[p];
+  let score = data.avg;
+  let trend = data.form[data.form.length - 1] - data.form[0];
+
   let tag = "";
 
   if (score >= 120) tag = "🔥 ELITE CAPTAIN";
-  else if (score >= 110) tag = "📈 PREMIUM PICK";
-  else if (score < 100) tag = "⚠️ TRADE OUT";
-  else tag = "✔ SOLID OPTION";
+  else if (score >= 110 && trend > 0) tag = "📈 FORM PICK";
+  else if (score < 105) tag = "⚠️ TRADE OUT";
+  else tag = "✔ SOLID HOLD";
 
   document.getElementById("result").innerHTML =
     `<b>${p.toUpperCase()}</b><br>
+    Position: ${data.pos}<br>
     Avg: ${score}<br>
+    Trend: ${trend > 0 ? "📈 Rising" : "📉 Falling"}<br>
     <span class="tag">${tag}</span>`;
 }
 
 // ---------------- SQUAD ----------------
 function addPlayer() {
   let p = document.getElementById("squadInput").value.toLowerCase();
-  if (!p) return;
+  if (!players[p]) return;
 
   squad.push(p);
   renderSquad();
@@ -162,13 +167,14 @@ function renderSquad() {
   list.innerHTML = "";
 
   squad.forEach(p => {
+    let d = players[p];
     let li = document.createElement("li");
-    li.textContent = "🏉 " + p.toUpperCase();
+    li.innerHTML = `🏉 <b>${p.toUpperCase()}</b> (${d.pos}) - Avg ${d.avg}`;
     list.appendChild(li);
   });
 }
 
-// ---------------- COMPARE ----------------
+// ---------------- CAPTAIN COMPARE ----------------
 function compare() {
   let a = document.getElementById("p1").value.toLowerCase();
   let b = document.getElementById("p2").value.toLowerCase();
@@ -178,13 +184,16 @@ function compare() {
     return;
   }
 
-  let winner = players[a] > players[b] ? a : b;
+  let winner = players[a].avg > players[b].avg ? a : b;
 
   document.getElementById("compareResult").innerHTML =
-    `${a.toUpperCase()}: ${players[a]}<br>
-     ${b.toUpperCase()}: ${players[b]}<br><br>
+    `${a.toUpperCase()}: ${players[a].avg}<br>
+     ${b.toUpperCase()}: ${players[b].avg}<br><br>
      🏆 Best Captain: <b>${winner.toUpperCase()}</b>`;
 }
+
+</script>
+
 
 </script>
 
