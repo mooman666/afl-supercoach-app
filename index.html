@@ -5,12 +5,7 @@
 <title>AFL SuperCoach Pro</title>
 
 <style>
-body {
-  margin:0;
-  font-family: Arial;
-  background:#0b0b0b;
-  color:white;
-}
+body { margin:0; font-family: Arial; background:#0b0b0b; color:white; }
 
 header {
   background:#00c46a;
@@ -20,13 +15,26 @@ header {
   font-weight:bold;
 }
 
-.container {
-  padding:12px;
+.container { padding:12px; }
+
+.nav {
+  display:flex;
+  gap:6px;
+  margin-bottom:10px;
+}
+
+.nav button {
+  flex:1;
+  padding:10px;
+  background:#222;
+  border:none;
+  color:white;
+  border-radius:8px;
 }
 
 .card {
   background:#1a1a1a;
-  margin:12px 0;
+  margin:10px 0;
   padding:14px;
   border-radius:12px;
 }
@@ -47,8 +55,13 @@ button {
   border:none;
   border-radius:8px;
   font-weight:bold;
-  color:black;
 }
+
+ul { list-style:none; padding:0; }
+li { padding:6px; border-bottom:1px solid #333; }
+
+.section { display:none; }
+.active { display:block; }
 </style>
 </head>
 
@@ -58,18 +71,41 @@ button {
 
 <div class="container">
 
-<div class="card">
+<div class="nav">
+<button onclick="show('analysis')">Analysis</button>
+<button onclick="show('squad')">Squad</button>
+<button onclick="show('trade')">Trades</button>
+<button onclick="show('news')">News</button>
+</div>
+
+<!-- ANALYSIS -->
+<div id="analysis" class="section active card">
 <h3>Player Analysis</h3>
 <input id="player" placeholder="neale, cripps, gawn">
 <button onclick="analyse()">Analyse</button>
 <p id="result"></p>
 </div>
 
-<div class="card">
+<!-- SQUAD -->
+<div id="squad" class="section card">
+<h3>Your Squad</h3>
+<input id="squadInput" placeholder="add player">
+<button onclick="addPlayer()">Add</button>
+<ul id="squadList"></ul>
+</div>
+
+<!-- TRADE -->
+<div id="trade" class="section card">
 <h3>Trade Assistant</h3>
 <input id="tradeInput" placeholder="player name">
 <button onclick="trade()">Get Advice</button>
 <p id="tradeResult"></p>
+</div>
+
+<!-- NEWS -->
+<div id="news" class="section card">
+<h3>Insights Feed</h3>
+<div id="feed"></div>
 </div>
 
 </div>
