@@ -18,18 +18,17 @@ header {
   padding:18px;
   text-align:center;
   font-weight:bold;
-  font-size:18px;
-  background: linear-gradient(90deg,#00c46a,#00a3ff);
+  background:linear-gradient(90deg,#00c46a,#00a3ff);
 }
 
-/* APP LAYOUT */
+/* LAYOUT */
 .container {
   max-width:700px;
   margin:auto;
   padding:14px;
 }
 
-/* NAV */
+/* NAV FIXED */
 .nav {
   display:flex;
   gap:6px;
@@ -54,7 +53,7 @@ header {
   margin:12px 0;
 }
 
-/* INPUTS */
+/* INPUT */
 input {
   width:100%;
   padding:12px;
@@ -64,7 +63,7 @@ input {
   color:white;
 }
 
-/* BUTTONS */
+/* BUTTON */
 button {
   width:100%;
   padding:12px;
@@ -76,33 +75,27 @@ button {
   color:black;
 }
 
-/* PLAYER CARD */
-.playerCard {
-  padding:10px;
-  border-bottom:1px solid #2a3445;
-}
-
-/* BAR */
-.bar {
-  height:6px;
-  background:#222;
-  border-radius:5px;
-  overflow:hidden;
-  margin-top:5px;
-}
-
-.fill {
-  height:100%;
-  background:linear-gradient(90deg,#00c46a,#00a3ff);
-}
-
-/* SECTIONS */
+/* SECTIONS FIX */
 .section { display:none; }
 .active { display:block; }
 
-.small {
-  font-size:12px;
-  opacity:0.7;
+/* KPI CARDS */
+.kpiGrid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.kpi {
+  background:#0e131c;
+  padding:10px;
+  border-radius:10px;
+  border:1px solid #2a3445;
+}
+
+.rankCard {
+  padding:10px;
+  border-bottom:1px solid #2a3445;
 }
 </style>
 </head>
@@ -113,10 +106,20 @@ button {
 
 <div class="container">
 
+<div class="nav">
+<button onclick="show('dashboard')">Dashboard</button>
+<button onclick="show('analysis')">Analysis</button>
+<button onclick="show('squad')">Squad</button>
+<button onclick="show('trade')">Trade</button>
+<button onclick="show('captain')">Captain</button>
+</div>
+
 <!-- DASHBOARD -->
 <div id="dashboard" class="section active card">
-<h3>🏆 Team Dashboard</h3>
-<div id="kpis"></div>
+<h3>📊 Team Overview</h3>
+
+<div id="kpis" class="kpiGrid"></div>
+
 <canvas id="chart"></canvas>
 </div>
 
