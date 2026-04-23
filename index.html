@@ -8,98 +8,121 @@
 body {
   margin:0;
   font-family: Arial;
-  background: linear-gradient(180deg, #070707, #121212);
+  background:#0b0f14;
   color:white;
 }
 
+/* TOP DASHBOARD */
 header {
   background: linear-gradient(90deg, #00c46a, #00a3ff);
   padding:18px;
   text-align:center;
-  font-size:20px;
+  font-size:18px;
   font-weight:bold;
-  letter-spacing:1px;
 }
 
+/* APP WRAPPER */
 .container {
+  max-width:600px;
+  margin:auto;
   padding:14px;
 }
 
+/* NAV */
 .nav {
   display:flex;
   gap:6px;
-  margin-bottom:12px;
+  margin:12px 0;
 }
 
 .nav button {
   flex:1;
-  padding:12px;
-  background:#1b1b1b;
-  border:1px solid #2a2a2a;
-  color:white;
+  padding:10px;
   border-radius:10px;
+  border:none;
+  background:#1b1f2a;
+  color:white;
 }
 
+/* CARDS (IMPORTANT UPGRADE) */
 .card {
-  background: rgba(255,255,255,0.04);
-  border:1px solid rgba(255,255,255,0.08);
-  margin:12px 0;
-  padding:16px;
+  background:#151b26;
+  border:1px solid #222b3a;
   border-radius:14px;
-  backdrop-filter: blur(6px);
+  padding:16px;
+  margin:12px 0;
 }
 
+/* INPUTS */
 input {
-  width:95%;
+  width:100%;
   padding:12px;
+  margin-top:8px;
   border-radius:10px;
-  border:1px solid #333;
-  background:#0f0f0f;
+  border:1px solid #2a3445;
+  background:#0e131c;
   color:white;
 }
 
+/* PRIMARY BUTTON */
 button {
   width:100%;
   padding:12px;
   margin-top:10px;
-  background: linear-gradient(90deg, #00c46a, #00a3ff);
   border:none;
   border-radius:10px;
-  font-weight:bold;
+  background: linear-gradient(90deg, #00c46a, #00a3ff);
   color:black;
+  font-weight:bold;
 }
 
+/* LIST */
 ul { list-style:none; padding:0; }
-li { padding:8px; border-bottom:1px solid #2a2a2a; }
+li {
+  padding:8px;
+  border-bottom:1px solid #2a3445;
+}
 
+/* SECTIONS */
 .section { display:none; }
 .active { display:block; }
+
+/* SMALL TEXT */
+.small {
+  opacity:0.7;
+  font-size:12px;
+}
 </style>
 </head>
 
 <body>
 
-<header>🏉 AFL SuperCoach Pro</header>
+<header>🏉 SuperCoach AI Dashboard</header>
 
 <div class="container">
 
+<div class="card">
+  <b>Quick Tip:</b>
+  <div class="small">Search a player to get BUY / SELL / HOLD advice</div>
+</div>
+
 <div class="nav">
-<button onclick="show('analysis')">Analysis</button>
+<button onclick="show('analysis')">Analyse</button>
 <button onclick="show('squad')">Squad</button>
-<button onclick="show('trade')">Trades</button>
+<button onclick="show('trade')">Trade</button>
 <button onclick="show('captain')">Captain</button>
-<button onclick="show('news')">News</button>
+<button onclick="show('news')">Feed</button>
 </div>
 
 <div id="analysis" class="section active card">
 <h3>Player Analysis</h3>
-<input id="player" placeholder="player name">
-<button onclick="analyse()">Analyse</button>
+<input id="player" placeholder="e.g. Neale">
+<button onclick="analyse()">Analyse Player</button>
 <p id="result"></p>
 </div>
 
 <div id="squad" class="section card">
-<h3>Squad Builder</h3>
+<h3>Squad</h3>
 <input id="squadInput" placeholder="add player">
 <button onclick="addPlayer()">Add</button>
 <ul id="squadList"></ul>
@@ -107,20 +130,20 @@ li { padding:8px; border-bottom:1px solid #2a2a2a; }
 </div>
 
 <div id="trade" class="section card">
-<h3>Trade Assistant</h3>
-<input id="tradeInput" placeholder="player name">
-<button onclick="trade()">Analyse Trade</button>
+<h3>Trade Engine</h3>
+<input id="tradeInput" placeholder="player">
+<button onclick="trade()">Run Trade AI</button>
 <p id="tradeResult"></p>
 </div>
 
 <div id="captain" class="section card">
-<h3>Captain Optimiser</h3>
+<h3>Captain Pick</h3>
 <button onclick="captain()">Find Best Captain</button>
 <p id="captainResult"></p>
 </div>
 
 <div id="news" class="section card">
-<h3>Insights</h3>
+<h3>Insights Feed</h3>
 <div id="feed"></div>
 </div>
 
