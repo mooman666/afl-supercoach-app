@@ -1,5 +1,3 @@
-console.log("APP VERSION 1 LOADED ✅");
-
 let squad = [];
 
 // NAV
@@ -17,50 +15,106 @@ function find(input){
   );
 }
 
-// SAFE METRICS
-function avg(scores){
-  return scores.reduce((a,b)=>a+b,0)/scores.length;
+// 📊 CORE STATS
+function avg(arr){
+  return arr.reduce((a,b)=>a+b,0)/arr.length;
 }
 
-// ANALYSIS (SIMPLE BUT STABLE)
+function max(arr){
+  return Math.max(...arr);
+}
+
+function min(arr){
+  return Math.min(...arr);
+}
+
+// 🔮 REALISTIC PROJECTION MODEL
+function projection(scores){
+  let recent = scores.slice(-3);
+
+  let weighted =
+    (recent[2]*0.5) +
+    (recent[1]*0.3) +
+    (recent[0]*0.2);
+
+  let seasonAvg = avg(scores);
+
+  // regression to mean (important realism factor)
+  let projection = (weighted * 0.7) + (seasonAvg * 0.3);
+
+  return projection;
+}
+
+// ⭐ 10 POINT RATING (REAL VERSION)
+function rating10(p){
+
+  let a = avg(p.scores);
+  let consistency = 100 - (max(p.scores) - min(p.scores));
+  let trend = p.scores[2] - p.scores[0];
+  let proj = projection(p.scores);
+
+  let score =
+    (a / 120) * 4 +
+    (consistency / 100) * 3 +
+    (trend / 20) * 1.5 +
+    (proj / 120) * 1.5;
+
+  if(score > 10) score = 10;
+  if(score < 1) score = 1;
+
+  return score;
+}
+
+// 🧠 ANALYSIS (NOW USEFUL)
 function analyse(){
   let k=find(document.getElementById("player").value);
-  if(!k) return out("result","Not found");
+  if(!k) return out("result","Player not found");
 
   let p=players[k];
 
   let a=avg(p.scores);
+  let proj=projection(p.scores);
+  let rating=rating10(p);
 
   out("result",`
-    <b>${p.name}</b><br>
-    Year Avg: ${a.toFixed(1)}<br>
-    Scores: ${p.scores.join(", ")}
+    <b>${p.name}</b><br><br>
+
+    ⭐ Rating: ${rating.toFixed(1)} / 10<br>
+    📊 Season Avg: ${a.toFixed(1)}<br>
+    🔮 Projection: ${proj.toFixed(1)}<br><br>
+
+    📅 Weekly Scores:<br>
+    ${p.scores.map((s,i)=>`Round ${i+1}: ${s}`).join("<br>")}
   `);
 }
 
-// TRADE
+// 🔁 TRADE LOGIC
 function trade(){
   let k=find(document.getElementById("tradeInput").value);
   if(!k) return;
 
   let p=players[k];
+
+  let proj=projection(p.scores);
   let a=avg(p.scores);
 
   let decision =
-    a>110?"🟢 BUY":
-    a>100?"🟡 HOLD":"🔴 SELL";
+    proj > a + 5 ? "🟢 BUY (uptrend)" :
+    proj < a - 5 ? "🔴 SELL (decline)" :
+    "🟡 HOLD (stable)";
 
   out("tradeResult",`${p.name}<br>${decision}`);
 }
 
-// CAPTAIN
+// 🏆 CAPTAIN LOGIC
 function captain(){
   let best=null,bestScore=-999;
 
   Object.values(players).forEach(p=>{
-    let a=avg(p.scores);
-    if(a>bestScore){
-      bestScore=a;
+    let score = (projection(p.scores) * 0.6) + (avg(p.scores) * 0.4);
+
+    if(score>bestScore){
+      bestScore=score;
       best=p;
     }
   });
@@ -68,38 +122,27 @@ function captain(){
   out("captainResult",`🏆 ${best.name}`);
 }
 
-// SQUAD
-function addPlayer(){
-  let k=find(document.getElementById("squadInput").value);
-  if(!k||squad.includes(k)) return;
-
-  squad.push(k);
-  renderSquad();
-}
-
-function renderSquad(){
-  let el=document.getElementById("squadList");
-  el.innerHTML="";
-  squad.forEach(k=>{
-    el.innerHTML+=`<div>${players[k].name}</div>`;
-  });
-}
-
-// DASHBOARD
+// 📊 DASHBOARD
 function renderDashboard(){
-  let top=Object.values(players).sort((a,b)=>avg(b.scores)-avg(a.scores));
+
+  let ranked = Object.values(players)
+    .sort((a,b)=>avg(b.scores)-avg(a.scores));
 
   document.getElementById("kpis").innerHTML=`
-    🥇 ${top[0].name}<br>
-    🥈 ${top[1].name}<br>
-    🥉 ${top[2].name}
+    🥇 ${ranked[0].name}<br>
+    🥈 ${ranked[1].name}<br>
+    🥉 ${ranked[2].name}
   `;
 
   new Chart(document.getElementById("chart"),{
-    type:"bar",
+    type:"line",
     data:{
-      labels:Object.values(players).map(p=>p.name),
-      datasets:[{data:Object.values(players).map(p=>avg(p.scores))}]
+      labels:["R1","R2","R3"],
+      datasets:Object.values(players).map(p=>({
+        label:p.name,
+        data:p.scores,
+        fill:false
+      }))
     }
   });
 }
@@ -116,5 +159,4 @@ renderDashboard();
 window.show=show;
 window.analyse=analyse;
 window.trade=trade;
-window.addPlayer=addPlayer;
 window.captain=captain;
