@@ -8,7 +8,7 @@ function show(tab){
 
 // ---------------- FIND ----------------
 function find(input){
-  input = (input || "").toLowerCase().trim();
+  input = (input || "").toLowerCase();
   return Object.keys(players).find(k =>
     input.includes(k) || players[k].name.toLowerCase().includes(input)
   );
@@ -40,17 +40,16 @@ function analyse(){
   let rating = (p.avg + m.value*10 - m.consistency).toFixed(1);
 
   let verdict =
-    rating > 120 ? "🔥 ELITE" :
-    rating > 110 ? "🟡 GOOD" :
+    rating > 120 ? "🔥 ELITE PICK" :
+    rating > 110 ? "🟡 STRONG" :
     rating > 100 ? "⚪ AVERAGE" :
     "🔴 DROP";
 
   out("result",
     `<b>${p.name}</b><br>
-    Avg: ${p.avg}<br>
+    Rating: ${rating}<br>
     Value: ${m.value.toFixed(2)}<br>
     Ceiling: ${m.ceiling}<br>
-    Rating: ${rating}<br><br>
     <b>${verdict}</b>`
   );
 }
@@ -69,17 +68,33 @@ function trade(){
     m.value > 1.1 ? "⚪ HOLD" :
     "🔴 SELL";
 
-  out("tradeResult",
-    `<b>${p.name}</b><br>${decision}<br>Value: ${m.value.toFixed(2)}`
+  out("tradeResult", `<b>${p.name}</b><br>${decision}`);
+}
+
+// ---------------- CAPTAIN ----------------
+function captain(){
+  let best = null;
+  let bestScore = -999;
+
+  Object.values(players).forEach(p => {
+    let m = metrics(p);
+    let score = p.avg + m.ceiling - m.consistency;
+
+    if(score > bestScore){
+      bestScore = score;
+      best = p;
+    }
+  });
+
+  out("captainResult",
+    `🏆 Captain: <b>${best.name}</b><br>Score: ${bestScore.toFixed(1)}`
   );
 }
 
 // ---------------- SQUAD ----------------
 function addPlayer(){
   let key = find(document.getElementById("squadInput").value);
-  if(!key) return;
-
-  if(squad.includes(key)) return; // prevent duplicates
+  if(!key || squad.includes(key)) return;
 
   squad.push(key);
   renderSquad();
@@ -99,51 +114,24 @@ function renderSquad(){
     list.innerHTML += `<li>${p.name}</li>`;
   });
 
-  let strength = squad.length ? (avg / squad.length).toFixed(1) : 0;
-
   document.getElementById("squadStats").innerHTML =
-    `Total Value: $${total}<br>Team Strength: ${strength}`;
+    `Value: $${total}<br>Strength: ${(avg / squad.length || 0).toFixed(1)}`;
 }
 
-// ---------------- CAPTAIN ----------------
-function captain(){
-  let best = null;
-  let bestScore = -999;
+// ---------------- CHART (NEW VISUAL LAYER) ----------------
+function initChart(){
+  let ctx = document.getElementById('teamChart');
 
-  Object.values(players).forEach(p => {
-    let m = metrics(p);
-    let score = p.avg + m.ceiling - m.consistency;
-
-    if(score > bestScore){
-      bestScore = score;
-      best = p;
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: Object.values(players).map(p => p.name),
+      datasets: [{
+        label: 'Average Score',
+        data: Object.values(players).map(p => p.avg)
+      }]
     }
   });
-
-  if(!best){
-    out("captainResult","No data");
-    return;
-  }
-
-  out("captainResult",
-    `🏆 Captain: <b>${best.name}</b><br>Score: ${bestScore.toFixed(1)}`
-  );
-}
-
-// ---------------- NEWS ----------------
-function loadFeed(){
-  let feed = [];
-
-  Object.values(players).forEach(p => {
-    let m = metrics(p);
-
-    if(m.value > 1.6) feed.push(`🔥 ${p.name} undervalued`);
-    else if(p.avg > 115) feed.push(`🏆 ${p.name} elite form`);
-    else feed.push(`📊 ${p.name} stable`);
-  });
-
-  document.getElementById("feed").innerHTML =
-    feed.map(f => `<p>${f}</p>`).join("");
 }
 
 // ---------------- OUTPUT ----------------
@@ -151,8 +139,8 @@ function out(id, html){
   document.getElementById(id).innerHTML = html;
 }
 
-// ---------------- INIT ----------------
-loadFeed();
+// INIT
+initChart();
 
 // ---------------- GLOBAL FIX ----------------
 window.show = show;
