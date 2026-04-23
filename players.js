@@ -1,9 +1,37 @@
-const players = {
-  neale: { name:"Lachie Neale", pos:"MID", price:680000, avg:121, scores:[118,123,120] },
-  cripps: { name:"Patrick Cripps", pos:"MID", price:650000, avg:115, scores:[110,117,118] },
-  gawn: { name:"Max Gawn", pos:"RUC", price:610000, avg:108, scores:[105,112,107] },
-  bont: { name:"Marcus Bontempelli", pos:"MID/FWD", price:670000, avg:118, scores:[116,119,120] },
-  dawson: { name:"Jordan Dawson", pos:"DEF", price:590000, avg:109, scores:[107,110,111] },
-  serong: { name:"Caleb Serong", pos:"MID", price:600000, avg:110, scores:[108,111,112] },
-  rowell: { name:"Matt Rowell", pos:"MID", price:540000, avg:106, scores:[104,108,106] }
-};
+const players = [
+  {
+    name: "Lachie Neale",
+    team: "BRL",
+    position: "MID",
+    price: 680000,
+    scores: [118, 123, 120, 110, 125]
+  },
+  {
+    name: "Patrick Cripps",
+    team: "CAR",
+    position: "MID",
+    price: 650000,
+    scores: [110, 117, 118, 105, 122]
+  },
+  {
+    name: "Max Gawn",
+    team: "MEL",
+    position: "RUC",
+    price: 610000,
+    scores: [105, 112, 107, 115, 109]
+  },
+  {
+    name: "Marcus Bontempelli",
+    team: "WBD",
+    position: "MID/FWD",
+    price: 670000,
+    scores: [116, 119, 120, 113, 121]
+  },
+  {
+    name: "Jordan Dawson",
+    team: "ADEL",
+    position: "DEF",
+    price: 590000,
+    scores: [107, 110, 111, 109, 114]
+  }
+];
