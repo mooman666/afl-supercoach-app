@@ -32,10 +32,6 @@ header {
   border:1px solid #222;
 }
 
-h3 {
-  margin-top:0;
-}
-
 input {
   width:92%;
   padding:12px;
@@ -60,7 +56,7 @@ ul {
 }
 
 li {
-  padding:6px 0;
+  padding:8px;
   border-bottom:1px solid #333;
 }
 
@@ -77,11 +73,10 @@ li {
 
 <body>
 
-<header>🏉 AFL SuperCoach AI Dashboard</header>
+<header>🏉 AFL SuperCoach AI</header>
 
 <div class="container">
 
-<!-- PLAYER ANALYSIS -->
 <div class="card">
 <h3>Player Analysis</h3>
 <input id="player" placeholder="neale, cripps, gawn">
@@ -89,7 +84,6 @@ li {
 <p id="result"></p>
 </div>
 
-<!-- SQUAD -->
 <div class="card">
 <h3>Your Squad</h3>
 <input id="squadInput" placeholder="add player">
@@ -97,105 +91,9 @@ li {
 <ul id="squadList"></ul>
 </div>
 
-<!-- CAPTAIN COMPARE -->
 <div class="card">
 <h3>Captain Compare</h3>
 <input id="p1" placeholder="player 1">
 <input id="p2" placeholder="player 2">
 <button onclick="compare()">Compare</button>
-<p id="compareResult"></p>
-</div>
-
-</div>
-
-<script>
-
-// ---------------- PLAYER DATA ----------------
-const players = {
-  neale: { avg: 121, pos: "MID", form: [118, 123, 120] },
-  cripps: { avg: 115, pos: "MID", form: [110, 117, 118] },
-  gawn: { avg: 108, pos: "RUC", form: [105, 112, 107] },
-  brayshaw: { avg: 112, pos: "MID", form: [109, 113, 114] },
-  serong: { avg: 110, pos: "MID", form: [108, 111, 112] },
-  bontempelli: { avg: 118, pos: "MID/FWD", form: [116, 119, 120] },
-  dawson: { avg: 109, pos: "DEF", form: [107, 110, 111] },
-  rowell: { avg: 106, pos: "MID", form: [104, 108, 106] },
-  mills: { avg: 111, pos: "DEF", form: [109, 112, 113] }
-};
-
-let squad = [];
-
-// ---------------- PLAYER ANALYSIS ----------------
-function analyse() {
-  let p = document.getElementById("player").value.toLowerCase();
-  let data = players[p];
-
-  if (!data) {
-    document.getElementById("result").innerHTML = "❌ No data found";
-    return;
-  }
-
-  let score = data.avg;
-  let trend = data.form[data.form.length - 1] - data.form[0];
-
-  let tag = "";
-
-  if (score >= 120) tag = "🔥 ELITE CAPTAIN";
-  else if (score >= 110 && trend > 0) tag = "📈 FORM PICK";
-  else if (score < 105) tag = "⚠️ TRADE OUT";
-  else tag = "✔ SOLID HOLD";
-
-  document.getElementById("result").innerHTML =
-    `<b>${p.toUpperCase()}</b><br>
-    Position: ${data.pos}<br>
-    Avg: ${score}<br>
-    Trend: ${trend > 0 ? "📈 Rising" : "📉 Falling"}<br>
-    <span class="tag">${tag}</span>`;
-}
-
-// ---------------- SQUAD ----------------
-function addPlayer() {
-  let p = document.getElementById("squadInput").value.toLowerCase();
-  if (!players[p]) return;
-
-  squad.push(p);
-  renderSquad();
-}
-
-function renderSquad() {
-  let list = document.getElementById("squadList");
-  list.innerHTML = "";
-
-  squad.forEach(p => {
-    let d = players[p];
-    let li = document.createElement("li");
-    li.innerHTML = `🏉 <b>${p.toUpperCase()}</b> (${d.pos}) - Avg ${d.avg}`;
-    list.appendChild(li);
-  });
-}
-
-// ---------------- CAPTAIN COMPARE ----------------
-function compare() {
-  let a = document.getElementById("p1").value.toLowerCase();
-  let b = document.getElementById("p2").value.toLowerCase();
-
-  if (!players[a] || !players[b]) {
-    document.getElementById("compareResult").innerText = "Player not found";
-    return;
-  }
-
-  let winner = players[a].avg > players[b].avg ? a : b;
-
-  document.getElementById("compareResult").innerHTML =
-    `${a.toUpperCase()}: ${players[a].avg}<br>
-     ${b.toUpperCase()}: ${players[b].avg}<br><br>
-     🏆 Best Captain: <b>${winner.toUpperCase()}</b>`;
-}
-
-</script>
-
-
-</script>
-
-</body>
-</html>
+<p id="compareResult"></p
