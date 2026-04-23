@@ -3,162 +3,32 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AFL SuperCoach Pro</title>
-
-<style>
-body { margin:0; font-family: Arial; background:#0b0b0b; color:white; }
-header { background:#00c46a; padding:16px; font-size:20px; font-weight:bold; text-align:center; }
-.container { padding:12px; }
-.card { background:#1a1a1a; margin:12px 0; padding:15px; border-radius:12px; border:1px solid #222; }
-input { width:92%; padding:12px; margin:6px 0; border-radius:8px; border:none; }
-button { width:100%; padding:12px; margin-top:8px; background:#00c46a; border:none; border-radius:8px; font-weight:bold; }
-ul { list-style:none; padding:0; }
-li { padding:8px; border-bottom:1px solid #333; }
-.tag { display:inline-block; padding:4px 8px; margin-top:6px; border-radius:6px; font-size:12px; background:#333; }
-.nav { display:flex; gap:5px; margin-bottom:10px; }
-.nav button { flex:1; background:#222; }
-.section { display:none; }
-.active { display:block; }
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
 <header>🏉 AFL SuperCoach Pro</header>
 
 <div class="container">
 
-<div class="nav">
-<button onclick="show('analysis')">Analysis</button>
-<button onclick="show('squad')">Squad</button>
-<button onclick="show('trade')">Trades</button>
-<button onclick="show('news')">News</button>
-</div>
-
-<!-- ANALYSIS -->
-<div id="analysis" class="section active card">
+<div class="card">
 <h3>Player Analysis</h3>
 <input id="player" placeholder="neale, cripps, gawn">
 <button onclick="analyse()">Analyse</button>
 <p id="result"></p>
 </div>
 
-<!-- SQUAD -->
-<div id="squad" class="section card">
-<h3>Your Squad</h3>
-<input id="squadInput" placeholder="add player">
-<button onclick="addPlayer()">Add Player</button>
-<ul id="squadList"></ul>
-</div>
-
-<!-- TRADES -->
-<div id="trade" class="section card">
+<div class="card">
 <h3>Trade Assistant</h3>
 <input id="tradeInput" placeholder="player name">
-<button onclick="tradeAdvice()">Get Advice</button>
+<button onclick="trade()">Get Advice</button>
 <p id="tradeResult"></p>
 </div>
 
-<!-- NEWS -->
-<div id="news" class="section card">
-<h3>Insights Feed</h3>
-<p>🔥 Neale in elite form (avg 121)</p>
-<p>📈 Bontempelli rising last 3 weeks</p>
-<p>⚠️ Rowell inconsistent scoring</p>
-<p>💰 Dawson value pick underpriced</p>
 </div>
 
-</div>
-
-<script>
-
-// ---------------- PLAYER DATABASE ----------------
-const players = {
-  neale: { name:"Lachie Neale", pos:"MID", price:680000, avg:121, scores:[118,123,120] },
-  cripps: { name:"Patrick Cripps", pos:"MID", price:650000, avg:115, scores:[110,117,118] },
-  gawn: { name:"Max Gawn", pos:"RUC", price:610000, avg:108, scores:[105,112,107] },
-  bontempelli: { name:"Marcus Bontempelli", pos:"MID/FWD", price:670000, avg:118, scores:[116,119,120] },
-  dawson: { name:"Jordan Dawson", pos:"DEF", price:590000, avg:109, scores:[107,110,111] },
-  serong: { name:"Caleb Serong", pos:"MID", price:600000, avg:110, scores:[108,111,112] },
-  rowell: { name:"Matt Rowell", pos:"MID", price:540000, avg:106, scores:[104,108,106] }
-};
-
-let squad = [];
-
-// ---------------- NAV ----------------
-function show(tab) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.getElementById(tab).classList.add('active');
-}
-
-// ---------------- ANALYSIS ----------------
-function analyse() {
-  let key = find(document.getElementById("player").value);
-  if (!key) return result("Player not found");
-
-  let d = players[key];
-  let trend = d.scores[2] - d.scores[0];
-
-  let verdict =
-    d.avg > 115 ? "🔥 ELITE" :
-    d.avg > 105 ? "✔ PREMIUM" :
-    "⚠️ MID RANGE";
-
-  result(
-    `<b>${d.name}</b><br>
-     Avg: ${d.avg}<br>
-     Pos: ${d.pos}<br>
-     Trend: ${trend >= 0 ? "📈 Rising" : "📉 Falling"}<br>
-     <span class="tag">${verdict}</span>`
-  );
-}
-
-// ---------------- TRADE ----------------
-function tradeAdvice() {
-  let key = find(document.getElementById("tradeInput").value);
-  if (!key) return tradeResult("Player not found");
-
-  let d = players[key];
-
-  let advice =
-    d.avg > 115 ? "HOLD (elite)" :
-    d.avg > 105 ? "HOLD / consider upgrade" :
-    "SELL / upgrade target";
-
-  tradeResult(`<b>${d.name}</b><br>${advice}`);
-}
-
-// ---------------- SQUAD ----------------
-function addPlayer() {
-  let key = find(document.getElementById("squadInput").value);
-  if (!key) return;
-
-  squad.push(key);
-  render();
-}
-
-function render() {
-  let list = document.getElementById("squadList");
-  list.innerHTML = "";
-
-  squad.forEach(p => {
-    let d = players[p];
-    list.innerHTML += `<li>${d.name} (${d.pos}) - $${d.price}</li>`;
-  });
-}
-
-// ---------------- SMART FIND ----------------
-function find(input) {
-  input = input.toLowerCase().trim();
-  return Object.keys(players).find(k =>
-    input.includes(k) || players[k].name.toLowerCase().includes(input)
-  );
-}
-
-// ---------------- OUTPUT HELPERS ----------------
-function result(html){ document.getElementById("result").innerHTML = html; }
-function tradeResult(html){ document.getElementById("tradeResult").innerHTML = html; }
-
-</script>
+<script src="players.js"></script>
+<script src="app.js"></script>
 
 </body>
 </html>
