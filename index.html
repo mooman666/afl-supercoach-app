@@ -5,12 +5,7 @@
 <title>AFL SuperCoach Pro</title>
 
 <style>
-body {
-  margin:0;
-  font-family: Arial;
-  background:#0b0b0b;
-  color:white;
-}
+body { margin:0; font-family: Arial; background:#0b0b0b; color:white; }
 
 header {
   background:#00c46a;
@@ -80,36 +75,40 @@ li { padding:6px; border-bottom:1px solid #333; }
 <button onclick="show('analysis')">Analysis</button>
 <button onclick="show('squad')">Squad</button>
 <button onclick="show('trade')">Trades</button>
+<button onclick="show('captain')">Captain</button>
 <button onclick="show('news')">News</button>
 </div>
 
-<!-- ANALYSIS -->
 <div id="analysis" class="section active card">
 <h3>Player Analysis</h3>
-<input id="player" placeholder="neale, cripps, gawn">
+<input id="player" placeholder="type player">
 <button onclick="analyse()">Analyse</button>
 <p id="result"></p>
 </div>
 
-<!-- SQUAD -->
 <div id="squad" class="section card">
-<h3>Your Squad</h3>
+<h3>Squad Builder</h3>
 <input id="squadInput" placeholder="add player">
 <button onclick="addPlayer()">Add</button>
 <ul id="squadList"></ul>
+<p id="squadStats"></p>
 </div>
 
-<!-- TRADE -->
 <div id="trade" class="section card">
-<h3>Trade Assistant</h3>
-<input id="tradeInput" placeholder="player name">
-<button onclick="trade()">Get Advice</button>
+<h3>Trade Engine</h3>
+<input id="tradeInput" placeholder="player">
+<button onclick="trade()">Analyse Trade</button>
 <p id="tradeResult"></p>
 </div>
 
-<!-- NEWS -->
+<div id="captain" class="section card">
+<h3>Captain Optimiser</h3>
+<button onclick="captain()">Find Best Captain</button>
+<p id="captainResult"></p>
+</div>
+
 <div id="news" class="section card">
-<h3>Insights Feed</h3>
+<h3>Insights</h3>
 <div id="feed"></div>
 </div>
 
