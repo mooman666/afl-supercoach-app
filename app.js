@@ -8,97 +8,116 @@ function show(tab){
   if(tab==="dashboard") renderDashboard();
 }
 
-// FIND
+// FIND PLAYER
 function find(input){
-  input = (input||"").toLowerCase();
+  input=(input||"").toLowerCase();
   return Object.keys(players).find(k =>
     input.includes(k) || players[k].name.toLowerCase().includes(input)
   );
 }
 
-// 🔥 RESTORED STRONG METRICS MODEL
-function metrics(p){
-
-  // trend (form direction)
-  let trend = p.scores[2] - p.scores[0];
-
-  // volatility (consistency penalty)
-  let variance =
-    Math.abs(p.scores[0]-p.avg)+
-    Math.abs(p.scores[1]-p.avg)+
-    Math.abs(p.scores[2]-p.avg);
-
-  // value metric
-  let value = p.avg / (p.price / 100000);
-
-  // ceiling impact (important for captains)
-  let ceiling = Math.max(...p.scores);
-
-  // form momentum weighting (IMPORTANT RESTORE)
-  let momentum = (p.scores[2]*2 + p.scores[1] - p.scores[0]) / 2;
-
-  return {trend, variance, value, ceiling, momentum};
+// ------------------------------
+// CORE ANALYTICS MODEL
+// ------------------------------
+function getAvg(scores){
+  return scores.reduce((a,b)=>a+b,0)/scores.length;
 }
 
-// ANALYSIS (FIXED SCORING SPREAD)
+function getTrend(scores){
+  return scores[scores.length-1] - scores[0];
+}
+
+// 🔮 SIMPLE PROJECTION MODEL
+function projectNext(scores){
+  let recent = scores.slice(-2);
+  let momentum = recent[1] - recent[0];
+  let base = getAvg(scores);
+
+  // weighted projection (simple but realistic)
+  return base + (momentum * 1.2);
+}
+
+// ⭐ 10 POINT RATING SYSTEM
+function rating10(avg, trend, consistency){
+  let score =
+    (avg/120)*4 +          // base output strength
+    (trend/10)*2 +         // form direction
+    (1 - consistency/50)*4; // reliability
+
+  if(score > 10) score = 10;
+  if(score < 1) score = 1;
+
+  return score;
+}
+
+// ------------------------------
+// PLAYER ANALYSIS
+// ------------------------------
 function analyse(){
-  let k = find(document.getElementById("player").value);
+  let k=find(document.getElementById("player").value);
   if(!k) return out("result","Player not found");
 
-  let p = players[k];
-  let m = metrics(p);
+  let p=players[k];
 
-  // restored stronger model
-  let rating =
-    (p.avg * 0.6) +
-    (m.momentum * 0.2) +
-    (m.value * 15) -
-    (m.variance * 0.3);
+  let avg = getAvg(p.scores);
+  let trend = getTrend(p.scores);
 
-  let verdict =
-    rating > 120 ? "🔥 ELITE PREMIUM" :
-    rating > 110 ? "🟡 STRONG" :
-    rating > 100 ? "⚪ SOLID" :
-    "🔴 RISK";
+  let consistency =
+    Math.abs(p.scores[0]-avg)+
+    Math.abs(p.scores[1]-avg)+
+    Math.abs(p.scores[2]-avg);
+
+  let rating = rating10(avg, trend, consistency);
+  let projection = projectNext(p.scores);
 
   out("result",`
-    <b>${p.name}</b><br>
-    Rating: ${rating.toFixed(1)}<br>
-    Value: ${m.value.toFixed(2)}<br>
-    <b>${verdict}</b>
+    <b>${p.name}</b><br><br>
+
+    ⭐ Rating: ${rating.toFixed(1)} / 10<br>
+    📊 Year Avg: ${avg.toFixed(1)}<br>
+    🔁 Trend: ${trend > 0 ? "↗ +" : "↘ "}${trend}<br>
+    🔮 Next Week Projection: ${projection.toFixed(1)}<br><br>
+
+    <b>Weekly Scores:</b><br>
+    ${p.scores.map((s,i)=>`Round ${i+1}: ${s}`).join("<br>")}
   `);
 }
 
-// TRADE
+// ------------------------------
+// TRADE LOGIC (SIMPLIFIED USEFUL)
+// ------------------------------
 function trade(){
   let k=find(document.getElementById("tradeInput").value);
   if(!k) return;
 
   let p=players[k];
-  let m=metrics(p);
-
-  let score = (m.value*20 - m.variance + m.momentum/2);
+  let avg=getAvg(p.scores);
+  let proj=projectNext(p.scores);
 
   let decision =
-    score > 30 ? "🟢 BUY STRONG" :
-    score > 20 ? "🟡 HOLD" :
-    "🔴 SELL";
+    proj > avg + 5 ? "🟢 BUY (improving)" :
+    proj < avg - 5 ? "🔴 SELL (declining)" :
+    "🟡 HOLD (stable)";
 
-  out("tradeResult",`${p.name}<br>${decision}`);
+  out("tradeResult",`
+    <b>${p.name}</b><br>
+    Avg: ${avg.toFixed(1)}<br>
+    Projection: ${proj.toFixed(1)}<br>
+    <b>${decision}</b>
+  `);
 }
 
-// CAPTAIN (FIXED ACCURACY)
+// ------------------------------
+// CAPTAIN (REALISTIC)
+// ------------------------------
 function captain(){
-  let best=null;
-  let bestScore=-999;
+  let best=null,bestScore=-999;
 
   Object.values(players).forEach(p=>{
-    let m=metrics(p);
+    let avg=getAvg(p.scores);
+    let proj=projectNext(p.scores);
 
-    let score =
-      (p.avg * 0.7) +
-      (m.ceiling * 0.2) -
-      (m.variance * 0.2);
+    let score = (proj*0.6)+(avg*0.4);
 
     if(score>bestScore){
       bestScore=score;
@@ -106,50 +125,43 @@ function captain(){
     }
   });
 
-  out("captainResult",`🏆 ${best.name}<br>${bestScore.toFixed(1)}`);
+  out("captainResult",`
+    🏆 Captain Pick: <b>${best.name}</b><br>
+    Score: ${bestScore.toFixed(1)}
+  `);
 }
 
-// SQUAD
-function addPlayer(){
-  let k=find(document.getElementById("squadInput").value);
-  if(!k||squad.includes(k)) return;
-
-  squad.push(k);
-  renderSquad();
-}
-
-function renderSquad(){
-  let el=document.getElementById("squadList");
-  el.innerHTML="";
-
-  squad.forEach(k=>{
-    el.innerHTML+=`<div>${players[k].name}</div>`;
-  });
-}
-
-// DASHBOARD (UNCHANGED)
+// ------------------------------
+// DASHBOARD (CLEANER)
+// ------------------------------
 function renderDashboard(){
 
-  let top = Object.values(players)
-    .sort((a,b)=>b.avg-a.avg)
-    .slice(0,3);
+  let ranked = Object.values(players)
+    .map(p=>({
+      name:p.name,
+      avg:getAvg(p.scores)
+    }))
+    .sort((a,b)=>b.avg-a.avg);
 
-  document.getElementById("kpis").innerHTML = `
-    <div>🥇 ${top[0].name}</div>
-    <div>🥈 ${top[1].name}</div>
-    <div>🥉 ${top[2].name}</div>
+  document.getElementById("kpis").innerHTML=`
+    🥇 ${ranked[0].name} (${ranked[0].avg.toFixed(1)})<br>
+    🥈 ${ranked[1].name} (${ranked[1].avg.toFixed(1)})<br>
+    🥉 ${ranked[2].name} (${ranked[2].avg.toFixed(1)})
   `;
 
   new Chart(document.getElementById("chart"),{
-    type:"bar",
+    type:"line",
     data:{
-      labels:Object.values(players).map(p=>p.name),
-      datasets:[{data:Object.values(players).map(p=>p.avg)}]
+      labels:["R1","R2","R3"],
+      datasets:Object.values(players).map(p=>({
+        label:p.name,
+        data:p.scores
+      }))
     }
   });
 }
 
-// OUTPUT
+// ------------------------------
 function out(id,html){
   document.getElementById(id).innerHTML=html;
 }
@@ -157,7 +169,7 @@ function out(id,html){
 // INIT
 renderDashboard();
 
-// GLOBAL FIX
+// GLOBALS
 window.show=show;
 window.analyse=analyse;
 window.trade=trade;
