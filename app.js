@@ -1,14 +1,15 @@
+console.log("APP VERSION 1 LOADED ✅");
+
 let squad = [];
 
 // NAV
 function show(tab){
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById(tab).classList.add('active');
-
   if(tab==="dashboard") renderDashboard();
 }
 
-// FIND PLAYER
+// FIND
 function find(input){
   input=(input||"").toLowerCase();
   return Object.keys(players).find(k =>
@@ -16,152 +17,94 @@ function find(input){
   );
 }
 
-// ------------------------------
-// CORE ANALYTICS MODEL
-// ------------------------------
-function getAvg(scores){
+// SAFE METRICS
+function avg(scores){
   return scores.reduce((a,b)=>a+b,0)/scores.length;
 }
 
-function getTrend(scores){
-  return scores[scores.length-1] - scores[0];
-}
-
-// 🔮 SIMPLE PROJECTION MODEL
-function projectNext(scores){
-  let recent = scores.slice(-2);
-  let momentum = recent[1] - recent[0];
-  let base = getAvg(scores);
-
-  // weighted projection (simple but realistic)
-  return base + (momentum * 1.2);
-}
-
-// ⭐ 10 POINT RATING SYSTEM
-function rating10(avg, trend, consistency){
-  let score =
-    (avg/120)*4 +          // base output strength
-    (trend/10)*2 +         // form direction
-    (1 - consistency/50)*4; // reliability
-
-  if(score > 10) score = 10;
-  if(score < 1) score = 1;
-
-  return score;
-}
-
-// ------------------------------
-// PLAYER ANALYSIS
-// ------------------------------
+// ANALYSIS (SIMPLE BUT STABLE)
 function analyse(){
   let k=find(document.getElementById("player").value);
-  if(!k) return out("result","Player not found");
+  if(!k) return out("result","Not found");
 
   let p=players[k];
 
-  let avg = getAvg(p.scores);
-  let trend = getTrend(p.scores);
-
-  let consistency =
-    Math.abs(p.scores[0]-avg)+
-    Math.abs(p.scores[1]-avg)+
-    Math.abs(p.scores[2]-avg);
-
-  let rating = rating10(avg, trend, consistency);
-  let projection = projectNext(p.scores);
+  let a=avg(p.scores);
 
   out("result",`
-    <b>${p.name}</b><br><br>
-
-    ⭐ Rating: ${rating.toFixed(1)} / 10<br>
-    📊 Year Avg: ${avg.toFixed(1)}<br>
-    🔁 Trend: ${trend > 0 ? "↗ +" : "↘ "}${trend}<br>
-    🔮 Next Week Projection: ${projection.toFixed(1)}<br><br>
-
-    <b>Weekly Scores:</b><br>
-    ${p.scores.map((s,i)=>`Round ${i+1}: ${s}`).join("<br>")}
+    <b>${p.name}</b><br>
+    Year Avg: ${a.toFixed(1)}<br>
+    Scores: ${p.scores.join(", ")}
   `);
 }
 
-// ------------------------------
-// TRADE LOGIC (SIMPLIFIED USEFUL)
-// ------------------------------
+// TRADE
 function trade(){
   let k=find(document.getElementById("tradeInput").value);
   if(!k) return;
 
   let p=players[k];
-  let avg=getAvg(p.scores);
-  let proj=projectNext(p.scores);
+  let a=avg(p.scores);
 
   let decision =
-    proj > avg + 5 ? "🟢 BUY (improving)" :
-    proj < avg - 5 ? "🔴 SELL (declining)" :
-    "🟡 HOLD (stable)";
+    a>110?"🟢 BUY":
+    a>100?"🟡 HOLD":"🔴 SELL";
 
-  out("tradeResult",`
-    <b>${p.name}</b><br>
-    Avg: ${avg.toFixed(1)}<br>
-    Projection: ${proj.toFixed(1)}<br>
-    <b>${decision}</b>
-  `);
+  out("tradeResult",`${p.name}<br>${decision}`);
 }
 
-// ------------------------------
-// CAPTAIN (REALISTIC)
-// ------------------------------
+// CAPTAIN
 function captain(){
   let best=null,bestScore=-999;
 
   Object.values(players).forEach(p=>{
-    let avg=getAvg(p.scores);
-    let proj=projectNext(p.scores);
-
-    let score = (proj*0.6)+(avg*0.4);
-
-    if(score>bestScore){
-      bestScore=score;
+    let a=avg(p.scores);
+    if(a>bestScore){
+      bestScore=a;
       best=p;
     }
   });
 
-  out("captainResult",`
-    🏆 Captain Pick: <b>${best.name}</b><br>
-    Score: ${bestScore.toFixed(1)}
-  `);
+  out("captainResult",`🏆 ${best.name}`);
 }
 
-// ------------------------------
-// DASHBOARD (CLEANER)
-// ------------------------------
-function renderDashboard(){
+// SQUAD
+function addPlayer(){
+  let k=find(document.getElementById("squadInput").value);
+  if(!k||squad.includes(k)) return;
 
-  let ranked = Object.values(players)
-    .map(p=>({
-      name:p.name,
-      avg:getAvg(p.scores)
-    }))
-    .sort((a,b)=>b.avg-a.avg);
+  squad.push(k);
+  renderSquad();
+}
+
+function renderSquad(){
+  let el=document.getElementById("squadList");
+  el.innerHTML="";
+  squad.forEach(k=>{
+    el.innerHTML+=`<div>${players[k].name}</div>`;
+  });
+}
+
+// DASHBOARD
+function renderDashboard(){
+  let top=Object.values(players).sort((a,b)=>avg(b.scores)-avg(a.scores));
 
   document.getElementById("kpis").innerHTML=`
-    🥇 ${ranked[0].name} (${ranked[0].avg.toFixed(1)})<br>
-    🥈 ${ranked[1].name} (${ranked[1].avg.toFixed(1)})<br>
-    🥉 ${ranked[2].name} (${ranked[2].avg.toFixed(1)})
+    🥇 ${top[0].name}<br>
+    🥈 ${top[1].name}<br>
+    🥉 ${top[2].name}
   `;
 
   new Chart(document.getElementById("chart"),{
-    type:"line",
+    type:"bar",
     data:{
-      labels:["R1","R2","R3"],
-      datasets:Object.values(players).map(p=>({
-        label:p.name,
-        data:p.scores
-      }))
+      labels:Object.values(players).map(p=>p.name),
+      datasets:[{data:Object.values(players).map(p=>avg(p.scores))}]
     }
   });
 }
 
-// ------------------------------
+// OUTPUT
 function out(id,html){
   document.getElementById(id).innerHTML=html;
 }
