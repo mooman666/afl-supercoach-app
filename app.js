@@ -1,150 +1,134 @@
 let squad = [];
 
-// ---------------- NAV ----------------
+// NAV
 function show(tab){
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById(tab).classList.add('active');
+
+  if(tab === "dashboard") renderDashboard();
 }
 
-// ---------------- FIND ----------------
-function find(input){
-  input = (input || "").toLowerCase();
+// FIND
+function find(i){
+  i = (i||"").toLowerCase();
   return Object.keys(players).find(k =>
-    input.includes(k) || players[k].name.toLowerCase().includes(input)
+    i.includes(k) || players[k].name.toLowerCase().includes(i)
   );
 }
 
-// ---------------- METRICS ----------------
-function metrics(p){
+// METRICS
+function m(p){
   let trend = p.scores[2] - p.scores[0];
-
-  let consistency =
-    Math.abs(p.scores[0] - p.avg) +
-    Math.abs(p.scores[1] - p.avg) +
-    Math.abs(p.scores[2] - p.avg);
-
-  let value = p.avg / (p.price / 100000);
-  let ceiling = Math.max(...p.scores);
-
-  return { trend, consistency, value, ceiling };
+  let consistency = Math.abs(p.scores[0]-p.avg)+Math.abs(p.scores[1]-p.avg)+Math.abs(p.scores[2]-p.avg);
+  let value = p.avg/(p.price/100000);
+  return {trend, consistency, value};
 }
 
-// ---------------- ANALYSIS ----------------
+// ANALYSIS
 function analyse(){
-  let key = find(document.getElementById("player").value);
-  if(!key) return out("result","Player not found");
+  let k = find(document.getElementById("player").value);
+  if(!k) return out("result","Not found");
 
-  let p = players[key];
-  let m = metrics(p);
+  let p = players[k];
+  let mm = m(p);
 
-  let rating = (p.avg + m.value*10 - m.consistency).toFixed(1);
+  let score = (p.avg + mm.value*10 - mm.consistency).toFixed(1);
 
-  let verdict =
-    rating > 120 ? "🔥 ELITE PICK" :
-    rating > 110 ? "🟡 STRONG" :
-    rating > 100 ? "⚪ AVERAGE" :
-    "🔴 DROP";
-
-  out("result",
-    `<b>${p.name}</b><br>
-    Rating: ${rating}<br>
-    Value: ${m.value.toFixed(2)}<br>
-    Ceiling: ${m.ceiling}<br>
-    <b>${verdict}</b>`
-  );
+  out("result", `
+  <b>${p.name}</b><br>
+  Rating: ${score}<br>
+  Value: ${mm.value.toFixed(2)}
+  `);
 }
 
-// ---------------- TRADE ----------------
+// TRADE
 function trade(){
-  let key = find(document.getElementById("tradeInput").value);
-  if(!key) return out("tradeResult","Player not found");
+  let k = find(document.getElementById("tradeInput").value);
+  if(!k) return;
 
-  let p = players[key];
-  let m = metrics(p);
+  let p = players[k];
+  let mm = m(p);
 
-  let decision =
-    m.value > 1.8 ? "🟢 STRONG BUY" :
-    m.value > 1.4 ? "🟡 BUY" :
-    m.value > 1.1 ? "⚪ HOLD" :
+  let res =
+    mm.value > 1.7 ? "🟢 BUY" :
+    mm.value > 1.3 ? "🟡 HOLD" :
     "🔴 SELL";
 
-  out("tradeResult", `<b>${p.name}</b><br>${decision}`);
+  out("tradeResult", `${p.name}<br>${res}`);
 }
 
-// ---------------- CAPTAIN ----------------
+// CAPTAIN
 function captain(){
-  let best = null;
-  let bestScore = -999;
+  let best=null, bestScore=-999;
 
-  Object.values(players).forEach(p => {
-    let m = metrics(p);
-    let score = p.avg + m.ceiling - m.consistency;
-
-    if(score > bestScore){
-      bestScore = score;
-      best = p;
-    }
+  Object.values(players).forEach(p=>{
+    let mm=m(p);
+    let s=p.avg+mm.value*10-mm.consistency;
+    if(s>bestScore){bestScore=s;best=p;}
   });
 
-  out("captainResult",
-    `🏆 Captain: <b>${best.name}</b><br>Score: ${bestScore.toFixed(1)}`
-  );
+  out("captainResult", `🏆 ${best.name}`);
 }
 
-// ---------------- SQUAD ----------------
+// SQUAD
 function addPlayer(){
-  let key = find(document.getElementById("squadInput").value);
-  if(!key || squad.includes(key)) return;
+  let k=find(document.getElementById("squadInput").value);
+  if(!k || squad.includes(k)) return;
 
-  squad.push(key);
+  squad.push(k);
   renderSquad();
 }
 
 function renderSquad(){
-  let list = document.getElementById("squadList");
-  list.innerHTML = "";
+  let el=document.getElementById("squadList");
+  el.innerHTML="";
 
-  let total = 0;
-  let avg = 0;
+  let total=0, avg=0;
 
-  squad.forEach(k => {
-    let p = players[k];
-    total += p.price;
-    avg += p.avg;
-    list.innerHTML += `<li>${p.name}</li>`;
+  squad.forEach(k=>{
+    let p=players[k];
+    total+=p.price;
+    avg+=p.avg;
+    el.innerHTML+=`<div class="playerCard">${p.name}</div>`;
   });
 
-  document.getElementById("squadStats").innerHTML =
-    `Value: $${total}<br>Strength: ${(avg / squad.length || 0).toFixed(1)}`;
+  out("squadStats", `Value: $${total}`);
 }
 
-// ---------------- CHART (NEW VISUAL LAYER) ----------------
-function initChart(){
-  let ctx = document.getElementById('teamChart');
+// DASHBOARD
+function renderDashboard(){
+  let best = null, bestScore=-999;
 
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: Object.values(players).map(p => p.name),
-      datasets: [{
-        label: 'Average Score',
-        data: Object.values(players).map(p => p.avg)
-      }]
+  Object.values(players).forEach(p=>{
+    let mm=m(p);
+    let s=p.avg+mm.value*10;
+    if(s>bestScore){bestScore=s;best=p;}
+  });
+
+  document.getElementById("kpis").innerHTML = `
+    <b>Top Player:</b> ${best.name}
+  `;
+
+  new Chart(document.getElementById("chart"), {
+    type:"bar",
+    data:{
+      labels:Object.values(players).map(p=>p.name),
+      datasets:[{data:Object.values(players).map(p=>p.avg)}]
     }
   });
 }
 
-// ---------------- OUTPUT ----------------
-function out(id, html){
-  document.getElementById(id).innerHTML = html;
+// OUTPUT
+function out(id,html){
+  document.getElementById(id).innerHTML=html;
 }
 
 // INIT
-initChart();
+renderDashboard();
 
-// ---------------- GLOBAL FIX ----------------
-window.show = show;
-window.analyse = analyse;
-window.trade = trade;
-window.addPlayer = addPlayer;
-window.captain = captain;
+// GLOBAL FIX
+window.show=show;
+window.analyse=analyse;
+window.trade=trade;
+window.addPlayer=addPlayer;
+window.captain=captain;
