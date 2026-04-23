@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AFL SuperCoach AI</title>
+<title>SuperCoach AI Pro</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -10,33 +10,26 @@
 body {
   margin:0;
   font-family: Arial;
-  background: radial-gradient(circle at top, #0f1722, #05070a);
+  background:#0b0f14;
   color:white;
 }
 
 header {
-  background: linear-gradient(90deg, #00c46a, #00a3ff);
   padding:18px;
   text-align:center;
-  font-size:18px;
   font-weight:bold;
+  font-size:18px;
+  background: linear-gradient(90deg,#00c46a,#00a3ff);
 }
 
+/* APP LAYOUT */
 .container {
-  max-width:650px;
+  max-width:700px;
   margin:auto;
   padding:14px;
 }
 
-.card {
-  background: rgba(255,255,255,0.04);
-  border:1px solid rgba(255,255,255,0.08);
-  border-radius:16px;
-  padding:16px;
-  margin:12px 0;
-  backdrop-filter: blur(10px);
-}
-
+/* NAV */
 .nav {
   display:flex;
   gap:6px;
@@ -46,53 +39,70 @@ header {
 .nav button {
   flex:1;
   padding:10px;
-  border-radius:10px;
   border:none;
+  border-radius:10px;
   background:#1b1f2a;
   color:white;
 }
 
+/* CARDS */
+.card {
+  background:#141a24;
+  border:1px solid #243042;
+  border-radius:14px;
+  padding:14px;
+  margin:12px 0;
+}
+
+/* INPUTS */
 input {
   width:100%;
   padding:12px;
-  margin-top:8px;
   border-radius:10px;
   border:1px solid #2a3445;
   background:#0e131c;
   color:white;
 }
 
+/* BUTTONS */
 button {
   width:100%;
   padding:12px;
   margin-top:10px;
   border:none;
   border-radius:10px;
-  background: linear-gradient(90deg, #00c46a, #00a3ff);
+  background:linear-gradient(90deg,#00c46a,#00a3ff);
   font-weight:bold;
   color:black;
 }
 
+/* PLAYER CARD */
+.playerCard {
+  padding:10px;
+  border-bottom:1px solid #2a3445;
+}
+
+/* BAR */
+.bar {
+  height:6px;
+  background:#222;
+  border-radius:5px;
+  overflow:hidden;
+  margin-top:5px;
+}
+
+.fill {
+  height:100%;
+  background:linear-gradient(90deg,#00c46a,#00a3ff);
+}
+
+/* SECTIONS */
 .section { display:none; }
 .active { display:block; }
-
-img.hero {
-  width:100%;
-  border-radius:12px;
-  margin-top:10px;
-  opacity:0.9;
-}
 
 .small {
   font-size:12px;
   opacity:0.7;
-}
-
-canvas {
-  margin-top:10px;
-  background:#0b0f14;
-  border-radius:12px;
-  padding:10px;
 }
 </style>
 </head>
@@ -103,31 +113,17 @@ canvas {
 
 <div class="container">
 
-<!-- HERO GRAPHIC (AI IMAGE PLACEHOLDER) -->
-<div class="card">
-  <b>Live Intelligence Overview</b>
-  <div class="small">AI-powered AFL analytics engine</div>
-  <img class="hero" src="https://images.unsplash.com/photo-1511886929837-354d827aae26?auto=format&fit=crop&w=1000&q=60">
-</div>
-
-<div class="nav">
-<button onclick="show('dashboard')">Dashboard</button>
-<button onclick="show('analysis')">Analysis</button>
-<button onclick="show('squad')">Squad</button>
-<button onclick="show('trade')">Trades</button>
-<button onclick="show('captain')">Captain</button>
-</div>
-
 <!-- DASHBOARD -->
 <div id="dashboard" class="section active card">
-<h3>Team Performance</h3>
-<canvas id="teamChart"></canvas>
+<h3>🏆 Team Dashboard</h3>
+<div id="kpis"></div>
+<canvas id="chart"></canvas>
 </div>
 
 <!-- ANALYSIS -->
 <div id="analysis" class="section card">
-<h3>Player AI Analysis</h3>
-<input id="player" placeholder="type player name">
+<h3>Player Analysis</h3>
+<input id="player" placeholder="player name">
 <button onclick="analyse()">Analyse</button>
 <p id="result"></p>
 </div>
@@ -137,21 +133,21 @@ canvas {
 <h3>Squad Builder</h3>
 <input id="squadInput" placeholder="add player">
 <button onclick="addPlayer()">Add</button>
-<ul id="squadList"></ul>
+<div id="squadList"></div>
 <p id="squadStats"></p>
 </div>
 
 <!-- TRADE -->
 <div id="trade" class="section card">
-<h3>Trade Intelligence</h3>
+<h3>Trade AI</h3>
 <input id="tradeInput" placeholder="player">
-<button onclick="trade()">Run AI Trade</button>
+<button onclick="trade()">Run</button>
 <p id="tradeResult"></p>
 </div>
 
 <!-- CAPTAIN -->
 <div id="captain" class="section card">
-<h3>Captain AI Selector</h3>
+<h3>Captain Pick</h3>
 <button onclick="captain()">Find Best Captain</button>
 <p id="captainResult"></p>
 </div>
@@ -162,4 +158,4 @@ canvas {
 <script src="app.js"></script>
 
 </body>
-</html> 
+</html>
