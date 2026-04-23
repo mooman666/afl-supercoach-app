@@ -6,7 +6,7 @@ function show(tab){
   document.getElementById(tab).classList.add('active');
 }
 
-// ---------------- FIND ----------------
+// ---------------- FIND PLAYER ----------------
 function find(input){
   input = input.toLowerCase().trim();
   return Object.keys(players).find(k =>
@@ -17,7 +17,11 @@ function find(input){
 // ---------------- ANALYSIS ----------------
 function analyse(){
   let key = find(document.getElementById("player").value);
-  if(!key) return out("result","Player not found");
+
+  if(!key){
+    document.getElementById("result").innerHTML = "❌ Player not found";
+    return;
+  }
 
   let p = players[key];
   let trend = p.scores[2] - p.scores[0];
@@ -27,19 +31,22 @@ function analyse(){
     p.avg > 105 ? "✔ PREMIUM" :
     "⚠️ MID";
 
-  out("result",
+  document.getElementById("result").innerHTML =
     `<b>${p.name}</b><br>
      Avg: ${p.avg}<br>
      Pos: ${p.pos}<br>
      Trend: ${trend >= 0 ? "📈 Rising" : "📉 Falling"}<br>
-     <b>${verdict}</b>`
-  );
+     <b>${verdict}</b>`;
 }
 
 // ---------------- TRADE ----------------
 function trade(){
   let key = find(document.getElementById("tradeInput").value);
-  if(!key) return out("tradeResult","Player not found");
+
+  if(!key){
+    document.getElementById("tradeResult").innerHTML = "❌ Player not found";
+    return;
+  }
 
   let p = players[key];
 
@@ -48,7 +55,8 @@ function trade(){
     p.avg > 105 ? "HOLD / upgrade target" :
     "SELL / downgrade";
 
-  out("tradeResult", `<b>${p.name}</b><br>${advice}`);
+  document.getElementById("tradeResult").innerHTML =
+    `<b>${p.name}</b><br>${advice}`;
 }
 
 // ---------------- SQUAD ----------------
@@ -75,17 +83,12 @@ function loadFeed(){
   let feed = [
     "🔥 Neale elite form continues",
     "📈 Bont trending upward",
-    "💰 Dawson value pick",
-    "⚠️ Rowell inconsistent"
+    "💰 Dawson undervalued defender",
+    "⚠️ Rowell inconsistent scoring"
   ];
 
   document.getElementById("feed").innerHTML =
     feed.map(f => `<p>${f}</p>`).join("");
-}
-
-// ---------------- OUTPUT ----------------
-function out(id, html){
-  document.getElementById(id).innerHTML = html;
 }
 
 // INIT
