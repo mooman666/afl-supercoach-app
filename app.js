@@ -1,15 +1,22 @@
 function find(input){
   input = input.toLowerCase().trim();
+
   return Object.keys(players).find(k =>
     input.includes(k) || players[k].name.toLowerCase().includes(input)
   );
 }
 
+// ---------------- ANALYSIS ----------------
 function analyse(){
   let key = find(document.getElementById("player").value);
-  if(!key) return out("result","Player not found");
+
+  if(!key){
+    document.getElementById("result").innerHTML = "❌ Player not found";
+    return;
+  }
 
   let p = players[key];
+
   let trend = p.scores[2] - p.scores[0];
 
   let verdict =
@@ -17,33 +24,30 @@ function analyse(){
     p.avg > 105 ? "✔ PREMIUM" :
     "⚠️ MID";
 
-  out("result",
+  document.getElementById("result").innerHTML =
     `<b>${p.name}</b><br>
-     Avg: ${p.avg}<br>
-     Pos: ${p.pos}<br>
-     Trend: ${trend >= 0 ? "📈 Rising" : "📉 Falling"}<br>
-     <b>${verdict}</b>`
-  );
+    Pos: ${p.pos}<br>
+    Avg: ${p.avg}<br>
+    Trend: ${trend >= 0 ? "📈 Rising" : "📉 Falling"}<br>
+    <b>${verdict}</b>`;
 }
 
+// ---------------- TRADE ----------------
 function trade(){
   let key = find(document.getElementById("tradeInput").value);
-  if(!key) return out("tradeResult","Player not found");
+
+  if(!key){
+    document.getElementById("tradeResult").innerHTML = "❌ Player not found";
+    return;
+  }
 
   let p = players[key];
 
   let advice =
-    p.avg > 115 ? "HOLD" :
-    p.avg > 105 ? "HOLD / upgrade" :
-    "SELL";
+    p.avg > 115 ? "HOLD (elite)" :
+    p.avg > 105 ? "HOLD / upgrade target" :
+    "SELL / downgrade";
 
-  out("tradeResult", `<b>${p.name}</b><br>${advice}`);
+  document.getElementById("tradeResult").innerHTML =
+    `<b>${p.name}</b><br>${advice}`;
 }
-
-function out(id, html){
-  document.getElementById(id).innerHTML = html;
-}
-
-// 🔥 IMPORTANT: expose functions globally
-window.analyse = analyse;
-window.trade = trade;
