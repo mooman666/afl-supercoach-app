@@ -96,4 +96,102 @@ li {
 <input id="p1" placeholder="player 1">
 <input id="p2" placeholder="player 2">
 <button onclick="compare()">Compare</button>
-<p id="compareResult"></p
+<p id="compareResult"></p>
+</div>
+
+</div>
+
+<script>
+
+// ---------------- REAL AFL-STYLE DATABASE ----------------
+const players = {
+  neale: { pos: "MID", price: 680000, avg: 121, scores: [118,123,120] },
+  cripps: { pos: "MID", price: 650000, avg: 115, scores: [110,117,118] },
+  gawn: { pos: "RUC", price: 610000, avg: 108, scores: [105,112,107] },
+  bontempelli: { pos: "MID/FWD", price: 670000, avg: 118, scores: [116,119,120] },
+  dawson: { pos: "DEF", price: 590000, avg: 109, scores: [107,110,111] },
+  serong: { pos: "MID", price: 600000, avg: 110, scores: [108,111,112] },
+  rowell: { pos: "MID", price: 540000, avg: 106, scores: [104,108,106] }
+};
+
+let squad = [];
+
+// ---------------- PLAYER ANALYSIS ----------------
+function analyse() {
+  let p = document.getElementById("player").value.toLowerCase();
+  let d = players[p];
+
+  if (!d) {
+    document.getElementById("result").innerHTML = "❌ Player not found";
+    return;
+  }
+
+  let trend = d.scores[2] - d.scores[0];
+  let value = Math.round(d.price / d.avg);
+
+  let verdict = "";
+
+  if (d.avg > 115 && trend >= 0) verdict = "🔥 MUST HAVE";
+  else if (d.avg > 105) verdict = "✔ SOLID PREMIUM";
+  else if (value < 5500) verdict = "💰 VALUE PICK";
+  else verdict = "⚠️ OVERPRICED";
+
+  document.getElementById("result").innerHTML =
+    `<b>${p.toUpperCase()}</b><br>
+    Pos: ${d.pos}<br>
+    Price: $${d.price.toLocaleString()}<br>
+    Avg: ${d.avg}<br>
+    Last 3: ${d.scores.join(", ")}<br>
+    Trend: ${trend >= 0 ? "📈 Rising" : "📉 Falling"}<br>
+    Value Score: ${value}<br><br>
+    <span class="tag">${verdict}</span>`;
+}
+
+// ---------------- SQUAD ----------------
+function addPlayer() {
+  let p = document.getElementById("squadInput").value.toLowerCase();
+  if (!players[p]) return;
+
+  squad.push(p);
+  renderSquad();
+}
+
+function renderSquad() {
+  let list = document.getElementById("squadList");
+  list.innerHTML = "";
+
+  squad.forEach(p => {
+    let d = players[p];
+    let li = document.createElement("li");
+    li.innerHTML =
+      `🏉 <b>${p.toUpperCase()}</b> (${d.pos})<br>
+       $${d.price.toLocaleString()} | Avg ${d.avg}`;
+    list.appendChild(li);
+  });
+}
+
+// ---------------- CAPTAIN ----------------
+function compare() {
+  let a = document.getElementById("p1").value.toLowerCase();
+  let b = document.getElementById("p2").value.toLowerCase();
+
+  if (!players[a] || !players[b]) {
+    document.getElementById("compareResult").innerText = "Player not found";
+    return;
+  }
+
+  let aScore = players[a].avg + players[a].scores[2];
+  let bScore = players[b].avg + players[b].scores[2];
+
+  let winner = aScore > bScore ? a : b;
+
+  document.getElementById("compareResult").innerHTML =
+    `${a.toUpperCase()} Score: ${aScore}<br>
+     ${b.toUpperCase()} Score: ${bScore}<br><br>
+     🏆 Best Captain: <b>${winner.toUpperCase()}</b>`;
+}
+
+</script>
+
+</body>
+</html>
