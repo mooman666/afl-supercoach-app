@@ -1,88 +1,69 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SuperCoach AI</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AFL SuperCoach App</title>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<style>
-body { margin:0; font-family:Arial; background:#0b0f14; color:white; }
-header { padding:16px; text-align:center; background:linear-gradient(90deg,#00c46a,#00a3ff); font-weight:bold; }
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #0f172a;
+      color: white;
+    }
 
-.container { max-width:700px; margin:auto; padding:14px; }
+    header {
+      padding: 15px;
+      background: #111827;
+      display: flex;
+      gap: 10px;
+    }
 
-.nav { display:flex; gap:6px; margin:12px 0; }
-.nav button { flex:1; padding:10px; border:none; border-radius:10px; background:#1b1f2a; color:white; }
+    button {
+      padding: 10px;
+      border: none;
+      cursor: pointer;
+      background: #2563eb;
+      color: white;
+      border-radius: 6px;
+    }
 
-.card { background:#141a24; border:1px solid #243042; border-radius:14px; padding:14px; margin:12px 0; }
+    button:hover {
+      background: #1d4ed8;
+    }
 
-input { width:100%; padding:12px; border-radius:10px; border:1px solid #2a3445; background:#0e131c; color:white; }
+    #app {
+      padding: 15px;
+    }
 
-button { width:100%; padding:12px; margin-top:10px; border:none; border-radius:10px; background:linear-gradient(90deg,#00c46a,#00a3ff); font-weight:bold; color:black; }
+    .card {
+      background: #1f2937;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+    }
 
-.section { display:none; }
-.active { display:block; }
-
-.small { font-size:12px; opacity:0.7; }
-</style>
+    h2, h3 {
+      margin-top: 20px;
+    }
+  </style>
 </head>
 
 <body>
 
 <header>
-🏉 SuperCoach AI
-<div class="small">Build v1.0.0</div>
+  <button onclick="setView('rankings')">Rankings</button>
+  <button onclick="setView('analytics')">Analytics</button>
 </header>
 
-<div class="container">
-
-<div class="nav">
-<button onclick="show('dashboard')">Dashboard</button>
-<button onclick="show('analysis')">Analysis</button>
-<button onclick="show('squad')">Squad</button>
-<button onclick="show('trade')">Trade</button>
-<button onclick="show('captain')">Captain</button>
+<div id="app">
+  Loading...
 </div>
 
-<div id="dashboard" class="section active card">
-<h3>Dashboard</h3>
-<div id="kpis"></div>
-<canvas id="chart"></canvas>
-</div>
-
-<div id="analysis" class="section card">
-<h3>Analysis</h3>
-<input id="player" placeholder="player">
-<button onclick="analyse()">Run</button>
-<p id="result"></p>
-</div>
-
-<div id="squad" class="section card">
-<h3>Squad</h3>
-<input id="squadInput">
-<button onclick="addPlayer()">Add</button>
-<div id="squadList"></div>
-<p id="squadStats"></p>
-</div>
-
-<div id="trade" class="section card">
-<h3>Trade</h3>
-<input id="tradeInput">
-<button onclick="trade()">Run</button>
-<p id="tradeResult"></p>
-</div>
-
-<div id="captain" class="section card">
-<h3>Captain</h3>
-<button onclick="captain()">Find</button>
-<p id="captainResult"></p>
-</div>
-
-</div>
-
-<script src="players.js?v=1"></script>
-<script src="app.js?v=1"></script>
+<script src="app.js"></script>
 
 </body>
 </html>
