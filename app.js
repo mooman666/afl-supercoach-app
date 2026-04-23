@@ -8,7 +8,7 @@ function show(tab){
 
 // ---------------- FIND ----------------
 function find(input){
-  input = input.toLowerCase().trim();
+  input = (input || "").toLowerCase().trim();
   return Object.keys(players).find(k =>
     input.includes(k) || players[k].name.toLowerCase().includes(input)
   );
@@ -47,9 +47,10 @@ function analyse(){
 
   out("result",
     `<b>${p.name}</b><br>
-    Rating: ${rating}<br>
+    Avg: ${p.avg}<br>
     Value: ${m.value.toFixed(2)}<br>
     Ceiling: ${m.ceiling}<br>
+    Rating: ${rating}<br><br>
     <b>${verdict}</b>`
   );
 }
@@ -77,6 +78,8 @@ function trade(){
 function addPlayer(){
   let key = find(document.getElementById("squadInput").value);
   if(!key) return;
+
+  if(squad.includes(key)) return; // prevent duplicates
 
   squad.push(key);
   renderSquad();
@@ -117,6 +120,11 @@ function captain(){
     }
   });
 
+  if(!best){
+    out("captainResult","No data");
+    return;
+  }
+
   out("captainResult",
     `🏆 Captain: <b>${best.name}</b><br>Score: ${bestScore.toFixed(1)}`
   );
@@ -124,12 +132,15 @@ function captain(){
 
 // ---------------- NEWS ----------------
 function loadFeed(){
-  let feed = Object.values(players).map(p => {
+  let feed = [];
+
+  Object.values(players).forEach(p => {
     let m = metrics(p);
-    if(m.value > 1.6) return `🔥 ${p.name} is undervalued`;
-    if(p.avg > 115) return `🏆 ${p.name} elite form`;
-    return null;
-  }).filter(Boolean);
+
+    if(m.value > 1.6) feed.push(`🔥 ${p.name} undervalued`);
+    else if(p.avg > 115) feed.push(`🏆 ${p.name} elite form`);
+    else feed.push(`📊 ${p.name} stable`);
+  });
 
   document.getElementById("feed").innerHTML =
     feed.map(f => `<p>${f}</p>`).join("");
@@ -140,13 +151,12 @@ function out(id, html){
   document.getElementById(id).innerHTML = html;
 }
 
-// ---------------- IMPORTANT FIX ----------------
-// expose ALL functions to browser global scope
+// ---------------- INIT ----------------
+loadFeed();
+
+// ---------------- GLOBAL FIX ----------------
 window.show = show;
 window.analyse = analyse;
 window.trade = trade;
 window.addPlayer = addPlayer;
 window.captain = captain;
-
-// INIT
-loadFeed();
