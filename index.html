@@ -1,12 +1,54 @@
-<div id="articleModal" class="modal">
-    <div class="modal-content">
-        <span class="close-btn" onclick="closeArticle()">&times;</span>
-        <h2 id="modalTitle"></h2>
-        <div id="modalContent"></div>
-    </div>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SC Terminal | Elite 2026</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="ticker-wrap" id="newsTicker"></div>
 
-<div class="article-card" onclick="openArticle(1)">
-    <h3>The Round 7 'Bubble' Strategy</h3>
-    <p>Read full premium analysis...</p>
-</div>
+    <nav>
+        <button onclick="showTab('dataTab')">📊 TERMINAL</button>
+        <button onclick="showTab('articleTab')">✍️ INSIGHTS</button>
+    </nav>
+
+    <div id="dataTab" class="tab-content">
+        <div class="controls">
+            <input type="text" id="playerSearch" placeholder="Filter Terminal...">
+            <select id="posFilter">
+                <option value="ALL">All Positions</option>
+                <option value="DEF">DEF</option><option value="MID">MID</option>
+                <option value="RUC">RUC</option><option value="FWD">FWD</option>
+            </select>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th onclick="handleSort('name')">Player / Role</th>
+                        <th>Pos</th><th>Price</th><th>Avg</th><th>BE</th><th onclick="handleSort('cba')">CBA%</th>
+                    </tr>
+                </thead>
+                <tbody id="playerBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="articleTab" class="tab-content" style="display:none;">
+        <div class="article-grid" id="articleGrid"></div>
+    </div>
+
+    <div id="articleModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeArticle()">&times;</span>
+            <h2 id="modalTitle"></h2>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <script src="players.js?v=gold"></script>
+    <script src="app.js?v=gold"></script>
+</body>
+</html>
