@@ -1,15 +1,31 @@
-<!DOCTYPE html>
-<html>
-<head>
-    </head>
-<body>
-    <script src="players.js"></script>
-    <script>
-        // YOUR CODE MUST BE INSIDE THESE SCRIPT TAGS
-        function init() {
-            // ... the logic ...
+<script src="players.js"></script>
+<script>
+    function init() {
+        // Fix for the "Market List" section
+        const list = document.getElementById('marketList');
+        if (list && typeof playerDatabase !== 'undefined') {
+            list.innerHTML = playerDatabase.map(p => `
+                <div class="card">
+                    <span class="status-tag status-${p.status || 'IN'}">${p.status || 'IN'}</span>
+                    <div style="width:80%;">
+                        <strong>${p.name}</strong><br>
+                        <small>${p.team} // ${p.pos}</small>
+                    </div>
+                </div>
+            `).join('');
         }
-        window.onload = init;
-    </script>
-</body>
-</html>
+
+        // Fix for the "Injury Intelligence" section
+        const injList = document.getElementById('injuryList');
+        if (injList && typeof injuries !== 'undefined') {
+            injList.innerHTML = injuries.map(i => `
+                <div class="card" style="border-left: 4px solid #ef4444;">
+                    <strong>${i.name} (${i.team})</strong><br>
+                    <small>${i.injury} - ${i.return}</small>
+                </div>
+            `).join('');
+        }
+    }
+    // This tells the phone to wait for everything to load before running
+    window.onload = init;
+</script>
