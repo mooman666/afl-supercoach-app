@@ -8,15 +8,20 @@ async function loadPlayers(){
   const text = await res.text();
 
   const rows = text.trim().split("\n").map(r => r.split(","));
-  rows.shift(); // headers
+
+  // remove header row (exact match, we don’t rely on names)
+  rows.shift();
 
   players = rows.map(r => ({
-    rank: Number(r[0]) || 0,
-    name: r[1],
-    team: r[2],
-    total: Number(r[3]) || 0,
-    avg: Number(r[4]) || 0
-  })).filter(p => p.name);
+    rank: Number(r[0]),              // Season Rank
+    name: r[1],                      // Name
+    team: r[2],                      // Team
+    total: Number(r[3]),             // Total yearly points
+    avg: Number(r[4])                // Yearly average
+  }))
+  .filter(p =>
+    p.name && !isNaN(p.avg)
+  );
 
   window.onPlayersLoaded(players);
 }
