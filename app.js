@@ -1,41 +1,72 @@
 let players = [];
-let view = "rankings";
+let filter = "ALL";
 
 const SHEET_URL =
   "https://opensheet.elk.sh/1ZYNGWyFP74w6ruXFtjLudu8sz6w0Y3KsuOJLm0Ro9fM/Sheet1";
 
 /* =========================
-   SAFE DATA LOADER
+   LOAD DATA
 ========================= */
 async function loadData() {
-  try {
-    const res = await fetch(SHEET_URL);
-    const data = await res.json();
+  const res = await fetch(SHEET_URL);
+  const data = await res.json();
 
-    players = data.map(p => {
-      // Use KEY names OR fallback to values safely
-      return {
-        name: (p.Name || p.name || "").toString().trim(),
-        team: (p.Team || p.team || "").toString().trim(),
-        rank: Number(p["Season Rank"] || p.rank || 0),
-        points: Number(p["Total yearly points"] || p.points || 0),
-        avg: Number(p["Yearly average"] || p.avg || 0)
-      };
-    }).filter(p => p.name); // remove blanks
+  players = data.map(p => {
+    const values = Object.values(p);
 
-    render();
-  } catch (err) {
-    console.log(err);
-    document.getElementById("app").innerHTML =
-      "<h3>⚠️ Failed to load data</h3>";
-  }
+    const name = values[1];
+    const team = values[2];
+    const points = Number(values[3]) || 0;
+    const avg = Number(values[4]) || 0;
+
+    return {
+      name,
+      team,
+      points,
+      avg,
+      position: detectPosition(name, team)
+    };
+  });
+
+  render();
 }
 
 /* =========================
-   NAV
+   SIMPLE POSITION DETECTION (fallback)
 ========================= */
-function setView(v) {
-  view = v;
+function detectPosition(name, team) {
+  const t = (team || "").toUpperCase();
+
+  if (t.includes("DEF")) return "DEF";
+  if (t.includes("MID")) return "MID";
+  if (t.includes("FWD")) return "FWD";
+  if (t.includes("RUC")) return "RUC";
+
+  return "MID"; // fallback
+}
+
+/* =========================
+   VALUE SCORE
+========================= */
+function valueScore(p, rankIndex) {
+  return p.avg / (rankIndex + 1);
+}
+
+/* =========================
+   TIER SYSTEM
+========================= */
+function getTier(avg) {
+  if (avg >= 110) return "elite";
+  if (avg >= 95) return "premium";
+  if (avg >= 80) return "value";
+  return "avoid";
+}
+
+/* =========================
+   FILTER
+========================= */
+function setFilter(f) {
+  filter = f;
   render();
 }
 
@@ -43,44 +74,27 @@ function setView(v) {
    RENDER
 ========================= */
 function render() {
-  document.getElementById("app").innerHTML =
-    view === "rankings" ? renderRankings() : renderTop10();
-}
+  let list = [...players];
 
-/* =========================
-   RANKINGS (NO NaN POSSIBLE)
-========================= */
-function renderRankings() {
-  let sorted = [...players].sort((a, b) => b.avg - a.avg);
+  if (filter !== "ALL") {
+    list = list.filter(p => p.position === filter);
+  }
 
-  return `
-    <h2>🏉 AFL Rankings</h2>
+  list.sort((a, b) => b.avg - a.avg);
 
-    ${sorted.map((p, i) => `
-      <div class="card">
-        <b>#${i + 1} ${p.name || "Unknown"}</b><br>
-        ${p.team || "-"}<br>
-        Avg: ${(p.avg || 0).toFixed(1)}<br>
-        Points: ${(p.points || 0).toFixed(0)}
-      </div>
-    `).join("")}
-  `;
-}
+  document.getElementById("app").innerHTML = `
+    <div class="topbar">
+      Showing: ${filter} | Players: ${list.length}
+    </div>
 
-/* =========================
-   TOP 10
-========================= */
-function renderTop10() {
-  let top = [...players]
-    .sort((a, b) => b.avg - a.avg)
-    .slice(0, 10);
-
-  return `
-    <h2>📊 Top 10</h2>
-
-    ${top.map(p => `
-      <div class="card">
-        ${p.name} — Avg ${(p.avg || 0).toFixed(1)}
+    ${list.map((p, i) => `
+      <div class="card ${getTier(p.avg)}">
+        <b>${p.name}</b> (${p.position})<br>
+        Team: ${p.team}<br>
+        Avg: ${p.avg.toFixed(1)}<br>
+        Points: ${p.points}<br>
+        Value: ${valueScore(p, i).toFixed(2)}<br>
+        Tier: ${getTier(p.avg).toUpperCase()}
       </div>
     `).join("")}
   `;
@@ -90,4 +104,3 @@ function renderTop10() {
    INIT
 ========================= */
 loadData();
-window.setView = setView;
