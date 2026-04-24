@@ -7,10 +7,8 @@ const playerDatabase = [
 ];
 
 const injuries = [
-    { name: "Isaac Heeney", team: "Swans", injury: "Calf", return: "R7 OUT" },
-    { name: "Harry Sheezel", team: "Kangaroos", injury: "Finger", return: "TEST" },
-    { name: "Mitch Hinge", team: "Crows", injury: "Hamstring", return: "2-4 weeks" },
-    { name: "Jake Soligo", team: "Crows", injury: "Ankle", return: "TEST" },
+    { name: "Isaac Heeney", team: "Swans", injury: "Calf Tightness", return: "R7 OUT" },
+    { name: "Harry Sheezel", team: "Kangaroos", injury: "Finger (Glove)", return: "PROBABLE" },
     { name: "Jarrod Berry", team: "Lions", injury: "Calf", return: "3-4 weeks" },
-    { name: "Sam Banks", team: "Tigers", injury: "Concussion", return: "1 week" }
+    { name: "Mitch Hinge", team: "Crows", injury: "Hamstring", return: "2-4 weeks" }
 ];
