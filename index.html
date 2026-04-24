@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AFL Fantasy Tool</title>
+  <title>AFL Fantasy Pro</title>
 
   <style>
     body {
@@ -21,6 +21,7 @@
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
+      align-items: center;
     }
 
     button {
@@ -37,6 +38,7 @@
       border-radius: 6px;
       border: none;
       flex: 1;
+      min-width: 120px;
     }
 
     #app {
@@ -50,10 +52,22 @@
       border-radius: 10px;
     }
 
+    .elite { border-left: 4px solid #22c55e; }
+    .premium { border-left: 4px solid #3b82f6; }
+    .value { border-left: 4px solid #f59e0b; }
+    .avoid { border-left: 4px solid #ef4444; }
+
     .topbar {
       padding: 10px;
+      font-size: 13px;
       opacity: 0.8;
-      font-size: 14px;
+    }
+
+    .insights {
+      background: #111827;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 10px;
     }
   </style>
 </head>
