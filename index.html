@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>AFL Fantasy Pro</title>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 body {
@@ -22,7 +20,6 @@ header {
   padding:10px;
   display:flex;
   gap:8px;
-  flex-wrap:wrap;
 }
 
 button {
@@ -48,6 +45,7 @@ input {
   padding:12px;
   margin:8px 0;
   border-radius:10px;
+  cursor:pointer;
 }
 
 .elite { border-left:4px solid #22c55e; }
@@ -55,11 +53,28 @@ input {
 .value { border-left:4px solid #f59e0b; }
 .avoid { border-left:4px solid #ef4444; }
 
-.insights {
+/* PROFILE MODAL */
+#modal {
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.85);
+  display:none;
+  overflow:auto;
+}
+
+.modal-content {
   background:#111827;
-  padding:10px;
+  margin:60px 10px;
+  padding:15px;
+  border-radius:12px;
+}
+
+img {
+  width:100%;
   border-radius:10px;
-  margin-bottom:10px;
 }
 </style>
 </head>
@@ -67,15 +82,17 @@ input {
 <body>
 
 <header>
-  <button onclick="setView('top')">Top</button>
-  <button onclick="setView('value')">Value</button>
-  <button onclick="setView('form')">Form</button>
-  <input placeholder="Search..." oninput="setSearch(this.value)" />
+<input placeholder="Search..." oninput="setSearch(this.value)" />
 </header>
 
 <div id="app">Loading...</div>
 
-<canvas id="chart" height="120"></canvas>
+<div id="modal" onclick="closeProfile()">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div id="profile"></div>
+    <button onclick="closeProfile()">Close</button>
+  </div>
+</div>
 
 <script src="app.js"></script>
 
