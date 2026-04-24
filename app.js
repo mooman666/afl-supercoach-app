@@ -1,89 +1,38 @@
-const SHEET_URL =
-"https://docs.google.com/spreadsheets/d/1O4c-KYHjBPpMX81ZLGRHtzBq31qOdcBghEMA0S8aCjA/gviz/tq?tqx=out:csv";
-
-let players = [];
-let search = "";
-let view = "top";
 let chart;
 
-window.setSearch = (v) => {
-  search = (v || "").toLowerCase();
-  render();
+let state = {
+  players: [],
+  filtered: []
 };
 
-window.setView = (v) => {
-  view = v;
+window.onPlayersLoaded = (players) => {
+  state.players = players;
+  state.filtered = players;
   render();
+  renderChart(players.slice(0, 10));
 };
 
-function filterData(list){
-  return list.filter(p => {
-    if(search && !p.name.toLowerCase().includes(search)) return false;
-    return true;
-  });
-}
+document.getElementById("search").addEventListener("input", (e) => {
+  const v = e.target.value.toLowerCase();
 
-function tier(avg){
-  if(avg >= 110) return "elite";
-  if(avg >= 95) return "premium";
-  if(avg >= 80) return "value";
-  return "avoid";
-}
-
-async function load(){
-  const res = await fetch(SHEET_URL);
-  const text = await res.text();
-
-  const rows = text.trim().split("\n").map(r => r.split(","));
-  rows.shift();
-
-  players = rows.map(r => ({
-    rank: Number(r[0]) || 0,
-    name: r[1],
-    team: r[2],
-    total: Number(r[3]) || 0,
-    avg: Number(r[4]) || 0
-  })).filter(p => p.name);
+  state.filtered = state.players.filter(p =>
+    p.name.toLowerCase().includes(v)
+  );
 
   render();
-}
-
-function getList(){
-  let list = filterData([...players]);
-
-  if(view === "top"){
-    return list.sort((a,b)=>b.avg-a.avg);
-  }
-
-  if(view === "value"){
-    return list.sort((a,b)=>(b.total/b.avg)-(a.total/a.avg));
-  }
-
-  if(view === "form"){
-    return list.sort((a,b)=>b.total-a.total);
-  }
-
-  return list;
-}
+  renderChart(state.filtered.slice(0, 10));
+});
 
 function render(){
-  const list = getList();
-
-  document.getElementById("app").innerHTML = `
-    <div class="insights">
-      <b>Players:</b> ${list.length}
-    </div>
-
-    ${list.map(p => `
-      <div class="card ${tier(p.avg)}">
-        <b>#${p.rank} ${p.name}</b> (${p.team})<br><br>
-        Total: ${p.total}<br>
-        Average: ${p.avg}
+  document.getElementById("app").innerHTML =
+    state.filtered.map(p => `
+      <div class="card">
+        <div class="rank">Rank: ${p.rank}</div>
+        <b>${p.name}</b> (${p.team})<br><br>
+        Total Points: ${p.total}<br>
+        Yearly Average: ${p.avg}
       </div>
-    `).join("")}
-  `;
-
-  renderChart(list.slice(0,10));
+    `).join("");
 }
 
 function renderChart(list){
@@ -99,11 +48,9 @@ function renderChart(list){
     data: {
       labels,
       datasets: [{
-        label: "Avg Points",
+        label: "Yearly Avg",
         data
       }]
     }
   });
 }
-
-load();
