@@ -1,38 +1,24 @@
-const players = [
-  {
-    name: "Lachie Neale",
-    position: "MID",
-    price: 680000,
-    scores: [118, 123, 120, 110, 125]
-  },
-  {
-    name: "Patrick Cripps",
-    position: "MID",
-    price: 650000,
-    scores: [110, 117, 118, 105, 122]
-  },
-  {
-    name: "Marcus Bontempelli",
-    position: "MID/FWD",
-    price: 670000,
-    scores: [116, 119, 120, 113, 121]
-  },
-  {
-    name: "Jordan Dawson",
-    position: "DEF",
-    price: 590000,
-    scores: [107, 110, 111, 109, 114]
-  },
-  {
-    name: "Max Gawn",
-    position: "RUC",
-    price: 610000,
-    scores: [105, 112, 107, 115, 109]
-  },
-  {
-    name: "Caleb Serong",
-    position: "MID",
-    price: 600000,
-    scores: [108, 111, 112, 110, 114]
-  }
-];
+const SHEET_URL =
+"https://docs.google.com/spreadsheets/d/1ZYNGWyFP74w6ruXFtjLudu8sz6w0Y3KsuOJLm0Ro9fM/gviz/tq?tqx=out:csv";
+
+let players = [];
+
+async function loadPlayers(){
+  const res = await fetch(SHEET_URL);
+  const text = await res.text();
+
+  const rows = text.trim().split("\n").map(r => r.split(","));
+  rows.shift(); // headers
+
+  players = rows.map(r => ({
+    rank: Number(r[0]) || 0,
+    name: r[1],
+    team: r[2],
+    total: Number(r[3]) || 0,
+    avg: Number(r[4]) || 0
+  })).filter(p => p.name);
+
+  window.onPlayersLoaded(players);
+}
+
+loadPlayers();
