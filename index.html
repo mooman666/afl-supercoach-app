@@ -1,31 +1,109 @@
-<script src="players.js"></script>
-<script>
-    function init() {
-        // Fix for the "Market List" section
-        const list = document.getElementById('marketList');
-        if (list && typeof playerDatabase !== 'undefined') {
-            list.innerHTML = playerDatabase.map(p => `
-                <div class="card">
-                    <span class="status-tag status-${p.status || 'IN'}">${p.status || 'IN'}</span>
-                    <div style="width:80%;">
-                        <strong>${p.name}</strong><br>
-                        <small>${p.team} // ${p.pos}</small>
-                    </div>
-                </div>
-            `).join('');
-        }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SC ARCHITECT | 2026</title>
+    <style>
+        :root { --primary: #38bdf8; --success: #00ff88; --danger: #ef4444; --warning: #facc15; --bg: #020617; --card: #1e293b; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: #f1f5f9; font-family: sans-serif; padding-bottom: 80px; line-height: 1.4; }
 
-        // Fix for the "Injury Intelligence" section
-        const injList = document.getElementById('injuryList');
-        if (injList && typeof injuries !== 'undefined') {
-            injList.innerHTML = injuries.map(i => `
-                <div class="card" style="border-left: 4px solid #ef4444;">
-                    <strong>${i.name} (${i.team})</strong><br>
-                    <small>${i.injury} - ${i.return}</small>
-                </div>
-            `).join('');
-        }
+        .hud { background: #0f172a; padding: 15px; border-bottom: 2px solid var(--primary); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .hud h1 { font-size: 14px; color: var(--primary); letter-spacing: 1px; }
+
+        nav { position: fixed; bottom: 0; width: 100%; display: flex; background: #0f172a; border-top: 1px solid #334155; padding: 10px; z-index: 100; }
+        nav button { flex: 1; background: none; border: none; color: #64748b; font-weight: bold; font-size: 11px; padding: 10px 0; }
+        nav button.active { color: var(--primary); }
+
+        .page { display: none; padding: 15px; }
+        .page.active { display: block; }
+
+        .card { background: var(--card); border-radius: 10px; padding: 15px; margin-bottom: 12px; border: 1px solid #334155; position: relative; }
+        .tag { position: absolute; top: 12px; right: 12px; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; }
+        .tag-IN { background: #064e3b; color: var(--success); }
+        .tag-OUT { background: #450a0a; color: var(--danger); }
+        .tag-TEST { background: #451a03; color: var(--warning); }
+        
+        .inj-card { border-left: 4px solid var(--danger); }
+        small { color: #94a3b8; font-size: 11px; }
+    </style>
+</head>
+<body>
+
+<div class="hud">
+    <h1>SC // ARCHITECT</h1>
+    <div style="font-size:10px;"><span style="color:var(--success)">●</span> RD 7 LIVE</div>
+</div>
+
+<div id="pageIntel" class="page active">
+    <h2 style="font-size:16px; color:var(--primary); margin-bottom:15px;">INTEL TERMINAL</h2>
+    <div id="playerList"></div>
+</div>
+
+<div id="pageInjury" class="page">
+    <h2 style="font-size:16px; color:var(--danger); margin-bottom:15px;">INJURY INTELLIGENCE</h2>
+    <div id="injuryList"></div>
+</div>
+
+<nav>
+    <button id="btnIntel" class="active" onclick="showTab('pageIntel')">INTEL</button>
+    <button id="btnInjury" onclick="showTab('pageInjury')">INJURY</button>
+</nav>
+
+<script>
+    // 📊 DATA PACK: Hardcoded so the page CANNOT be blank
+    const players = [
+        { name: "Angus Anderson", team: "Magpies", price: 113500, be: -75, status: "IN" },
+        { name: "Harry Sheezel", team: "Kangaroos", price: 645000, be: 112, status: "TEST" },
+        { name: "Isaac Heeney", team: "Swans", price: 632700, be: 24, status: "OUT" },
+        { name: "Nasiah Wanganeen-Milera", team: "Saints", price: 588300, be: 94, status: "IN" }
+    ];
+
+    const injuries = [
+        { name: "Isaac Heeney", type: "Calf", return: "R7 OUT" },
+        { name: "Harry Sheezel", type: "Finger", return: "TESTING" },
+        { name: "Mitch Hinge", type: "Hamstring", return: "2-4 Weeks" }
+    ];
+
+    function showTab(id) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        if(id === 'pageIntel') document.getElementById('btnIntel').classList.add('active');
+        if(id === 'pageInjury') document.getElementById('btnInjury').classList.add('active');
     }
-    // This tells the phone to wait for everything to load before running
-    window.onload = init;
+
+    function renderApp() {
+        const pContainer = document.getElementById('playerList');
+        const iContainer = document.getElementById('injuryList');
+
+        // Render Players
+        pContainer.innerHTML = players.map(p => `
+            <div class="card">
+                <span class="tag tag-${p.status}">${p.status}</span>
+                <strong>${p.name}</strong><br>
+                <small>${p.team}</small>
+                <div style="display:flex; justify-content:space-between; margin-top:10px;">
+                    <span><small>PRICE</small><br><strong>$${p.price.toLocaleString()}</strong></span>
+                    <span style="text-align:right"><small>B.E.</small><br><strong style="color:${p.be < 50 ? 'var(--success)' : 'var(--danger)'}">${p.be}</strong></span>
+                </div>
+            </div>
+        `).join('');
+
+        // Render Injuries
+        iContainer.innerHTML = injuries.map(i => `
+            <div class="card inj-card">
+                <span style="float:right; color:var(--danger); font-weight:bold; font-size:10px;">${i.return}</span>
+                <strong>${i.name}</strong><br>
+                <small>Issue: ${i.type}</small>
+            </div>
+        `).join('');
+    }
+
+    // Run immediately when page loads
+    window.onload = renderApp;
 </script>
+
+</body>
+</html>
