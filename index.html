@@ -3,23 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ARCHITECT v15 // TOTAL REGISTRY</title>
+    <title>ARCHITECT v16 // TOTAL DATABASE</title>
     <style>
         :root { --primary: #38bdf8; --success: #00ff88; --danger: #ef4444; --bg: #020617; --card: #1e293b; --nav: #0f172a; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background: var(--bg); color: #f1f5f9; padding-bottom: 90px; }
 
-        /* HEADER & SEARCH */
-        .header-wrap { background: var(--nav); padding: 15px; border-bottom: 2px solid var(--primary); position: sticky; top: 0; z-index: 1000; }
-        .search-row { display: flex; gap: 8px; }
-        #mainSearch { flex: 1; background: #111827; border: 2px solid #334155; padding: 12px; border-radius: 8px; color: white; font-size: 16px; outline: none; }
-        .force-btn { background: var(--primary); color: #020617; border: none; padding: 0 15px; border-radius: 8px; font-weight: 900; font-size: 10px; }
+        /* SEARCH BAR */
+        .search-container { background: var(--nav); padding: 15px; border-bottom: 2px solid var(--primary); position: sticky; top: 0; z-index: 1000; }
+        #mainSearch { width: 100%; background: #111827; border: 2px solid #334155; padding: 16px; border-radius: 12px; color: white; font-size: 16px; outline: none; }
 
         /* LIST */
         .page { display: none; padding: 15px; }
         .page.active { display: block; }
         .player-row { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 10px; border: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; }
-        .player-row:active { background: #2d3748; }
 
         /* MODAL */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; padding: 20px; align-items: center; justify-content: center; }
@@ -30,25 +27,22 @@
         .stat-label { font-size: 9px; color: #94a3b8; text-transform: uppercase; }
         .stat-value { font-size: 16px; font-weight: 800; display: block; }
 
-        nav { position: fixed; bottom: 0; width: 100%; display: flex; background: var(--nav); border-top: 1px solid #334155; padding: 10px; }
-        nav button { flex: 1; background: none; border: none; color: #64748b; font-weight: 800; font-size: 11px; padding: 10px; }
+        nav { position: fixed; bottom: 0; width: 100%; display: flex; background: var(--nav); border-top: 1px solid #334155; padding: 15px; }
+        nav button { flex: 1; background: none; border: none; color: #64748b; font-weight: 800; font-size: 11px; }
         nav button.active { color: var(--primary); }
     </style>
 </head>
 <body>
 
-<div class="header-wrap">
-    <div class="search-row">
-        <input type="text" id="mainSearch" placeholder="🔍 Search by Name or Team...">
-        <button class="force-btn" id="searchTrigger">GO</button>
-    </div>
+<div class="search-container">
+    <input type="text" id="mainSearch" placeholder="🔍 Search Name, Team, or Position...">
 </div>
 
 <div id="dbPage" class="page active"><div id="listContainer"></div></div>
 <div id="insightPage" class="page">
-    <h2 style="color:var(--primary); margin-bottom:15px;">RD 7 RADAR</h2>
-    <div style="background:rgba(239, 68, 68, 0.1); border:1px solid var(--danger); padding:15px; border-radius:12px;">
-        <strong>Isaac Heeney (OUT):</strong> Confirmed calf tightness. Target <strong>Angus Anderson</strong> or <strong>Elijah Tsatas</strong> for max bank generation.
+    <h2 style="color:var(--primary)">RD 7 STRATEGY</h2>
+    <div style="margin-top:20px; padding:15px; background:rgba(0, 255, 136, 0.05); border:1px solid var(--success); border-radius:12px;">
+        <strong>CASH COW PRIORITY:</strong> Angus Anderson is the #1 trade-in this week with a breakeven of -33.
     </div>
 </div>
 
@@ -58,63 +52,49 @@
         <div id="mMeta" style="font-size:12px; color:#94a3b8; margin-bottom:10px;"></div>
         <div class="stat-grid">
             <div class="stat-box"><span class="stat-label">PRICE</span><span class="stat-value" id="mPrice" style="color:var(--success)"></span></div>
-            <div class="stat-box"><span class="stat-label">B.E.</span><span class="stat-value" id="mBE"></span></div>
+            <div class="stat-box"><span class="stat-label">BE</span><span class="stat-value" id="mBE"></span></div>
             <div class="stat-box"><span class="stat-label">AVG</span><span class="stat-value" id="mAvg"></span></div>
             <div class="stat-box"><span class="stat-label">OWN%</span><span class="stat-value" id="mOwn"></span></div>
         </div>
         <div style="background:#111827; padding:15px; border-radius:10px;">
-            <span class="stat-label">LAST 3 SCORES</span>
-            <div id="mHistory" style="font-weight:900; font-size:18px; color:var(--primary); letter-spacing:2px;"></div>
+            <span class="stat-label">LAST 3 ROUNDS</span>
+            <div id="mHistory" style="font-weight:900; font-size:20px; color:var(--primary); letter-spacing:2px;"></div>
         </div>
-        <p id="mNotes" style="font-size:12px; margin-top:20px; line-height:1.4; color:#cbd5e1;"></p>
+        <p id="mNotes" style="font-size:13px; margin-top:20px; line-height:1.4; color:#cbd5e1;"></p>
     </div>
 </div>
 
 <nav>
-    <button onclick="showTab('dbPage')" id="tabDb" class="active">TERMINAL</button>
+    <button onclick="showTab('dbPage')" id="tabDb" class="active">DATABASE</button>
     <button onclick="showTab('insightPage')" id="tabIn">INSIGHTS</button>
 </nav>
 
 <script>
-    // 🗃️ ROUND 7 MASTER REGISTRY (Expanded to 60+ key players)
+    // 🗃️ OFFICIAL ROUND 7 PRICES & DATA
     const database = [
-        { name: "Max Gawn", team: "Demons", pos: "RUC", price: 651200, be: 185, avg: 134, own: "14%", hist: "145, 128, 130", notes: "Top VC loop target for Friday. Richmond rucks are outmatched." },
-        { name: "Harry Sheezel", team: "Kangaroos", pos: "MID/FWD", price: 611700, be: 140, avg: 125, own: "99%", hist: "141, 108, 123", notes: "Injury test. High-risk hold if finger limits marking." },
-        { name: "Nick Daicos", team: "Magpies", pos: "MID", price: 634000, be: 146, avg: 122, own: "19%", hist: "135, 140, 112", notes: "Historically elite ANZAC Day performer. Premier captain choice." },
-        { name: "Angus Anderson", team: "Magpies", pos: "MID", price: 113500, be: -33, avg: 79, own: "15%", hist: "68, 74, 95", notes: "Mandatory cash cow. Must-buy for Rd 7." },
-        { name: "Marcus Bontempelli", team: "Bulldogs", pos: "MID", price: 699900, be: 238, avg: 130, own: "81%", hist: "125, 138, 127", notes: "Under a cloud (Knee) but named to play. Expect a dip if tagged." },
-        { name: "Elijah Tsatas", team: "Bombers", pos: "MID", price: 223400, be: -49, avg: 91, own: "5%", hist: "88, 92, 94", notes: "Top mid-price value on the wing. High cash generation speed." },
-        { name: "Brodie Grundy", team: "Swans", pos: "RUC", price: 628900, be: 158, avg: 133, own: "15%", hist: "135, 142, 122", notes: "Crucial for Swans midfield dominance against Bulldogs." },
-        { name: "Nasiah Wanganeen-Milera", team: "Saints", pos: "DEF", price: 576600, be: 128, avg: 102, own: "10%", hist: "105, 118, 110", notes: "Primary target for premium defensive upgrades." },
-        { name: "Christian Petracca", team: "Suns", pos: "MID/FWD", price: 570100, be: 150, avg: 136, own: "26%", hist: "128, 140, 135", notes: "New role at Suns. High ceiling impact player." },
-        { name: "Tristan Xerri", team: "Kangaroos", pos: "RUC", price: 687300, be: 141, avg: 131, own: "53%", hist: "132, 128, 135", notes: "Elite RUC scoring consistency. Lock and forget." },
-        { name: "Sam Flanders", team: "Suns", pos: "FWD", price: 430700, be: 75, avg: 89, own: "83%", hist: "85, 92, 90", notes: "Template forward. Essential for team balance." },
-        { name: "Zak Butters", team: "Power", pos: "MID", price: 639800, be: 121, avg: 123, own: "96%", hist: "118, 154, 112", notes: "High CBA participation. Solid premium keeper." }
+        { name: "Max Gawn", team: "Melbourne", pos: "RUC", price: 1188000, be: 113, avg: 134, own: "58%", hist: "145, 128, 130", notes: "Top-tier ruck premium. Dominant scores vs Richmond on Friday." },
+        { name: "Nick Daicos", team: "Collingwood", pos: "MID", price: 1134000, be: 108, avg: 128, own: "77%", hist: "135, 140, 112", notes: "Historically massive ANZAC Day performer. A safe captaincy play." },
+        { name: "Nasiah Wanganeen-Milera", team: "St Kilda", pos: "DEF", price: 1163000, be: 110, avg: 112, own: "31%", hist: "105, 118, 110", notes: "The only pure defender priced in the elite bracket this year." },
+        { name: "Harry Sheezel", team: "North Melbourne", pos: "MID/FWD", price: 1145000, be: 109, avg: 125, own: "99%", hist: "141, 108, 123", notes: "Tested finger during training. Expect high volume disposals vs GWS." },
+        { name: "Zak Butters", team: "Port Adelaide", pos: "MID", price: 639800, be: 121, avg: 123, own: "96%", hist: "118, 154, 112", notes: "High CBA participation. Solid premium keeper." },
+        { name: "Jordan Clark", team: "Fremantle", pos: "DEF", price: 524000, be: 61, avg: 105, own: "15%", hist: "88, 92, 146", notes: "Massive value after Round 6 masterclass (146 points)." },
+        { name: "Angus Anderson", team: "Collingwood", pos: "MID", price: 113500, be: -33, avg: 79, own: "15%", hist: "68, 74, 95", notes: "Mandatory cash cow trade-in for Round 7." },
+        { name: "Elijah Tsatas", team: "Essendon", pos: "MID", price: 223400, be: -49, avg: 91, own: "5%", hist: "88, 92, 94", notes: "Best mid-price value play on the wing." },
+        { name: "Isaac Heeney", team: "Sydney", pos: "MID/FWD", price: 632700, be: 24, avg: 135, own: "10%", hist: "115, 128, 0", notes: "OUT (Calf). Massive sell priority for Round 7 bank generation." }
     ];
 
-    // 🚀 SELF-HEALING SEARCH LOGIC
-    function initializeApp() {
-        const input = document.getElementById('mainSearch');
-        const trigger = document.getElementById('searchTrigger');
-        const list = document.getElementById('listContainer');
-
-        if (!input || !list) return; // Exit if elements aren't ready
-
-        const executeSearch = () => {
-            const query = input.value.toLowerCase();
+    // 🚀 THE FIX: Global Listener (Fires on every character typed)
+    document.addEventListener('input', (e) => {
+        if (e.target.id === 'mainSearch') {
+            const query = e.target.value.toLowerCase();
             const filtered = database.filter(p => 
                 p.name.toLowerCase().includes(query) || 
-                p.team.toLowerCase().includes(query)
+                p.team.toLowerCase().includes(query) ||
+                p.pos.toLowerCase().includes(query)
             );
             render(filtered);
-        };
-
-        input.addEventListener('input', executeSearch);
-        trigger.addEventListener('click', executeSearch);
-
-        // Initial render
-        render(database);
-    }
+        }
+    });
 
     function render(list) {
         const container = document.getElementById('listContainer');
@@ -123,7 +103,7 @@
                 <div><strong>${p.name}</strong><br><small>${p.team} // ${p.pos}</small></div>
                 <div style="text-align:right">
                     <div style="color:var(--success); font-weight:800">$${p.price.toLocaleString()}</div>
-                    <small style="color:#94a3b8">BE: ${p.be}</small>
+                    <small style="color:#94a3b8">B.E: ${p.be}</small>
                 </div>
             </div>
         `).join('');
@@ -139,7 +119,7 @@
         document.getElementById('mAvg').innerText = p.avg;
         document.getElementById('mOwn').innerText = p.own;
         document.getElementById('mHistory').innerText = p.hist;
-        document.getElementById('mNotes').innerText = "TACTICAL: " + p.notes;
+        document.getElementById('mNotes').innerText = "ARCHITECT ANALYSIS: " + p.notes;
         document.getElementById('pModal').classList.add('active');
     }
 
@@ -151,9 +131,7 @@
         document.getElementById(id === 'dbPage' ? 'tabDb' : 'tabIn').classList.add('active');
     }
 
-    // Wait for everything to load then start
-    document.addEventListener('DOMContentLoaded', initializeApp);
-    window.onload = initializeApp;
+    window.onload = () => render(database);
 </script>
 </body>
 </html>
