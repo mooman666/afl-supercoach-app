@@ -5,31 +5,29 @@ const SHEET_URL =
   "https://opensheet.elk.sh/1ZYNGWyFP74w6ruXFtjLudu8sz6w0Y3KsuOJLm0Ro9fM/Sheet1";
 
 /* =========================
-   LOAD DATA (SAFE PARSER)
+   SAFE DATA LOADER
 ========================= */
 async function loadData() {
   try {
     const res = await fetch(SHEET_URL);
     const data = await res.json();
 
-    players = data.map(row => {
-      const values = Object.values(row);
-
+    players = data.map(p => {
+      // Use KEY names OR fallback to values safely
       return {
-        // SAFE POSITION-BASED MAPPING
-        rank: Number(values[0]) || 0,
-        name: String(values[1] || "").trim(),
-        team: String(values[2] || "").trim(),
-        points: Number(values[3]) || 0,
-        avg: Number(values[4]) || 0
+        name: (p.Name || p.name || "").toString().trim(),
+        team: (p.Team || p.team || "").toString().trim(),
+        rank: Number(p["Season Rank"] || p.rank || 0),
+        points: Number(p["Total yearly points"] || p.points || 0),
+        avg: Number(p["Yearly average"] || p.avg || 0)
       };
-    }).filter(p => p.name); // remove empty rows
+    }).filter(p => p.name); // remove blanks
 
     render();
   } catch (err) {
     console.log(err);
     document.getElementById("app").innerHTML =
-      "<h3>⚠️ Data load failed</h3>";
+      "<h3>⚠️ Failed to load data</h3>";
   }
 }
 
@@ -50,7 +48,7 @@ function render() {
 }
 
 /* =========================
-   RANKINGS (FIXED NaN)
+   RANKINGS (NO NaN POSSIBLE)
 ========================= */
 function renderRankings() {
   let sorted = [...players].sort((a, b) => b.avg - a.avg);
@@ -62,8 +60,8 @@ function renderRankings() {
       <div class="card">
         <b>#${i + 1} ${p.name || "Unknown"}</b><br>
         ${p.team || "-"}<br>
-        Avg: ${p.avg.toFixed(1)}<br>
-        Points: ${p.points.toFixed(0)}
+        Avg: ${(p.avg || 0).toFixed(1)}<br>
+        Points: ${(p.points || 0).toFixed(0)}
       </div>
     `).join("")}
   `;
@@ -82,7 +80,7 @@ function renderTop10() {
 
     ${top.map(p => `
       <div class="card">
-        ${p.name} — Avg ${p.avg.toFixed(1)}
+        ${p.name} — Avg ${(p.avg || 0).toFixed(1)}
       </div>
     `).join("")}
   `;
