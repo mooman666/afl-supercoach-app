@@ -12,7 +12,6 @@ function renderPlayers(data) {
     data.forEach(p => {
         const value = (p.avg / (p.price / 1000)).toFixed(2);
         
-        // Color coding for Value
         let valueClass = 'val-neutral';
         if (value >= 0.20) valueClass = 'val-good';
         if (value <= 0.13) valueClass = 'val-bad';
@@ -48,7 +47,6 @@ function filterAndSort() {
             let valA = a[sortOrder.column];
             let valB = b[sortOrder.column];
             
-            // Special math for Value column sorting
             if (sortOrder.column === 'value') {
                 valA = a.avg / (a.price / 1000);
                 valB = b.avg / (b.price / 1000);
@@ -66,15 +64,13 @@ function handleSort(column) {
         sortOrder.ascending = !sortOrder.ascending;
     } else {
         sortOrder.column = column;
-        sortOrder.ascending = false; // Default to highest first
+        sortOrder.ascending = false;
     }
     filterAndSort();
 }
 
-// Listeners
 searchInput.addEventListener('input', filterAndSort);
 posFilter.addEventListener('change', filterAndSort);
 teamFilter.addEventListener('change', filterAndSort);
 
-// Initial Load
 renderPlayers(playerDatabase);
