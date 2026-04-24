@@ -3,24 +3,17 @@ const SHEET_URL =
 
 let players = [];
 let search = "";
-let mode = "all";
 
 window.setSearch = (v) => {
-  search = v.toLowerCase();
+  search = (v || "").toLowerCase();
   render();
 };
 
-window.setMode = (m) => {
-  mode = m;
-  render();
-};
-
-function filterData(list){
-  return list.filter(p => {
-    if(search && !p.name.toLowerCase().includes(search)) return false;
-    if(mode !== "all" && p.pos !== mode) return false;
-    return true;
-  });
+function filter(list){
+  if(!search) return list;
+  return list.filter(p =>
+    (p.name || "").toLowerCase().includes(search)
+  );
 }
 
 async function load(){
@@ -31,28 +24,25 @@ async function load(){
   rows.shift(); // headers
 
   players = rows.map(r => ({
-    name: r[0],
-    team: r[1],
-    pos: r[2],        // MID / DEF / FWD
-    avg: Number(r[3]) || 0,
-    points: Number(r[4]) || 0,
-    form: Number(r[5]) || 0
-  }));
+    rank: Number(r[0]) || 0,
+    name: r[1],
+    team: r[2],
+    total: Number(r[3]) || 0,
+    avg: Number(r[4]) || 0
+  })).filter(p => p.name);
 
   render();
 }
 
 function render(){
-  let list = filterData([...players]).sort((a,b)=>b.avg-a.avg);
+  let list = filter([...players]).sort((a,b)=>a.rank-b.rank);
 
   document.getElementById("app").innerHTML = list.map(p => `
     <div class="card">
-      <b>${p.name}</b> (${p.team})<br>
-      Pos: ${p.pos}<br><br>
+      <b>#${p.rank} ${p.name}</b> (${p.team})<br><br>
 
-      Avg: ${p.avg}<br>
-      Points: ${p.points}<br>
-      Form: ${p.form}
+      Total Points: ${p.total}<br>
+      Yearly Avg: ${p.avg}
     </div>
   `).join("");
 }
