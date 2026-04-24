@@ -2,20 +2,26 @@ const playerBody = document.getElementById('playerBody');
 const searchInput = document.getElementById('playerSearch');
 const posFilter = document.getElementById('posFilter');
 const teamFilter = document.getElementById('teamFilter');
+const newsFeed = document.getElementById('newsFeed');
 
-let currentData = [...playerDatabase];
-let sortOrder = { column: null, ascending: true };
+let sortOrder = { column: 'price', ascending: false };
+
+function renderNews() {
+    newsFeed.innerHTML = newsUpdates.map(n => `
+        <div class="news-item">
+            <small>${n.date}</small>
+            <p>${n.text}</p>
+        </div>
+    `).join('');
+}
 
 function renderPlayers(data) {
     playerBody.innerHTML = '';
 
     data.forEach(p => {
         const value = (p.avg / (p.price / 1000)).toFixed(2);
+        const beClass = p.be < 50 ? 'val-good' : 'val-neutral';
         
-        let valueClass = 'val-neutral';
-        if (value >= 0.20) valueClass = 'val-good';
-        if (value <= 0.13) valueClass = 'val-bad';
-
         playerBody.innerHTML += `
             <tr>
                 <td><strong>${p.name}</strong></td>
@@ -23,7 +29,8 @@ function renderPlayers(data) {
                 <td><span class="badge ${p.pos}">${p.pos}</span></td>
                 <td>$${p.price.toLocaleString()}</td>
                 <td>${p.avg}</td>
-                <td class="${valueClass}">${value}</td>
+                <td>${p.last3}</td>
+                <td class="${beClass}">${p.be}</td>
                 <td>Rd ${p.bye}</td>
             </tr>
         `;
@@ -46,12 +53,6 @@ function filterAndSort() {
         filtered.sort((a, b) => {
             let valA = a[sortOrder.column];
             let valB = b[sortOrder.column];
-            
-            if (sortOrder.column === 'value') {
-                valA = a.avg / (a.price / 1000);
-                valB = b.avg / (b.price / 1000);
-            }
-
             return sortOrder.ascending ? valA - valB : valB - valA;
         });
     }
@@ -60,12 +61,8 @@ function filterAndSort() {
 }
 
 function handleSort(column) {
-    if (sortOrder.column === column) {
-        sortOrder.ascending = !sortOrder.ascending;
-    } else {
-        sortOrder.column = column;
-        sortOrder.ascending = false;
-    }
+    sortOrder.ascending = (sortOrder.column === column) ? !sortOrder.ascending : false;
+    sortOrder.column = column;
     filterAndSort();
 }
 
@@ -73,4 +70,6 @@ searchInput.addEventListener('input', filterAndSort);
 posFilter.addEventListener('change', filterAndSort);
 teamFilter.addEventListener('change', filterAndSort);
 
+// Init
+renderNews();
 renderPlayers(playerDatabase);
