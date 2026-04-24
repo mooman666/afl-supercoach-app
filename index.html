@@ -3,120 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ARCHITECT v11 // RD 7 TACTICAL</title>
+    <title>ARCHITECT v12 // OMNI-SYSTEM</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --primary: #38bdf8; --success: #00ff88; --danger: #ef4444; --warning: #facc15; --bg: #020617; --card: #1e293b; --accent: #1e1b4b; }
+        :root { --primary: #38bdf8; --success: #00ff88; --danger: #ef4444; --warning: #facc15; --bg: #020617; --card: #1e293b; --nav: #0f172a; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
-        body { background: var(--bg); color: #f1f5f9; padding-bottom: 90px; }
+        body { background: var(--bg); color: #f1f5f9; padding-bottom: 90px; overflow-x: hidden; }
 
-        /* HEADER & PULSE */
-        .header { background: #0f172a; padding: 20px; border-bottom: 2px solid var(--primary); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
-        .header h1 { font-size: 16px; letter-spacing: 2px; font-weight: 900; color: var(--primary); }
-        .pulse-container { display: flex; align-items: center; font-size: 10px; font-weight: 800; color: #94a3b8; }
-        .pulse { height: 8px; width: 8px; background: var(--success); border-radius: 50%; display: inline-block; margin-right: 6px; box-shadow: 0 0 8px var(--success); animation: blink 1.5s infinite; }
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        /* HEADER & GLOBAL HUD */
+        .header { background: var(--nav); padding: 15px 20px; border-bottom: 2px solid var(--primary); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
+        .header h1 { font-size: 14px; letter-spacing: 2px; font-weight: 900; color: var(--primary); }
+        .live-tag { font-size: 10px; color: var(--success); font-weight: 800; display: flex; align-items: center; }
+        .pulse { height: 6px; width: 6px; background: var(--success); border-radius: 50%; margin-right: 6px; animation: blink 1.5s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-        /* NAVIGATION */
-        nav { position: fixed; bottom: 0; width: 100%; display: flex; background: #0f172a; border-top: 1px solid #334155; padding: 12px; z-index: 1000; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); }
-        nav button { flex: 1; background: none; border: none; color: #64748b; font-weight: 800; font-size: 12px; cursor: pointer; transition: 0.3s; }
-        nav button.active { color: var(--primary); transform: translateY(-2px); }
+        /* NAVIGATION BAR */
+        nav { position: fixed; bottom: 0; width: 100%; display: flex; background: var(--nav); border-top: 1px solid #334155; z-index: 1000; padding: 10px 5px; }
+        nav button { flex: 1; background: none; border: none; color: #64748b; font-size: 9px; font-weight: 800; text-transform: uppercase; cursor: pointer; transition: 0.2s; }
+        nav button.active { color: var(--primary); transform: translateY(-3px); }
 
-        /* CARDS & UI */
-        .page { display: none; padding: 20px; animation: fadeIn 0.4s ease; }
+        /* TAB PAGES */
+        .page { display: none; padding: 15px; animation: slideUp 0.3s ease-out; }
         .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        .card { background: var(--card); border-radius: 12px; padding: 16px; margin-bottom: 15px; border: 1px solid #334155; position: relative; overflow: hidden; }
-        .card::before { content: ""; position: absolute; left: 0; top: 0; height: 100%; width: 4px; background: var(--primary); }
-        .card.risk-high::before { background: var(--danger); }
-        .card.grade-aplus { border: 1px solid var(--success); background: linear-gradient(145deg, #1e293b, #064e3b); }
+        /* COMPONENT STYLES */
+        .card { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid #334155; position: relative; }
+        .section-label { font-size: 11px; color: #94a3b8; letter-spacing: 2px; margin-bottom: 15px; text-transform: uppercase; font-weight: 900; }
+        
+        .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; }
+        .stat-box { text-align: center; }
+        .stat-box small { font-size: 8px; color: #64748b; font-weight: 800; display: block; }
+        .stat-box strong { font-size: 13px; color: #f1f5f9; }
 
-        .tag { position: absolute; top: 12px; right: 12px; font-size: 10px; font-weight: 900; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; }
-        .tag-IN { background: #064e3b; color: var(--success); }
-        .tag-OUT { background: #450a0a; color: var(--danger); }
-        .tag-TEST { background: #451a03; color: var(--warning); }
+        .badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 900; position: absolute; top: 12px; right: 12px; }
+        .badge-buy { background: #064e3b; color: var(--success); }
+        .badge-sell { background: #450a0a; color: var(--danger); }
+        .badge-test { background: #451a03; color: var(--warning); }
 
-        .stat-row { display: flex; justify-content: space-between; margin-top: 15px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; }
-        .stat-item { text-align: center; }
-        .stat-label { font-size: 9px; color: #94a3b8; font-weight: 700; margin-bottom: 4px; }
-        .stat-val { font-size: 14px; font-weight: 800; }
-
-        .grade-badge { font-size: 11px; background: var(--primary); color: #000; padding: 2px 6px; border-radius: 4px; font-weight: 900; margin-left: 10px; }
+        /* CHART CONTAINER */
+        .chart-box { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 20px; border: 1px solid #334155; height: 200px; }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <h1>ARCHITECT.v11</h1>
-    <div class="pulse-container"><span class="pulse"></span>RD7_STABLE_SIGNAL</div>
+    <h1>ARCHITECT.v12 // OMNI</h1>
+    <div class="live-tag"><span class="pulse"></span> RD7 LIVE DATA</div>
 </div>
 
-<div id="pIntel" class="page active">
-    <h2 style="font-size:12px; color:#94a3b8; letter-spacing:3px; margin-bottom:20px;">MARKET ANALYSIS</h2>
-    <div id="playerList"></div>
+<div id="pTerminal" class="page active">
+    <p class="section-label">Market Intelligence</p>
+    <div id="terminalContent"></div>
+</div>
+
+<div id="pPredictor" class="page">
+    <p class="section-label">Breakeven Predictor</p>
+    <div class="chart-box"><canvas id="beChart"></canvas></div>
+    <div id="predictorContent"></div>
+</div>
+
+<div id="pCaptain" class="page">
+    <p class="section-label">Captaincy Matrix</p>
+    <div id="captainContent"></div>
 </div>
 
 <div id="pInjury" class="page">
-    <h2 style="font-size:12px; color:var(--danger); letter-spacing:3px; margin-bottom:20px;">INJURY INTELLIGENCE</h2>
-    <div id="injuryList"></div>
+    <p class="section-label">Medical Room</p>
+    <div id="injuryContent"></div>
+</div>
+
+<div id="pSim" class="page">
+    <p class="section-label">Trade Simulator</p>
+    <div class="card">
+        <p style="font-size:12px; margin-bottom:10px;">Projected Bank Balance</p>
+        <h2 id="simBank">$245,300</h2>
+        <button onclick="alert('Trade Saved!')" style="width:100%; margin-top:15px; padding:10px; background:var(--primary); border:none; border-radius:6px; font-weight:900;">EXECUTE TRADES</button>
+    </div>
 </div>
 
 <nav>
-    <button id="bIntel" class="active" onclick="showTab('pIntel')">TERMINAL</button>
-    <button id="bInjury" onclick="showTab('pInjury')">INJURIES</button>
+    <button id="bTerminal" class="active" onclick="tab('pTerminal')">Terminal</button>
+    <button id="bPredictor" onclick="tab('pPredictor')">Predict</button>
+    <button id="bCaptain" onclick="tab('pCaptain')">Captain</button>
+    <button id="bInjury" onclick="tab('pInjury')">Injury</button>
+    <button id="bSim" onclick="tab('pSim')">Sim</button>
 </nav>
 
 <script>
-    // 📊 RD7 LIVE TACTICAL DATA
-    const db = [
-        { name: "Angus Anderson", team: "Magpies", price: 113500, be: -75, status: "IN", grade: "A+", risk: "LOW" },
-        { name: "Isaac Heeney", team: "Swans", price: 632700, be: 24, status: "OUT", grade: "SELL", risk: "HIGH" },
-        { name: "Harry Sheezel", team: "Kangaroos", price: 645000, be: 112, status: "TEST", grade: "B", risk: "MED" },
-        { name: "Nasiah Wanganeen-Milera", team: "Saints", price: 588300, be: 94, status: "IN", grade: "A", risk: "LOW" },
-        { name: "Elijah Tsatas", team: "Bombers", price: 223400, be: -49, status: "IN", grade: "A", risk: "MED" }
+    // 📊 MASTER DATA HUB
+    const players = [
+        { id: 1, name: "Angus Anderson", team: "Magpies", price: 113500, be: -75, proj: 88, status: "IN", grade: "A+", role: "CBA Mid" },
+        { id: 2, name: "Isaac Heeney", team: "Swans", price: 632700, be: 24, proj: 0, status: "OUT", grade: "SELL", role: "N/A" },
+        { id: 3, name: "Harry Sheezel", team: "Kangaroos", price: 645000, be: 112, proj: 124, status: "TEST", grade: "B+", role: "DEF/MID" },
+        { id: 4, name: "Nasiah Wanganeen-Milera", team: "Saints", price: 588300, be: 94, proj: 118, status: "IN", grade: "A", role: "DEF Dist" },
+        { id: 5, name: "Elijah Tsatas", team: "Bombers", price: 223400, be: -49, proj: 92, status: "IN", grade: "A", role: "Wing/Mid" }
     ];
 
-    const injuries = [
-        { name: "Isaac Heeney", team: "SYD", type: "Calf Tightness", return: "R7 OUT", impact: "High CBA Opportunity" },
-        { name: "Harry Sheezel", team: "NM", type: "Finger", return: "TEST", impact: "Role Stability Warning" },
-        { name: "Mitch Hinge", team: "ADEL", type: "Hamstring", return: "2-4 WKS", impact: "Defensive Structural Hit" },
-        { name: "Jarrod Berry", team: "BL", type: "Calf", return: "3-4 WKS", impact: "Midfield Depth Tested" }
+    const injuryList = [
+        { name: "Isaac Heeney", issue: "Calf Tightness", return: "R7 OUT", impact: "Warner/Cootee CBA boost" },
+        { name: "Mitch Hinge", issue: "Hamstring", return: "2-4 WKS", impact: "Adelaide defensive structural hit" },
+        { name: "Jarrod Berry", issue: "Calf", return: "3-4 WKS", impact: "Brisbane midfield depth tested" }
     ];
 
-    function showTab(id) {
+    function tab(id) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
         document.getElementById(id).classList.add('active');
         document.getElementById('b' + id.substring(1)).classList.add('active');
+        if(id === 'pPredictor') initChart();
+    }
+
+    function initChart() {
+        const ctx = document.getElementById('beChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: players.slice(0,4).map(p => p.name.split(' ')[1]),
+                datasets: [{
+                    label: 'Breakeven',
+                    data: players.slice(0,4).map(p => p.be),
+                    backgroundColor: players.slice(0,4).map(p => p.be < 0 ? '#00ff88' : '#ef4444')
+                }]
+            },
+            options: { maintainAspectRatio: false, plugins: { legend: { display: false } } }
+        });
     }
 
     function boot() {
-        // Player Terminal Render
-        document.getElementById('playerList').innerHTML = db.map(p => `
-            <div class="card ${p.grade === 'A+' ? 'grade-aplus' : ''} ${p.risk === 'HIGH' ? 'risk-high' : ''}">
-                <span class="tag tag-${p.status}">${p.status}</span>
-                <div style="margin-bottom:4px;">
-                    <strong style="font-size:18px;">${p.name}</strong>
-                    <span class="grade-badge">${p.grade}</span>
-                </div>
-                <small style="text-transform:uppercase; font-weight:700;">${p.team} // RD7 TARGET</small>
-                
-                <div class="stat-row">
-                    <div class="stat-item"><div class="stat-label">PRICE</div><div class="stat-val">$${p.price.toLocaleString()}</div></div>
-                    <div class="stat-item"><div class="stat-label">B.E.</div><div class="stat-val" style="color:${p.be < 50 ? 'var(--success)' : 'var(--danger)'}">${p.be}</div></div>
-                    <div class="stat-item"><div class="stat-label">RISK</div><div class="stat-val" style="color:${p.risk === 'LOW' ? 'var(--success)' : 'var(--warning)'}">${p.risk}</div></div>
+        // Render Terminal
+        document.getElementById('terminalContent').innerHTML = players.map(p => `
+            <div class="card">
+                <span class="badge badge-${p.status.toLowerCase()}">${p.status}</span>
+                <strong>${p.name}</strong><br><small>${p.team} // ${p.role}</small>
+                <div class="stat-grid">
+                    <div class="stat-box"><small>PRICE</small><strong>$${p.price.toLocaleString()}</strong></div>
+                    <div class="stat-box"><small>BE</small><strong style="color:${p.be < 0 ? 'var(--success)' : 'var(--danger)'}">${p.be}</strong></div>
+                    <div class="stat-box"><small>GRADE</small><strong>${p.grade}</strong></div>
                 </div>
             </div>
         `).join('');
 
-        // Injury Intel Render
-        document.getElementById('injuryList').innerHTML = injuries.map(i => `
-            <div class="card risk-high">
-                <span style="float:right; font-size:12px; color:var(--danger); font-weight:900;">${i.return}</span>
-                <strong style="font-size:16px;">${i.name} (${i.team})</strong><br>
-                <small style="color:#ef4444; font-weight:bold;">${i.type}</small>
-                <div style="margin-top:12px; padding:8px; background:rgba(0,0,0,0.3); border-radius:6px; font-size:11px;">
-                    <span style="color:var(--primary); font-weight:900;">TACTICAL IMPACT:</span> ${i.impact}
+        // Render Captains
+        const captains = [
+            { name: "Brodie Grundy", type: "VC", logic: "Clear ruck advantage vs Dogs" },
+            { name: "Max Gawn", type: "VC", logic: "Friday night bounce-back vs Tigers" },
+            { name: "Nick Daicos", type: "C", logic: "Elite ceiling, thrived last ANZAC" },
+            { name: "Harry Sheezel", type: "C", logic: "Safe 120+ floor vs West Coast" }
+        ];
+        document.getElementById('captainContent').innerHTML = captains.map(c => `
+            <div class="card" style="border-left:4px solid ${c.type === 'VC' ? 'var(--primary)' : 'var(--warning)'}">
+                <strong style="color:${c.type === 'VC' ? 'var(--primary)' : 'var(--warning)'}">${c.type}: ${c.name}</strong>
+                <p style="font-size:11px; margin-top:5px; color:#94a3b8;">${c.logic}</p>
+            </div>
+        `).join('');
+
+        // Render Injuries
+        document.getElementById('injuryContent').innerHTML = injuryList.map(i => `
+            <div class="card" style="border-left: 4px solid var(--danger);">
+                <span style="float:right; font-size:10px; color:var(--danger); font-weight:900;">${i.return}</span>
+                <strong>${i.name}</strong><br><small style="color:var(--danger)">${i.issue}</small>
+                <div style="margin-top:10px; font-size:10px; background:rgba(0,0,0,0.2); padding:8px; border-radius:4px;">
+                    <span style="color:var(--primary)">TACTICAL:</span> ${i.impact}
                 </div>
             </div>
         `).join('');
