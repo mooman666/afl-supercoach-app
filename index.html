@@ -1,120 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SC Terminal | Elite 2026</title>
-    <style>
-        /* 🌑 FORCED DARK THEME */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #0b0f19; color: #f8fafc; font-family: -apple-system, sans-serif; line-height: 1.4; }
+<style>
+    .vcc-badge { font-size: 10px; font-weight: 800; color: #eab308; }
+    .fix-chip { font-size: 9px; padding: 2px 4px; border-radius: 3px; background: #2d3748; color: #94a3b8; margin-right: 2px; border: 1px solid transparent; }
+    .easy { color: #00ff88; border-color: #00ff8822; background: #00ff8811; }
+    .hard { color: #ff4d4d; border-color: #ff4d4d22; background: #ff4d4d11; }
+    .info-btn { background: none; border: 1px solid #38bdf8; color: #38bdf8; border-radius: 4px; font-size: 9px; padding: 2px 5px; cursor: pointer; }
+</style>
 
-        /* 🚨 PRO TICKER */
-        .ticker-wrap { background: #1e293b; color: #38bdf8; padding: 12px; font-weight: bold; font-size: 12px; border-bottom: 2px solid #38bdf8; position: sticky; top: 0; z-index: 100; overflow: hidden; }
-
-        /* 📱 NAVIGATION */
-        nav { display: flex; background: #161e2d; padding: 8px; gap: 8px; border-bottom: 1px solid #2d3748; }
-        nav button { flex: 1; background: #1e293b; border: 1px solid #38bdf8; color: #38bdf8; padding: 12px; border-radius: 6px; font-weight: bold; font-size: 13px; cursor: pointer; }
-
-        /* 📊 TERMINAL TABLE */
-        .table-container { padding: 10px; width: 100%; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; background: #161e2d; border-radius: 10px; overflow: hidden; }
-        th { background: #1e293b; padding: 12px 8px; text-align: left; color: #94a3b8; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
-        td { padding: 14px 8px; border-bottom: 1px solid #2d3748; font-size: 13px; vertical-align: middle; }
-
-        /* 🏷️ STATUS & ROLES */
-        .player-info strong { display: block; color: #fff; font-size: 14px; }
-        .player-info small { color: #94a3b8; font-size: 11px; }
-        
-        .badge { background: #334155; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
-        
-        /* 💹 BE COLOR TAGS */
-        .be-tag { display: inline-block; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; min-width: 45px; text-align: center; }
-        .buy { background: rgba(0, 255, 136, 0.15); color: #00ff88; border: 1px solid #00ff88; }
-        .sell { background: rgba(255, 77, 77, 0.15); color: #ff4d4d; border: 1px solid #ff4d4d; }
-        .hold { background: rgba(234, 179, 8, 0.15); color: #eab308; border: 1px solid #eab308; }
-
-        /* ✍️ ARTICLES TAB */
-        .tab-content { display: none; padding: 15px; }
-        .active { display: block; }
-        .article-card { background: #161e2d; padding: 20px; border-radius: 12px; border-left: 4px solid #38bdf8; margin-bottom: 15px; }
-        .article-card h3 { color: #38bdf8; margin-bottom: 10px; }
-    </style>
-</head>
-<body>
-
-<div class="ticker-wrap" id="newsTicker">SYNCHRONIZING DATA...</div>
-
-<nav>
-    <button onclick="showTab('dataTab')">📊 TERMINAL</button>
-    <button onclick="showTab('articleTab')">✍️ INSIGHTS</button>
-</nav>
-
-<div id="dataTab" class="tab-content active">
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Player</th>
-                    <th>Pos</th>
-                    <th>Price</th>
-                    <th>Avg</th>
-                    <th>BE</th>
-                    <th>CBA%</th>
-                </tr>
-            </thead>
-            <tbody id="playerBody"></tbody>
-        </table>
-    </div>
-</div>
-
-<div id="articleTab" class="tab-content">
-    <div id="articleGrid"></div>
-</div>
-
-<script src="players.js?v=99"></script>
 <script>
-    // SELF-HEALING ENGINE
-    function startApp() {
-        if (typeof playerDatabase !== 'undefined') {
-            renderTable(playerDatabase);
-            renderTicker();
-            renderArticles();
-        } else {
-            setTimeout(startApp, 500);
-        }
-    }
+function renderTable(data) {
+    const body = document.getElementById('playerBody');
+    body.innerHTML = data.map(p => {
+        const beClass = p.be < 0 ? 'buy' : (p.be > 150 ? 'sell' : 'hold');
+        
+        // Generate Fixture Chips
+        const fixHTML = p.fixture ? p.fixture.map(f => {
+            const level = (f.includes('WCE') || f.includes('NMFC')) ? 'easy' : (f.includes('SYD') || f.includes('COL')) ? 'hard' : '';
+            return `<span class="fix-chip ${level}">${f}</span>`;
+        }).join('') : '';
 
-    function renderTable(data) {
-        const body = document.getElementById('playerBody');
-        body.innerHTML = data.map(p => {
-            const beClass = p.be < 0 ? 'buy' : (p.be > 150 ? 'sell' : 'hold');
-            return `
-                <tr>
-                    <td class="player-info"><strong>${p.name}</strong><small>${p.team}</small></td>
-                    <td><span class="badge">${p.pos}</span></td>
-                    <td>$${p.price.toLocaleString()}</td>
-                    <td>${p.avg}</td>
-                    <td><span class="be-tag ${beClass}">${p.be}</span></td>
-                    <td>${p.cba}</td>
-                </tr>
-            `;
-        }).join('');
-    }
-
-    function renderTicker() {
-        const ticker = document.getElementById('newsTicker');
-        if (typeof newsUpdates !== 'undefined') {
-            ticker.innerHTML = newsUpdates.join(' | ');
-        }
-    }
-
-    function showTab(id) {
-        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-    }
-
-    window.onload = startApp;
+        return `
+            <tr>
+                <td class="player-info">
+                    <strong>${p.name}</strong>
+                    <span class="vcc-badge">${p.vcc || ''}</span>
+                </td>
+                <td><span class="badge">${p.pos}</span></td>
+                <td>$${p.price.toLocaleString()}</td>
+                <td><div style="display:flex; flex-direction:column; gap:4px;">${fixHTML}</div></td>
+                <td><span class="be-tag ${beClass}">${p.be}</span></td>
+                <td><button class="info-btn" onclick="alert('${p.insight || 'Hold for Round 7'}')">VIEW</button></td>
+            </tr>
+        `;
+    }).join('');
+}
 </script>
-</body>
-</html>
