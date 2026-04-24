@@ -3,17 +3,31 @@ const SHEET_URL =
 
 let players = [];
 let search = "";
+let view = "top";
+let chart;
 
 window.setSearch = (v) => {
   search = (v || "").toLowerCase();
   render();
 };
 
-function filter(list){
-  if(!search) return list;
-  return list.filter(p =>
-    (p.name || "").toLowerCase().includes(search)
-  );
+window.setView = (v) => {
+  view = v;
+  render();
+};
+
+function filterData(list){
+  return list.filter(p => {
+    if(search && !p.name.toLowerCase().includes(search)) return false;
+    return true;
+  });
+}
+
+function tier(avg){
+  if(avg >= 110) return "elite";
+  if(avg >= 95) return "premium";
+  if(avg >= 80) return "value";
+  return "avoid";
 }
 
 async function load(){
@@ -21,7 +35,7 @@ async function load(){
   const text = await res.text();
 
   const rows = text.trim().split("\n").map(r => r.split(","));
-  rows.shift(); // headers
+  rows.shift();
 
   players = rows.map(r => ({
     rank: Number(r[0]) || 0,
@@ -34,16 +48,62 @@ async function load(){
   render();
 }
 
-function render(){
-  let list = filter([...players]).sort((a,b)=>a.rank-b.rank);
+function getList(){
+  let list = filterData([...players]);
 
-  document.getElementById("app").innerHTML = list.map(p => `
-    <div class="card">
-      <b>#${p.rank} ${p.name}</b> (${p.team})<br><br>
-      Total: ${p.total}<br>
-      Avg: ${p.avg}
+  if(view === "top"){
+    return list.sort((a,b)=>b.avg-a.avg);
+  }
+
+  if(view === "value"){
+    return list.sort((a,b)=>(b.total/b.avg)-(a.total/a.avg));
+  }
+
+  if(view === "form"){
+    return list.sort((a,b)=>b.total-a.total);
+  }
+
+  return list;
+}
+
+function render(){
+  const list = getList();
+
+  document.getElementById("app").innerHTML = `
+    <div class="insights">
+      <b>Players:</b> ${list.length}
     </div>
-  `).join("");
+
+    ${list.map(p => `
+      <div class="card ${tier(p.avg)}">
+        <b>#${p.rank} ${p.name}</b> (${p.team})<br><br>
+        Total: ${p.total}<br>
+        Average: ${p.avg}
+      </div>
+    `).join("")}
+  `;
+
+  renderChart(list.slice(0,10));
+}
+
+function renderChart(list){
+  const ctx = document.getElementById("chart");
+
+  const labels = list.map(p => p.name);
+  const data = list.map(p => p.avg);
+
+  if(chart) chart.destroy();
+
+  chart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [{
+        label: "Avg Points",
+        data
+      }]
+    }
+  });
 }
 
 load();
