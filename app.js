@@ -3,40 +3,26 @@ const SHEET_URL =
 
 let players = [];
 let search = "";
+let mode = "all";
 
 window.setSearch = (v) => {
-  search = (v || "").toLowerCase();
+  search = v.toLowerCase();
   render();
 };
 
-function tier(avg){
-  if(avg >= 110) return "elite";
-  if(avg >= 95) return "premium";
-  if(avg >= 80) return "value";
-  return "avoid";
+window.setMode = (m) => {
+  mode = m;
+  render();
+};
+
+function filterData(list){
+  return list.filter(p => {
+    if(search && !p.name.toLowerCase().includes(search)) return false;
+    if(mode !== "all" && p.pos !== mode) return false;
+    return true;
+  });
 }
 
-/* CORE METRICS */
-function form(p){
-  return (p.last - p.avg).toFixed(1);
-}
-
-function projection(p){
-  return Math.round((p.avg * 0.65) + (p.last * 0.35));
-}
-
-function value(p){
-  return (p.avg / (p.games || 1)).toFixed(2);
-}
-
-function filter(list){
-  if(!search) return list;
-  return list.filter(p =>
-    (p.name || "").toLowerCase().includes(search)
-  );
-}
-
-/* LOAD DATA FROM SHEET */
 async function load(){
   const res = await fetch(SHEET_URL);
   const text = await res.text();
@@ -47,43 +33,28 @@ async function load(){
   players = rows.map(r => ({
     name: r[0],
     team: r[1],
-    avg: Number(r[2]) || 0,
-    last: Number(r[3]) || 0,
-    high: Number(r[4]) || 0,
-    games: Number(r[5]) || 0
-  })).filter(p => p.name);
+    pos: r[2],        // MID / DEF / FWD
+    avg: Number(r[3]) || 0,
+    points: Number(r[4]) || 0,
+    form: Number(r[5]) || 0
+  }));
 
   render();
 }
 
-/* UI */
 function render(){
-  let list = filter([...players]).sort((a,b)=>b.avg-a.avg);
+  let list = filterData([...players]).sort((a,b)=>b.avg-a.avg);
 
-  const best = list[0];
-  const captain = [...list].sort((a,b)=>projection(b)-projection(a))[0];
-
-  document.getElementById("app").innerHTML = `
+  document.getElementById("app").innerHTML = list.map(p => `
     <div class="card">
-      <b>🔥 Insights</b><br><br>
-      Best: ${best?.name || "-"}<br>
-      Captain: ${captain?.name || "-"}
+      <b>${p.name}</b> (${p.team})<br>
+      Pos: ${p.pos}<br><br>
+
+      Avg: ${p.avg}<br>
+      Points: ${p.points}<br>
+      Form: ${p.form}
     </div>
-
-    ${list.map(p => `
-      <div class="card ${tier(p.avg)}">
-        <b>${p.name}</b> (${p.team})<br><br>
-
-        Avg: ${p.avg}<br>
-        Last: ${p.last}<br>
-        High: ${p.high}<br><br>
-
-        Form: ${form(p)}<br>
-        Projection: ${projection(p)}<br>
-        Value: ${value(p)}
-      </div>
-    `).join("")}
-  `;
+  `).join("");
 }
 
 load();
