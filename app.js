@@ -1,75 +1,46 @@
 const playerBody = document.getElementById('playerBody');
-const searchInput = document.getElementById('playerSearch');
-const posFilter = document.getElementById('posFilter');
-const teamFilter = document.getElementById('teamFilter');
-const newsFeed = document.getElementById('newsFeed');
+const articleGrid = document.getElementById('articleGrid');
+const newsTicker = document.getElementById('newsTicker');
 
-let sortOrder = { column: 'price', ascending: false };
+// Navigation Logic
+function showTab(tabName) {
+    document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+    document.getElementById(tabName).style.display = 'block';
+}
 
 function renderNews() {
-    newsFeed.innerHTML = newsUpdates.map(n => `
-        <div class="news-item">
-            <small>${n.date}</small>
-            <p>${n.text}</p>
+    newsTicker.innerHTML = newsUpdates.map(n => `<span>${n}</span>`).join(' | ');
+}
+
+function renderArticles() {
+    articleGrid.innerHTML = articles.map(a => `
+        <div class="article-card">
+            <small>${a.category} • ${a.date}</small>
+            <h3>${a.title}</h3>
+            <p>${a.content.substring(0, 100)}...</p>
+            <button class="read-btn">Read Full Article</button>
         </div>
     `).join('');
 }
 
 function renderPlayers(data) {
-    playerBody.innerHTML = '';
-
-    data.forEach(p => {
-        const value = (p.avg / (p.price / 1000)).toFixed(2);
-        const beClass = p.be < 50 ? 'val-good' : 'val-neutral';
-        
-        playerBody.innerHTML += `
+    playerBody.innerHTML = data.map(p => {
+        const val = (p.avg / (p.price / 1000)).toFixed(2);
+        return `
             <tr>
                 <td><strong>${p.name}</strong></td>
-                <td>${p.team}</td>
-                <td><span class="badge ${p.pos}">${p.pos}</span></td>
+                <td>${p.pos}</td>
                 <td>$${p.price.toLocaleString()}</td>
                 <td>${p.avg}</td>
-                <td>${p.last3}</td>
-                <td class="${beClass}">${p.be}</td>
-                <td>Rd ${p.bye}</td>
+                <td>${p.cba}</td>
+                <td>${p.tog}</td>
+                <td class="${p.be < 50 ? 'val-good' : ''}">${p.be}</td>
             </tr>
         `;
-    });
+    }).join('');
 }
 
-function filterAndSort() {
-    const searchTerm = searchInput.value.toLowerCase();
-    const selectedPos = posFilter.value;
-    const selectedTeam = teamFilter.value;
-
-    let filtered = playerDatabase.filter(p => {
-        const matchesSearch = p.name.toLowerCase().includes(searchTerm);
-        const matchesPos = selectedPos === 'ALL' || p.pos === selectedPos;
-        const matchesTeam = selectedTeam === 'ALL' || p.team === selectedTeam;
-        return matchesSearch && matchesPos && matchesTeam;
-    });
-
-    if (sortOrder.column) {
-        filtered.sort((a, b) => {
-            let valA = a[sortOrder.column];
-            let valB = b[sortOrder.column];
-            return sortOrder.ascending ? valA - valB : valB - valA;
-        });
-    }
-
-    renderPlayers(filtered);
-}
-
-function handleSort(column) {
-    sortOrder.ascending = (sortOrder.column === column) ? !sortOrder.ascending : false;
-    sortOrder.column = column;
-    filterAndSort();
-}
-
-searchInput.addEventListener('input', filterAndSort);
-posFilter.addEventListener('change', filterAndSort);
-teamFilter.addEventListener('change', filterAndSort);
-
-// Init
+// Initial Load
 renderNews();
+renderArticles();
 renderPlayers(playerDatabase);
