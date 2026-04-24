@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
+<meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>AFL Fantasy Pro</title>
+<title>AFL Fantasy Engine</title>
 
 <style>
 body {
@@ -22,23 +22,16 @@ header {
   gap:8px;
 }
 
-button {
-  padding:8px 10px;
-  border:none;
-  border-radius:6px;
-  background:#2563eb;
-  color:white;
-  cursor:pointer;
-}
-
 input {
+  flex:1;
   padding:8px;
   border-radius:6px;
   border:none;
-  flex:1;
 }
 
-#app { padding:12px; }
+#app {
+  padding:10px;
+}
 
 .card {
   background:#1f2937;
@@ -53,28 +46,9 @@ input {
 .value { border-left:4px solid #f59e0b; }
 .avoid { border-left:4px solid #ef4444; }
 
-/* PROFILE MODAL */
-#modal {
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background:rgba(0,0,0,0.85);
-  display:none;
-  overflow:auto;
-}
-
-.modal-content {
-  background:#111827;
-  margin:60px 10px;
-  padding:15px;
-  border-radius:12px;
-}
-
-img {
-  width:100%;
-  border-radius:10px;
+.small {
+  opacity:0.8;
+  font-size:12px;
 }
 </style>
 </head>
@@ -82,17 +56,10 @@ img {
 <body>
 
 <header>
-<input placeholder="Search..." oninput="setSearch(this.value)" />
+  <input placeholder="Search player..." oninput="setSearch(this.value)">
 </header>
 
 <div id="app">Loading...</div>
-
-<div id="modal" onclick="closeProfile()">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <div id="profile"></div>
-    <button onclick="closeProfile()">Close</button>
-  </div>
-</div>
 
 <script src="app.js"></script>
 
