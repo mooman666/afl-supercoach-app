@@ -1,75 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AFL Fantasy Pro</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AFL Fantasy Pro</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial;
-      background: #0f172a;
-      color: white;
-    }
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    header {
-      position: sticky;
-      top: 0;
-      background: #111827;
-      padding: 10px;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
+<style>
+body {
+  margin:0;
+  font-family: Arial;
+  background:#0f172a;
+  color:white;
+}
 
-    button {
-      padding: 8px 10px;
-      border: none;
-      border-radius: 6px;
-      background: #2563eb;
-      color: white;
-      cursor: pointer;
-    }
+header {
+  position:sticky;
+  top:0;
+  background:#111827;
+  padding:10px;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
 
-    input {
-      padding: 8px;
-      border-radius: 6px;
-      border: none;
-      flex: 1;
-      min-width: 120px;
-    }
+button {
+  padding:8px 10px;
+  border:none;
+  border-radius:6px;
+  background:#2563eb;
+  color:white;
+  cursor:pointer;
+}
 
-    #app {
-      padding: 12px;
-    }
+input {
+  padding:8px;
+  border-radius:6px;
+  border:none;
+  flex:1;
+}
 
-    .card {
-      background: #1f2937;
-      padding: 12px;
-      margin: 8px 0;
-      border-radius: 10px;
-    }
+#app { padding:12px; }
 
-    .elite { border-left: 4px solid #22c55e; }
-    .premium { border-left: 4px solid #3b82f6; }
-    .value { border-left: 4px solid #f59e0b; }
-    .avoid { border-left: 4px solid #ef4444; }
+.card {
+  background:#1f2937;
+  padding:12px;
+  margin:8px 0;
+  border-radius:10px;
+}
 
-    .topbar {
-      padding: 10px;
-      font-size: 13px;
-      opacity: 0.8;
-    }
+.elite { border-left:4px solid #22c55e; }
+.premium { border-left:4px solid #3b82f6; }
+.value { border-left:4px solid #f59e0b; }
+.avoid { border-left:4px solid #ef4444; }
 
-    .insights {
-      background: #111827;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 10px;
-    }
-  </style>
+.insights {
+  background:#111827;
+  padding:10px;
+  border-radius:10px;
+  margin-bottom:10px;
+}
+</style>
 </head>
 
 <body>
@@ -78,10 +70,12 @@
   <button onclick="setView('top')">Top</button>
   <button onclick="setView('value')">Value</button>
   <button onclick="setView('form')">Form</button>
-  <input placeholder="Search player..." oninput="setSearch(this.value)" />
+  <input placeholder="Search..." oninput="setSearch(this.value)" />
 </header>
 
 <div id="app">Loading...</div>
+
+<canvas id="chart" height="120"></canvas>
 
 <script src="app.js"></script>
 
