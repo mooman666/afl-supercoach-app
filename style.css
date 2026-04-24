@@ -1,21 +1,11 @@
-:root { --bg: #0b0f19; --card: #161e2d; --accent: #38bdf8; --text: #f8fafc; }
-body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; }
+/* Modal (The Article Window) */
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; }
+.modal-content { background: #161e2d; padding: 25px; border-radius: 15px; max-width: 500px; width: 90%; color: white; border: 1px solid #38bdf8; position: relative; }
+.close-btn { position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer; color: #38bdf8; }
 
-nav { display: flex; background: var(--card); padding: 5px; gap: 10px; justify-content: center; border-bottom: 1px solid #2d3748; }
-nav button { background: none; border: none; color: #94a3b8; cursor: pointer; padding: 15px; font-weight: bold; font-size: 14px; }
-nav button:focus { color: var(--accent); border-bottom: 2px solid var(--accent); }
+/* Verdict Tags */
+.verdict { font-size: 10px; padding: 3px 6px; border-radius: 4px; font-weight: bold; }
+.buy-tag { background: #00ff8822; color: #00ff88; border: 1px solid #00ff88; }
+.hold-tag { background: #eab30822; color: #eab308; border: 1px solid #eab308; }
 
-.ticker-wrap { background: #1e293b; padding: 12px; overflow: hidden; white-space: nowrap; border-bottom: 1px solid var(--accent); }
-.ticker-wrap span { margin-right: 50px; color: #38bdf8; font-weight: bold; font-size: 13px; }
-
-.controls { padding: 15px; display: flex; gap: 10px; background: #0f172a; }
-input, select { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #2d3748; background: var(--card); color: white; }
-
-.table-container { width: 100%; overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; min-width: 500px; }
-th { background: #1e293b; padding: 12px; text-align: left; color: var(--accent); font-size: 11px; text-transform: uppercase; }
-td { padding: 15px 12px; border-bottom: 1px solid #2d3748; font-size: 14px; }
-
-.badge { padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
-.DEF { background: #2563eb; } .MID { background: #eab308; color: #000; } .RUC { background: #ea580c; } .FWD { background: #dc2626; }
-.val-good { color: #4ade80; font-weight: bold; }
+.insight-btn { background: #38bdf8; border: none; padding: 6px 12px; border-radius: 5px; font-weight: bold; cursor: pointer; }
