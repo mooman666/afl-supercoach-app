@@ -5,40 +5,43 @@ const SHEET_URL =
   "https://opensheet.elk.sh/1ZYNGWyFP74w6ruXFtjLudu8sz6w0Y3KsuOJLm0Ro9fM/Sheet1";
 
 /* =========================
-   LOAD DATA (FIXED POSITION)
+   LOAD DATA
 ========================= */
 async function loadData() {
-  const res = await fetch(SHEET_URL);
-  const data = await res.json();
+  try {
+    const res = await fetch(SHEET_URL);
+    const data = await res.json();
 
-  players = data.map(p => {
-    const values = Object.values(p);
+    players = data.map(p => {
+      const values = Object.values(p);
 
-    return {
-      name: values[1],
-      team: values[2],
-      points: Number(values[3]) || 0,
-      avg: Number(values[4]) || 0,
+      return {
+        name: values[1],
+        team: values[2],
+        points: Number(values[3]) || 0,
+        avg: Number(values[4]) || 0,
+        position: (values[2] || "").toString().toUpperCase()
+      };
+    });
 
-      // 🔥 FIX: try multiple possible sources for position
-      position:
-        (p.Position ||
-         p.position ||
-         values[2] || // fallback if position is in 3rd column
-         "").toString().toUpperCase()
-    };
-  });
-
-  render();
+    render();
+  } catch (err) {
+    document.getElementById("app").innerHTML =
+      "<h3>⚠️ Load failed</h3>";
+    console.log(err);
+  }
 }
 
 /* =========================
-   FILTER HANDLER
+   FILTER FUNCTION (FOR GLOBAL ACCESS)
 ========================= */
 function setFilter(f) {
   filter = f;
   render();
 }
+
+/* 🔥 CRITICAL FIX: expose to browser */
+window.setFilter = setFilter;
 
 /* =========================
    RENDER
@@ -72,4 +75,3 @@ function render() {
    INIT
 ========================= */
 loadData();
-window.setFilter = setFilter;
