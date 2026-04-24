@@ -1,114 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SC ARCHITECT | 2026</title>
-    <style>
-        :root { --primary: #38bdf8; --success: #00ff88; --danger: #ef4444; --warning: #facc15; --bg: #020617; --card: #1e293b; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: var(--bg); color: #f1f5f9; font-family: 'Inter', system-ui, sans-serif; padding-bottom: 90px; }
-
-        /* 🚀 TOP HUD */
-        .hud { background: #0f172a; padding: 15px; border-bottom: 2px solid var(--primary); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1001; }
-        .hud h1 { font-size: 16px; font-weight: 900; letter-spacing: 1px; color: var(--primary); }
-        .live-pulse { height: 8px; width: 8px; background: var(--success); border-radius: 50%; display: inline-block; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
-
-        /* 📋 NAVIGATION */
-        nav { display: flex; background: #0f172a; position: fixed; bottom: 0; width: 100%; z-index: 1000; border-top: 1px solid #334155; padding: 10px; gap: 5px; }
-        nav button { flex: 1; background: transparent; border: none; color: #64748b; font-size: 9px; font-weight: 800; text-transform: uppercase; padding: 12px 0; }
-        nav button.active { color: var(--primary); border-top: 2px solid var(--primary); }
-
-        .page { display: none; padding: 15px; animation: fadeIn 0.2s ease-in; }
-        .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* 📊 THE ARCHITECT CARD */
-        .card { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid #334155; position: relative; }
-        .status-tag { position: absolute; top: 10px; right: 10px; font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 900; }
-        .status-IN { background: #064e3b; color: var(--success); }
-        .status-OUT { background: #450a0a; color: var(--danger); }
-        .status-TEST { background: #451a03; color: var(--warning); }
-
-        .vest-risk { font-size: 10px; color: var(--warning); background: #facc1511; padding: 4px; border-radius: 4px; margin-top: 8px; display: inline-block; }
-
-        /* 🎯 TRADE ANALYSIS */
-        .grade-box { font-size: 48px; font-weight: 900; color: var(--success); text-align: center; margin: 10px 0; }
-        .verdict { font-size: 12px; color: #94a3b8; text-align: center; font-style: italic; }
-    </style>
-</head>
-<body>
-
-<div class="hud">
-    <h1>SC // ARCHITECT</h1>
-    <div><span class="live-pulse"></span> <span style="font-size:10px; font-weight:800;">RD 7 LIVE</span></div>
-</div>
-
-<div id="pageMarket" class="page active">
-    <h3 style="margin-bottom:15px; font-size:14px; color:var(--primary);">INTEL TERMINAL</h3>
-    <div id="marketList"></div>
-</div>
-
-<div id="pageGrader" class="page">
-    <h3 style="margin-bottom:15px;">TRADE GRADER</h3>
-    <div class="card">
-        <label style="font-size:10px; color:#94a3b8;">OUT (PEAKED ASSET)</label>
-        <select id="selOut" onchange="gradeTrade()" style="width:100%; padding:12px; background:#0f172a; color:#fff; border:1px solid var(--primary); border-radius:8px; margin:5px 0;"></select>
-        <div style="height:10px;"></div>
-        <label style="font-size:10px; color:#94a3b8;">IN (UPGRADE TARGET)</label>
-        <select id="selIn" onchange="gradeTrade()" style="width:100%; padding:12px; background:#0f172a; color:#fff; border:1px solid var(--primary); border-radius:8px; margin:5px 0;"></select>
-    </div>
-    <div class="card" style="text-align:center;">
-        <div style="font-size:10px; color:#94a3b8;">TRADE GRADE</div>
-        <div id="tradeGrade" class="grade-box">-</div>
-        <div id="tradeVerdict" class="verdict">Select players to analyze the move.</div>
-        <div id="tradeCash" style="font-size:20px; font-weight:800; color:var(--success); margin-top:10px;">$0</div>
-    </div>
-</div>
-
-<div id="pageInjury" class="page">
-    <h3 style="margin-bottom:15px;">INJURY INTELLIGENCE</h3>
-    <div id="injuryList"></div>
-</div>
-
-<nav>
-    <button onclick="showPage('pageMarket')" class="active">INTEL</button>
-    <button onclick="showPage('pageGrader')">GRADER</button>
-    <button onclick="showPage('pageInjury')">INJURY</button>
-</nav>
-
-<script src="players.js"></script>
-<script>
-    function showPage(id) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        event.currentTarget.classList.add('active');
-    }
-
-    function init() {
-        if (typeof playerDatabase === 'undefined') return;
-        
-        // Market List
-        document.getElementById('marketList').innerHTML = playerDatabase.map(p => `
-            <div class="card">
-                <span class="status-tag status-${p.status}">${p.status}</span>
-                <div style="width:80%;">
-                    <strong style="font-size:15px;">${p.name}</strong><br>
-                    <small style="color:#94a3b8;">${p.team} // ${p.pos}</small>
-                </div>
-                <div style="display:flex; justify-content:space-between; margin-top:10px; border-top:1px solid #334155; padding-top:8px;">
-                    <div><span style="font-size:9px; color:#94a3b8;">PRICE</span><br><strong>$${p.price.toLocaleString()}</strong></div>
-                    <div style="text-align:center;"><span style="font-size:9px; color:#94a3b8;">B.E.</span><br><strong style="color:${p.be < 50 ? 'var(--success)' : 'var(--danger)'}">${p.be}</strong></div>
-                    <div style="text-align:right;"><span style="font-size:9px; color:#94a3b8;">OWN%</span><br><strong>${p.own}</strong></div>
-                </div>
-                ${p.vestRisk ? `<div class="vest-risk">⚠️ VEST RISK: ${p.vestRisk}</div>` : ''}
+function init() {
+    if (typeof playerDatabase === 'undefined') return;
+    
+    // Market List Fix
+    document.getElementById('marketList').innerHTML = playerDatabase.map(p => `
+        <div class="card">
+            <span class="status-tag status-${p.status || 'OK'}">${p.status || 'ACTIVE'}</span>
+            <div style="width:80%;">
+                <strong style="font-size:15px;">${p.name}</strong><br>
+                <small style="color:#94a3b8;">${p.team} // ${p.pos}</small>
             </div>
-        `).join('');
+            <div style="display:flex; justify-content:space-between; margin-top:10px; border-top:1px solid #334155; padding-top:8px;">
+                <div><span style="font-size:9px; color:#94a3b8;">PRICE</span><br><strong>$${(p.price || 0).toLocaleString()}</strong></div>
+                <div style="text-align:center;"><span style="font-size:9px; color:#94a3b8;">B.E.</span><br><strong style="color:${p.be < 50 ? 'var(--success)' : 'var(--danger)'}">${p.be || 0}</strong></div>
+                <div style="text-align:right;"><span style="font-size:9px; color:#94a3b8;">OWN%</span><br><strong>${p.own || '0%'}</strong></div>
+            </div>
+            ${p.vestRisk ? `<div class="vest-risk">⚠️ VEST RISK: ${p.vestRisk}</div>` : ''}
+        </div>
+    `).join('');
 
-        // Injury List
-        document.getElementById('injuryList').innerHTML = injuries.map(i => `
+    // Injury List Fix (Added check for empty data)
+    const injuryContainer = document.getElementById('injuryList');
+    if (typeof injuries !== 'undefined' && injuries.length > 0) {
+        injuryContainer.innerHTML = injuries.map(i => `
             <div class="card" style="border-left: 4px solid var(--danger);">
                 <div style="display:flex; justify-content:space-between;">
                     <strong>${i.name} (${i.team})</strong>
@@ -117,40 +30,12 @@
                 <div style="font-size:12px; color:#94a3b8; margin-top:5px;">Injury: ${i.injury}</div>
             </div>
         `).join('');
-
-        // Fill Grader
-        const opts = playerDatabase.sort((a,b)=>a.name.localeCompare(b.name)).map(p => `<option value="${p.price}">${p.name} ($${p.price.toLocaleString()})</option>`).join('');
-        document.getElementById('selOut').innerHTML = `<option value="0">Select Sell</option>` + opts;
-        document.getElementById('selIn').innerHTML = `<option value="0">Select Buy</option>` + opts;
+    } else {
+        injuryContainer.innerHTML = '<div class="card" style="text-align:center; color:#94a3b8;">No current critical injury alerts.</div>';
     }
 
-    function gradeTrade() {
-        const outVal = parseInt(document.getElementById('selOut').value);
-        const inVal = parseInt(document.getElementById('selIn').value);
-        const diff = outVal - inVal;
-        const grade = document.getElementById('tradeGrade');
-        const verdict = document.getElementById('tradeVerdict');
-        const cash = document.getElementById('tradeCash');
-
-        cash.innerText = (diff >= 0 ? "+" : "") + "$" + diff.toLocaleString();
-        cash.style.color = diff >= 0 ? "var(--success)" : "var(--danger)";
-
-        if (outVal === 0 || inVal === 0) return;
-
-        // Trade Logic Engine
-        if (diff > 400000) {
-            grade.innerText = "A+"; grade.style.color = "var(--success)";
-            verdict.innerText = "The 'Anderson' Special. Massive bank generation.";
-        } else if (diff < -200000) {
-            grade.innerText = "B-"; grade.style.color = "var(--warning)";
-            verdict.innerText = "Aggressive upgrade. Hope you have the bank.";
-        } else {
-            grade.innerText = "A"; grade.style.color = "var(--primary)";
-            verdict.innerText = "Balanced upgrade cadence. Solid management.";
-        }
-    }
-
-    window.onload = init;
-</script>
-</body>
-</html>
+    // Grader Dropdown Fix
+    const opts = playerDatabase.sort((a,b)=>a.name.localeCompare(b.name)).map(p => `<option value="${p.price}">${p.name} ($${(p.price || 0).toLocaleString()})</option>`).join('');
+    document.getElementById('selOut').innerHTML = `<option value="0">Select Sell</option>` + opts;
+    document.getElementById('selIn').innerHTML = `<option value="0">Select Buy</option>` + opts;
+}
