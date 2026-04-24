@@ -1,18 +1,15 @@
-// REPLACE your current init() with this exact block
-function init() {
-    const list = document.getElementById('marketList');
-    list.innerHTML = playerDatabase.map(p => `
-        <div class="card">
-            <span class="status-tag status-${p.status || 'IN'}">${p.status || 'IN'}</span>
-            <div style="width:80%;">
-                <strong>${p.name}</strong><br>
-                <small>${p.team} // ${p.pos}</small>
-            </div>
-            <div class="stat-row" style="display:flex; justify-content:space-between; margin-top:10px;">
-                <div><small>PRICE</small><br><strong>$${(p.price || 0).toLocaleString()}</strong></div>
-                <div><small>B.E.</small><br><strong style="color:${p.be < 50 ? '#00ff88' : '#ef4444'}">${p.be}</strong></div>
-                <div><small>OWN%</small><br><strong>${p.own}</strong></div>
-            </div>
-        </div>
-    `).join('');
-}
+<!DOCTYPE html>
+<html>
+<head>
+    </head>
+<body>
+    <script src="players.js"></script>
+    <script>
+        // YOUR CODE MUST BE INSIDE THESE SCRIPT TAGS
+        function init() {
+            // ... the logic ...
+        }
+        window.onload = init;
+    </script>
+</body>
+</html>
