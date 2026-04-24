@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SuperCoach Analyst</title>
+    <title>SuperCoach Pro Analyst</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
-        <h1>SuperCoach Player Analyst</h1>
+        <h1>SuperCoach Pro Analyst</h1>
         <div class="controls">
-            <input type="text" id="playerSearch" placeholder="Search name or team...">
+            <input type="text" id="playerSearch" placeholder="Search Player...">
             <select id="posFilter">
                 <option value="ALL">All Positions</option>
                 <option value="DEF">Defense</option>
@@ -18,24 +18,33 @@
                 <option value="RUC">Ruck</option>
                 <option value="FWD">Forward</option>
             </select>
+            <select id="teamFilter">
+                <option value="ALL">All Teams</option>
+                <option value="Adelaide">Crows</option>
+                <option value="Magpies">Magpies</option>
+                <option value="Demons">Demons</option>
+                <option value="Swans">Swans</option>
+                <option value="Kangaroos">Kangaroos</option>
+                </select>
         </div>
     </header>
 
-    <main>
-        <table id="playerTable">
+    <div class="table-container">
+        <table>
             <thead>
                 <tr>
-                    <th>Player</th>
-                    <th>Team</th>
-                    <th>Pos</th>
-                    <th>Price</th>
-                    <th>Avg</th>
-                    <th>Value</th>
+                    <th onclick="handleSort('name')">Player</th>
+                    <th onclick="handleSort('team')">Team</th>
+                    <th onclick="handleSort('pos')">Pos</th>
+                    <th onclick="handleSort('price')">Price</th>
+                    <th onclick="handleSort('avg')">Avg</th>
+                    <th onclick="handleSort('value')">Value</th>
+                    <th onclick="handleSort('bye')">Bye</th>
                 </tr>
             </thead>
             <tbody id="playerBody"></tbody>
         </table>
-    </main>
+    </div>
 
     <script src="players.js"></script>
     <script src="app.js"></script>
