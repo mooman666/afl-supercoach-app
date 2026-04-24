@@ -2,70 +2,123 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SC Terminal | Elite 2026</title>
     <style>
-        /* 🌑 FORCED DARK THEME */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #0b0f19; color: #f8fafc; font-family: sans-serif; }
+        body { background: #0b111b; color: #f8fafc; font-family: -apple-system, sans-serif; padding-bottom: 80px; }
         
-        .ticker-wrap { background: #1e293b; color: #38bdf8; padding: 12px; font-weight: bold; border-bottom: 2px solid #38bdf8; }
-        nav { display: flex; background: #161e2d; padding: 8px; gap: 8px; }
-        nav button { flex: 1; background: #1e293b; border: 1px solid #38bdf8; color: #38bdf8; padding: 12px; border-radius: 6px; font-weight: bold; }
+        /* 🚨 PRO HEADER & TICKER */
+        .header { background: #161e2d; padding: 15px; border-bottom: 2px solid #38bdf8; text-align: center; }
+        .ticker { background: #38bdf8; color: #000; padding: 8px; font-weight: 900; font-size: 11px; text-transform: uppercase; overflow: hidden; white-space: nowrap; }
 
-        .table-container { padding: 10px; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; background: #161e2d; border-radius: 8px; }
-        th { background: #1e293b; padding: 12px; text-align: left; color: #94a3b8; font-size: 10px; text-transform: uppercase; }
-        td { padding: 12px; border-bottom: 1px solid #2d3748; font-size: 13px; }
+        /* 📱 NAVIGATION */
+        nav { display: flex; background: #161e2d; padding: 10px; gap: 8px; position: fixed; bottom: 0; width: 100%; z-index: 1000; border-top: 1px solid #2d3748; }
+        nav button { flex: 1; background: #1e293b; border: 1px solid #38bdf8; color: #38bdf8; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 10px; }
+        nav button.active { background: #38bdf8; color: #000; }
 
-        .be-tag { padding: 4px 8px; border-radius: 4px; font-weight: bold; }
-        .buy { background: #00ff8822; color: #00ff88; border: 1px solid #00ff88; }
-        .hold { background: #eab30822; color: #eab308; border: 1px solid #eab308; }
+        /* 📦 PAGES */
+        .page { display: none; padding: 15px; animation: fadeIn 0.3s ease; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* 📊 DATA CARDS */
+        .card { background: #161e2d; border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #2d3748; }
+        .card h3 { color: #38bdf8; margin-bottom: 10px; font-size: 16px; border-bottom: 1px solid #2d3748; padding-bottom: 5px; }
+
+        /* 🟢 FIXTURE HEATMAP */
+        .fix-row { display: flex; gap: 5px; margin-top: 5px; }
+        .fix-chip { font-size: 10px; padding: 3px 6px; border-radius: 4px; background: #2d3748; }
+        .easy { background: rgba(0, 255, 136, 0.2); color: #00ff88; border: 1px solid #00ff88; }
+        .hard { background: rgba(255, 77, 77, 0.2); color: #ff4d4d; border: 1px solid #ff4d4d; }
+
+        /* 🎖️ CAPTAINCY MATRIX */
+        .matrix-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #2d3748; }
+        .score-pill { background: #38bdf8; color: #000; padding: 2px 8px; border-radius: 20px; font-weight: 800; font-size: 12px; }
+
+        /* 💹 TRADE SIMULATOR */
+        .sim-input { background: #0b111b; border: 1px solid #38bdf8; color: white; padding: 10px; width: 100%; border-radius: 8px; margin: 10px 0; }
+        .result-box { background: #00ff8811; border: 1px solid #00ff88; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold; color: #00ff88; }
     </style>
 </head>
 <body>
 
-<div class="ticker-wrap" id="newsTicker">WAITING FOR DATA...</div>
+<div class="header"><h1>SC TERMINAL PRO</h1></div>
+<div class="ticker" id="mainTicker">SYNCING ROUND 7 DATA...</div>
 
-<nav>
-    <button onclick="document.getElementById('dataTab').style.display='block'">📊 TERMINAL</button>
-    <button onclick="alert('Insights Loading...')">✍️ INSIGHTS</button>
-</nav>
-
-<div id="dataTab" class="table-container">
-    <table>
-        <thead>
-            <tr>
-                <th>Player</th>
-                <th>Price</th>
-                <th>BE</th>
-                <th>Run</th>
-            </tr>
-        </thead>
-        <tbody id="playerBody">
-            </tbody>
-    </table>
+<div id="pageData" class="page active">
+    <h3>📈 Market Intelligence</h3>
+    <div id="playerList"></div>
 </div>
 
-<script src="players.js"></script>
+<div id="pageCaptain" class="page">
+    <h3>👑 Captaincy Matrix (R7)</h3>
+    <div class="card">
+        <div class="matrix-row"><span>1. Nick Daicos (VC)</span><span class="score-pill">PROJ: 138</span></div>
+        <div class="matrix-row"><span>2. Max Gawn (VC)</span><span class="score-pill">PROJ: 129</span></div>
+        <div class="matrix-row"><span>3. Harry Sheezel (C)</span><span class="score-pill">PROJ: 134</span></div>
+        <p style="font-size: 11px; color: #94a3b8; margin-top: 10px;">*Based on opponent defensive pressure ratings.</p>
+    </div>
+</div>
+
+<div id="pageTrade" class="page">
+    <h3>🛠 Upgrade Simulator</h3>
+    <div class="card">
+        <label>Player OUT (Selling):</label>
+        <input type="number" id="valOut" class="sim-input" placeholder="Price e.g. 250000">
+        <label>Player IN (Buying):</label>
+        <input type="number" id="valIn" class="sim-input" placeholder="Price e.g. 580000">
+        <div id="simResult" class="result-box">Net Change: $0</div>
+    </div>
+</div>
+
+<nav>
+    <button onclick="showPage('pageData')" id="btnData" class="active">MARKET</button>
+    <button onclick="showPage('pageCaptain')" id="btnCaptain">CAPTAIN</button>
+    <button onclick="showPage('pageTrade')" id="btnTrade">TRADE</button>
+</nav>
+
+<script src="players.js?v=MEGA"></script>
 <script>
-    function render() {
-        const body = document.getElementById('playerBody');
-        if (typeof playerDatabase !== 'undefined') {
-            body.innerHTML = playerDatabase.map(p => `
-                <tr>
-                    <td><strong>${p.name}</strong><br><small>${p.team}</small></td>
-                    <td>$${p.price.toLocaleString()}</td>
-                    <td><span class="be-tag ${p.be < 0 ? 'buy' : 'hold'}">${p.be}</span></td>
-                    <td>${p.fixture ? p.fixture.join(' ') : 'TBD'}</td>
-                </tr>
-            `).join('');
-            document.getElementById('newsTicker').innerHTML = newsUpdates.join(' | ');
-        } else {
-            body.innerHTML = "<tr><td colspan='4' style='text-align:center; padding:50px;'>Error: players.js not found. Check your file name in GitHub!</td></tr>";
-        }
+    function showPage(id) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.querySelector(`button[onclick="showPage('${id}')"]`).classList.add('active');
     }
-    window.onload = render;
+
+    function renderApp() {
+        if (typeof playerDatabase === 'undefined') return;
+        
+        const list = document.getElementById('playerList');
+        list.innerHTML = playerDatabase.map(p => `
+            <div class="card">
+                <div style="display:flex; justify-content:space-between;">
+                    <strong>${p.name}</strong>
+                    <span style="color:#00ff88; font-weight:bold;">$${p.price.toLocaleString()}</span>
+                </div>
+                <small>${p.team} • BE: ${p.be}</small>
+                <div class="fix-row">
+                    ${p.fixture.map(f => `<span class="fix-chip ${f.includes('WCE') || f.includes('ADE') ? 'easy' : ''}">${f}</span>`).join('')}
+                </div>
+            </div>
+        `).join('');
+
+        document.getElementById('mainTicker').innerHTML = newsUpdates.join(' • ');
+    }
+
+    // Live Simulator Logic
+    document.addEventListener('input', () => {
+        const outVal = document.getElementById('valOut').value || 0;
+        const inVal = document.getElementById('valIn').value || 0;
+        const diff = outVal - inVal;
+        const res = document.getElementById('simResult');
+        res.innerText = `Bank Impact: $${diff.toLocaleString()}`;
+        res.style.color = diff >= 0 ? '#00ff88' : '#ff4d4d';
+        res.style.borderColor = diff >= 0 ? '#00ff88' : '#ff4d4d';
+    });
+
+    window.onload = renderApp;
 </script>
 </body>
 </html>
