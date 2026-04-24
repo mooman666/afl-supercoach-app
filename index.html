@@ -3,106 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SC ARCHITECT | 2026</title>
+    <title>ARCHITECT v11 // RD 7 TACTICAL</title>
     <style>
-        :root { --primary: #38bdf8; --success: #00ff88; --danger: #ef4444; --warning: #facc15; --bg: #020617; --card: #1e293b; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: var(--bg); color: #f1f5f9; font-family: sans-serif; padding-bottom: 80px; line-height: 1.4; }
+        :root { --primary: #38bdf8; --success: #00ff88; --danger: #ef4444; --warning: #facc15; --bg: #020617; --card: #1e293b; --accent: #1e1b4b; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+        body { background: var(--bg); color: #f1f5f9; padding-bottom: 90px; }
 
-        .hud { background: #0f172a; padding: 15px; border-bottom: 2px solid var(--primary); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
-        .hud h1 { font-size: 14px; color: var(--primary); letter-spacing: 1px; }
+        /* HEADER & PULSE */
+        .header { background: #0f172a; padding: 20px; border-bottom: 2px solid var(--primary); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .header h1 { font-size: 16px; letter-spacing: 2px; font-weight: 900; color: var(--primary); }
+        .pulse-container { display: flex; align-items: center; font-size: 10px; font-weight: 800; color: #94a3b8; }
+        .pulse { height: 8px; width: 8px; background: var(--success); border-radius: 50%; display: inline-block; margin-right: 6px; box-shadow: 0 0 8px var(--success); animation: blink 1.5s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
 
-        nav { position: fixed; bottom: 0; width: 100%; display: flex; background: #0f172a; border-top: 1px solid #334155; padding: 10px; z-index: 100; }
-        nav button { flex: 1; background: none; border: none; color: #64748b; font-weight: bold; font-size: 11px; padding: 10px 0; }
-        nav button.active { color: var(--primary); }
+        /* NAVIGATION */
+        nav { position: fixed; bottom: 0; width: 100%; display: flex; background: #0f172a; border-top: 1px solid #334155; padding: 12px; z-index: 1000; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); }
+        nav button { flex: 1; background: none; border: none; color: #64748b; font-weight: 800; font-size: 12px; cursor: pointer; transition: 0.3s; }
+        nav button.active { color: var(--primary); transform: translateY(-2px); }
 
-        .page { display: none; padding: 15px; }
+        /* CARDS & UI */
+        .page { display: none; padding: 20px; animation: fadeIn 0.4s ease; }
         .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .card { background: var(--card); border-radius: 10px; padding: 15px; margin-bottom: 12px; border: 1px solid #334155; position: relative; }
-        .tag { position: absolute; top: 12px; right: 12px; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; }
+        .card { background: var(--card); border-radius: 12px; padding: 16px; margin-bottom: 15px; border: 1px solid #334155; position: relative; overflow: hidden; }
+        .card::before { content: ""; position: absolute; left: 0; top: 0; height: 100%; width: 4px; background: var(--primary); }
+        .card.risk-high::before { background: var(--danger); }
+        .card.grade-aplus { border: 1px solid var(--success); background: linear-gradient(145deg, #1e293b, #064e3b); }
+
+        .tag { position: absolute; top: 12px; right: 12px; font-size: 10px; font-weight: 900; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; }
         .tag-IN { background: #064e3b; color: var(--success); }
         .tag-OUT { background: #450a0a; color: var(--danger); }
         .tag-TEST { background: #451a03; color: var(--warning); }
-        
-        .inj-card { border-left: 4px solid var(--danger); }
-        small { color: #94a3b8; font-size: 11px; }
+
+        .stat-row { display: flex; justify-content: space-between; margin-top: 15px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; }
+        .stat-item { text-align: center; }
+        .stat-label { font-size: 9px; color: #94a3b8; font-weight: 700; margin-bottom: 4px; }
+        .stat-val { font-size: 14px; font-weight: 800; }
+
+        .grade-badge { font-size: 11px; background: var(--primary); color: #000; padding: 2px 6px; border-radius: 4px; font-weight: 900; margin-left: 10px; }
     </style>
 </head>
 <body>
 
-<div class="hud">
-    <h1>SC // ARCHITECT</h1>
-    <div style="font-size:10px;"><span style="color:var(--success)">●</span> RD 7 LIVE</div>
+<div class="header">
+    <h1>ARCHITECT.v11</h1>
+    <div class="pulse-container"><span class="pulse"></span>RD7_STABLE_SIGNAL</div>
 </div>
 
-<div id="pageIntel" class="page active">
-    <h2 style="font-size:16px; color:var(--primary); margin-bottom:15px;">INTEL TERMINAL</h2>
+<div id="pIntel" class="page active">
+    <h2 style="font-size:12px; color:#94a3b8; letter-spacing:3px; margin-bottom:20px;">MARKET ANALYSIS</h2>
     <div id="playerList"></div>
 </div>
 
-<div id="pageInjury" class="page">
-    <h2 style="font-size:16px; color:var(--danger); margin-bottom:15px;">INJURY INTELLIGENCE</h2>
+<div id="pInjury" class="page">
+    <h2 style="font-size:12px; color:var(--danger); letter-spacing:3px; margin-bottom:20px;">INJURY INTELLIGENCE</h2>
     <div id="injuryList"></div>
 </div>
 
 <nav>
-    <button id="btnIntel" class="active" onclick="showTab('pageIntel')">INTEL</button>
-    <button id="btnInjury" onclick="showTab('pageInjury')">INJURY</button>
+    <button id="bIntel" class="active" onclick="showTab('pIntel')">TERMINAL</button>
+    <button id="bInjury" onclick="showTab('pInjury')">INJURIES</button>
 </nav>
 
 <script>
-    // 📊 DATA PACK: Hardcoded so the page CANNOT be blank
-    const players = [
-        { name: "Angus Anderson", team: "Magpies", price: 113500, be: -75, status: "IN" },
-        { name: "Harry Sheezel", team: "Kangaroos", price: 645000, be: 112, status: "TEST" },
-        { name: "Isaac Heeney", team: "Swans", price: 632700, be: 24, status: "OUT" },
-        { name: "Nasiah Wanganeen-Milera", team: "Saints", price: 588300, be: 94, status: "IN" }
+    // 📊 RD7 LIVE TACTICAL DATA
+    const db = [
+        { name: "Angus Anderson", team: "Magpies", price: 113500, be: -75, status: "IN", grade: "A+", risk: "LOW" },
+        { name: "Isaac Heeney", team: "Swans", price: 632700, be: 24, status: "OUT", grade: "SELL", risk: "HIGH" },
+        { name: "Harry Sheezel", team: "Kangaroos", price: 645000, be: 112, status: "TEST", grade: "B", risk: "MED" },
+        { name: "Nasiah Wanganeen-Milera", team: "Saints", price: 588300, be: 94, status: "IN", grade: "A", risk: "LOW" },
+        { name: "Elijah Tsatas", team: "Bombers", price: 223400, be: -49, status: "IN", grade: "A", risk: "MED" }
     ];
 
     const injuries = [
-        { name: "Isaac Heeney", type: "Calf", return: "R7 OUT" },
-        { name: "Harry Sheezel", type: "Finger", return: "TESTING" },
-        { name: "Mitch Hinge", type: "Hamstring", return: "2-4 Weeks" }
+        { name: "Isaac Heeney", team: "SYD", type: "Calf Tightness", return: "R7 OUT", impact: "High CBA Opportunity" },
+        { name: "Harry Sheezel", team: "NM", type: "Finger", return: "TEST", impact: "Role Stability Warning" },
+        { name: "Mitch Hinge", team: "ADEL", type: "Hamstring", return: "2-4 WKS", impact: "Defensive Structural Hit" },
+        { name: "Jarrod Berry", team: "BL", type: "Calf", return: "3-4 WKS", impact: "Midfield Depth Tested" }
     ];
 
     function showTab(id) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        if(id === 'pageIntel') document.getElementById('btnIntel').classList.add('active');
-        if(id === 'pageInjury') document.getElementById('btnInjury').classList.add('active');
+        document.getElementById('b' + id.substring(1)).classList.add('active');
     }
 
-    function renderApp() {
-        const pContainer = document.getElementById('playerList');
-        const iContainer = document.getElementById('injuryList');
-
-        // Render Players
-        pContainer.innerHTML = players.map(p => `
-            <div class="card">
+    function boot() {
+        // Player Terminal Render
+        document.getElementById('playerList').innerHTML = db.map(p => `
+            <div class="card ${p.grade === 'A+' ? 'grade-aplus' : ''} ${p.risk === 'HIGH' ? 'risk-high' : ''}">
                 <span class="tag tag-${p.status}">${p.status}</span>
-                <strong>${p.name}</strong><br>
-                <small>${p.team}</small>
-                <div style="display:flex; justify-content:space-between; margin-top:10px;">
-                    <span><small>PRICE</small><br><strong>$${p.price.toLocaleString()}</strong></span>
-                    <span style="text-align:right"><small>B.E.</small><br><strong style="color:${p.be < 50 ? 'var(--success)' : 'var(--danger)'}">${p.be}</strong></span>
+                <div style="margin-bottom:4px;">
+                    <strong style="font-size:18px;">${p.name}</strong>
+                    <span class="grade-badge">${p.grade}</span>
+                </div>
+                <small style="text-transform:uppercase; font-weight:700;">${p.team} // RD7 TARGET</small>
+                
+                <div class="stat-row">
+                    <div class="stat-item"><div class="stat-label">PRICE</div><div class="stat-val">$${p.price.toLocaleString()}</div></div>
+                    <div class="stat-item"><div class="stat-label">B.E.</div><div class="stat-val" style="color:${p.be < 50 ? 'var(--success)' : 'var(--danger)'}">${p.be}</div></div>
+                    <div class="stat-item"><div class="stat-label">RISK</div><div class="stat-val" style="color:${p.risk === 'LOW' ? 'var(--success)' : 'var(--warning)'}">${p.risk}</div></div>
                 </div>
             </div>
         `).join('');
 
-        // Render Injuries
-        iContainer.innerHTML = injuries.map(i => `
-            <div class="card inj-card">
-                <span style="float:right; color:var(--danger); font-weight:bold; font-size:10px;">${i.return}</span>
-                <strong>${i.name}</strong><br>
-                <small>Issue: ${i.type}</small>
+        // Injury Intel Render
+        document.getElementById('injuryList').innerHTML = injuries.map(i => `
+            <div class="card risk-high">
+                <span style="float:right; font-size:12px; color:var(--danger); font-weight:900;">${i.return}</span>
+                <strong style="font-size:16px;">${i.name} (${i.team})</strong><br>
+                <small style="color:#ef4444; font-weight:bold;">${i.type}</small>
+                <div style="margin-top:12px; padding:8px; background:rgba(0,0,0,0.3); border-radius:6px; font-size:11px;">
+                    <span style="color:var(--primary); font-weight:900;">TACTICAL IMPACT:</span> ${i.impact}
+                </div>
             </div>
         `).join('');
     }
 
-    // Run immediately when page loads
-    window.onload = renderApp;
+    window.onload = boot;
 </script>
 
 </body>
