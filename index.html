@@ -1,41 +1,18 @@
+// REPLACE your current init() with this exact block
 function init() {
-    if (typeof playerDatabase === 'undefined') return;
-    
-    // Market List Fix
-    document.getElementById('marketList').innerHTML = playerDatabase.map(p => `
+    const list = document.getElementById('marketList');
+    list.innerHTML = playerDatabase.map(p => `
         <div class="card">
-            <span class="status-tag status-${p.status || 'OK'}">${p.status || 'ACTIVE'}</span>
+            <span class="status-tag status-${p.status || 'IN'}">${p.status || 'IN'}</span>
             <div style="width:80%;">
-                <strong style="font-size:15px;">${p.name}</strong><br>
-                <small style="color:#94a3b8;">${p.team} // ${p.pos}</small>
+                <strong>${p.name}</strong><br>
+                <small>${p.team} // ${p.pos}</small>
             </div>
-            <div style="display:flex; justify-content:space-between; margin-top:10px; border-top:1px solid #334155; padding-top:8px;">
-                <div><span style="font-size:9px; color:#94a3b8;">PRICE</span><br><strong>$${(p.price || 0).toLocaleString()}</strong></div>
-                <div style="text-align:center;"><span style="font-size:9px; color:#94a3b8;">B.E.</span><br><strong style="color:${p.be < 50 ? 'var(--success)' : 'var(--danger)'}">${p.be || 0}</strong></div>
-                <div style="text-align:right;"><span style="font-size:9px; color:#94a3b8;">OWN%</span><br><strong>${p.own || '0%'}</strong></div>
+            <div class="stat-row" style="display:flex; justify-content:space-between; margin-top:10px;">
+                <div><small>PRICE</small><br><strong>$${(p.price || 0).toLocaleString()}</strong></div>
+                <div><small>B.E.</small><br><strong style="color:${p.be < 50 ? '#00ff88' : '#ef4444'}">${p.be}</strong></div>
+                <div><small>OWN%</small><br><strong>${p.own}</strong></div>
             </div>
-            ${p.vestRisk ? `<div class="vest-risk">⚠️ VEST RISK: ${p.vestRisk}</div>` : ''}
         </div>
     `).join('');
-
-    // Injury List Fix (Added check for empty data)
-    const injuryContainer = document.getElementById('injuryList');
-    if (typeof injuries !== 'undefined' && injuries.length > 0) {
-        injuryContainer.innerHTML = injuries.map(i => `
-            <div class="card" style="border-left: 4px solid var(--danger);">
-                <div style="display:flex; justify-content:space-between;">
-                    <strong>${i.name} (${i.team})</strong>
-                    <span style="color:var(--danger); font-weight:800;">${i.return}</span>
-                </div>
-                <div style="font-size:12px; color:#94a3b8; margin-top:5px;">Injury: ${i.injury}</div>
-            </div>
-        `).join('');
-    } else {
-        injuryContainer.innerHTML = '<div class="card" style="text-align:center; color:#94a3b8;">No current critical injury alerts.</div>';
-    }
-
-    // Grader Dropdown Fix
-    const opts = playerDatabase.sort((a,b)=>a.name.localeCompare(b.name)).map(p => `<option value="${p.price}">${p.name} ($${(p.price || 0).toLocaleString()})</option>`).join('');
-    document.getElementById('selOut').innerHTML = `<option value="0">Select Sell</option>` + opts;
-    document.getElementById('selIn').innerHTML = `<option value="0">Select Buy</option>` + opts;
 }
