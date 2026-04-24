@@ -1,25 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>AFL Dashboard</title>
-  <style>
-    body { font-family: Arial; background:#0f172a; color:white; }
-    .card { background:#1f2937; padding:10px; margin:10px; border-radius:8px; }
-    button { margin:5px; padding:8px; }
-    input { padding:8px; margin:10px; }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AFL Fantasy</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
 
-<h2>AFL Yearly Stats</h2>
+<header>
+  <input id="search" placeholder="Search player..." />
+</header>
 
-<input placeholder="Search player..." oninput="setSearch(this.value)" />
+<div id="app">Loading...</div>
 
-<button onclick="setMode('all')">ALL</button>
+<canvas id="chart"></canvas>
 
-<div id="app"></div>
-
+<script src="players.js"></script>
 <script src="app.js"></script>
 
 </body>
