@@ -10,15 +10,12 @@
 body {
     background-color: var(--bg);
     color: var(--text);
-    font-family: 'Inter', -apple-system, sans-serif;
+    font-family: 'Inter', sans-serif;
     margin: 0;
     padding: 20px;
 }
 
-header {
-    text-align: center;
-    padding: 20px 0;
-}
+header { text-align: center; padding: 20px 0; }
 
 .controls {
     display: flex;
@@ -34,7 +31,6 @@ input, select {
     border: 1px solid #334155;
     background: var(--card);
     color: white;
-    font-size: 14px;
 }
 
 .table-container {
@@ -46,11 +42,7 @@ input, select {
     border: 1px solid #334155;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: var(--card);
-}
+table { width: 100%; border-collapse: collapse; background: var(--card); }
 
 thead {
     position: sticky;
@@ -69,12 +61,7 @@ th {
     border-bottom: 2px solid #334155;
 }
 
-th:hover { background: #334155; }
-
-td {
-    padding: 15px;
-    border-bottom: 1px solid #334155;
-}
+td { padding: 15px; border-bottom: 1px solid #334155; }
 
 .badge {
     padding: 4px 10px;
@@ -90,4 +77,3 @@ td {
 
 .val-good { color: var(--green); font-weight: bold; }
 .val-bad { color: var(--red); font-weight: bold; }
-.val-neutral { color: #94a3b8; }
