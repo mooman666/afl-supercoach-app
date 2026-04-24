@@ -1,47 +1,68 @@
 let players = [];
 let view = "rankings";
 
-/* LOAD DATA */
+/* =========================
+   LOAD DATA
+========================= */
 async function loadData() {
-  const res = await fetch(
-    "https://opensheet.elk.sh/1ZYNGWyFP74w6ruXFtjLudu8sz6w0Y3KsuOJLm0Ro9fM/Sheet1"
-  );
+  try {
+    const res = await fetch(
+      "https://opensheet.elk.sh/1ZYNGWyFP74w6ruXFtjLudu8sz6w0Y3KsuOJLm0Ro9fM/Sheet1"
+    );
 
-  const data = await res.json();
+    const data = await res.json();
 
-  players = data.map(p => ({
-    rank: Number(p["Season rank"] || p["Rank"]),
-    name: p["Name"],
-    team: p["Team"],
-    points: Number(p["Total yearly points"] || p["Points"]),
-    avg: Number(p["Yearly average"] || p["Avg"])
-  }));
+    // SAFE PARSING (no header dependency)
+    players = data.map(p => {
+      const values = Object.values(p);
 
-  render();
+      return {
+        name: values[1],
+        team: values[2],
+        points: Number(values[3]) || 0,
+        avg: Number(values[4]) || 0
+      };
+    });
+
+    render();
+  } catch (err) {
+    document.getElementById("app").innerHTML =
+      "<h3>⚠️ Failed to load data</h3>";
+    console.log(err);
+  }
 }
 
-/* NAV */
+/* =========================
+   NAVIGATION
+========================= */
 function setView(v) {
   view = v;
   render();
 }
 
-/* RENDER */
+/* =========================
+   RENDER CONTROLLER
+========================= */
 function render() {
-  document.getElementById("app").innerHTML =
-    view === "rankings" ? renderRankings() : renderAnalytics();
+  if (view === "rankings") {
+    document.getElementById("app").innerHTML = renderRankings();
+  } else {
+    document.getElementById("app").innerHTML = renderAnalytics();
+  }
 }
 
-/* RANKINGS */
+/* =========================
+   RANKINGS (FIXED)
+========================= */
 function renderRankings() {
   let sorted = [...players].sort((a, b) => b.avg - a.avg);
 
   return `
     <h2>🏉 AFL Rankings</h2>
 
-    ${sorted.map(p => `
+    ${sorted.map((p, i) => `
       <div class="card">
-        <b>#${p.rank} ${p.name}</b><br>
+        <b>#${i + 1} ${p.name}</b><br>
         ${p.team}<br>
         Avg: ${p.avg}<br>
         Points: ${p.points}
@@ -50,20 +71,25 @@ function renderRankings() {
   `;
 }
 
-/* ANALYTICS */
+/* =========================
+   ANALYTICS
+========================= */
 function renderAnalytics() {
-  return `
-    <h2>📊 Analytics</h2>
-    <p>Top 10 by average:</p>
+  let top = [...players].sort((a, b) => b.avg - a.avg).slice(0, 10);
 
-    ${[...players]
-      .sort((a,b)=>b.avg-a.avg)
-      .slice(0,10)
-      .map(p => `<div class="card">${p.name} - ${p.avg}</div>`)
-      .join("")}
+  return `
+    <h2>📊 Top 10 Players</h2>
+
+    ${top.map(p => `
+      <div class="card">
+        ${p.name} — ${p.avg}
+      </div>
+    `).join("")}
   `;
 }
 
-/* INIT */
+/* =========================
+   INIT
+========================= */
 loadData();
 window.setView = setView;
