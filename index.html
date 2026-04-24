@@ -3,30 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AFL SuperCoach App</title>
+  <title>AFL Fantasy Dashboard</title>
 
   <style>
     body {
-      font-family: Arial, sans-serif;
       margin: 0;
+      font-family: Arial, sans-serif;
       background: #0f172a;
       color: white;
     }
 
     header {
-      padding: 15px;
+      position: sticky;
+      top: 0;
       background: #111827;
+      padding: 10px;
       display: flex;
-      gap: 10px;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     button {
-      padding: 10px;
+      padding: 8px 12px;
       border: none;
+      border-radius: 6px;
       cursor: pointer;
       background: #2563eb;
       color: white;
-      border-radius: 6px;
     }
 
     button:hover {
@@ -34,19 +37,25 @@
     }
 
     #app {
-      padding: 15px;
+      padding: 12px;
     }
 
     .card {
       background: #1f2937;
       padding: 12px;
-      margin: 10px 0;
+      margin: 8px 0;
       border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
 
-    h2 {
-      margin-top: 10px;
+    .elite { border-left: 4px solid #22c55e; }
+    .premium { border-left: 4px solid #3b82f6; }
+    .value { border-left: 4px solid #f59e0b; }
+    .avoid { border-left: 4px solid #ef4444; }
+
+    .topbar {
+      padding: 10px;
+      font-size: 14px;
+      opacity: 0.8;
     }
   </style>
 </head>
@@ -54,13 +63,14 @@
 <body>
 
 <header>
-  <button onclick="setView('rankings')">Rankings</button>
-  <button onclick="setView('analytics')">Top 10</button>
+  <button onclick="setFilter('ALL')">All</button>
+  <button onclick="setFilter('MID')">MID</button>
+  <button onclick="setFilter('DEF')">DEF</button>
+  <button onclick="setFilter('FWD')">FWD</button>
+  <button onclick="setFilter('RUC')">RUC</button>
 </header>
 
-<div id="app">
-  Loading...
-</div>
+<div id="app">Loading...</div>
 
 <script src="app.js"></script>
 
