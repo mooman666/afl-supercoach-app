@@ -5,45 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SC Terminal | Elite 2026</title>
     <style>
-        /* 🌑 MASTER STYLING - FORCED LOAD */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #0b0f19; color: #f8fafc; font-family: sans-serif; line-height: 1.4; padding-bottom: 50px; }
-
-        /* 🚨 TICKER */
-        .ticker-wrap { background: #1e293b; color: #38bdf8; padding: 12px; font-weight: bold; font-size: 13px; border-bottom: 2px solid #38bdf8; position: sticky; top: 0; z-index: 100; }
-
-        /* 📱 NAV */
-        nav { display: flex; background: #161e2d; padding: 10px; gap: 8px; border-bottom: 1px solid #2d3748; }
-        nav button { flex: 1; background: #1e293b; border: 1px solid #38bdf8; color: #38bdf8; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-
-        /* 🔍 CONTROLS */
-        .controls { padding: 15px; display: flex; gap: 8px; background: #0f172a; }
-        input, select { flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #2d3748; background: #161e2d; color: white; font-size: 14px; }
-
-        /* 📊 TABLE */
-        .table-container { width: 100%; overflow-x: auto; padding: 0 10px; }
-        table { width: 100%; border-collapse: collapse; background: #161e2d; border-radius: 8px; margin-top: 10px; }
-        th { background: #1e293b; padding: 12px; text-align: left; color: #94a3b8; font-size: 11px; text-transform: uppercase; }
-        td { padding: 12px; border-bottom: 1px solid #2d3748; font-size: 14px; vertical-align: top; }
-
-        /* 🏷️ BE TAGS */
-        .verdict { display: inline-block; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 12px; margin-top: 4px; }
-        .buy-tag { background: #00ff8822; color: #00ff88; border: 1px solid #00ff88; }
-        .hold-tag { background: #eab30822; color: #eab308; border: 1px solid #eab308; }
-
-        /* ✍️ ARTICLES */
-        .article-card { background: #161e2d; margin: 15px; padding: 20px; border-radius: 10px; border-left: 4px solid #38bdf8; cursor: pointer; }
-        .article-card h3 { color: #38bdf8; margin-bottom: 8px; }
-
-        /* 🪟 MODAL */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; padding: 20px; align-items: center; justify-content: center; }
-        .modal-content { background: #161e2d; padding: 20px; border-radius: 12px; border: 1px solid #38bdf8; width: 100%; max-width: 450px; position: relative; }
-        .close-btn { position: absolute; top: 10px; right: 15px; font-size: 24px; color: #38bdf8; cursor: pointer; }
+        /* KEEP ALL THE CSS I GAVE YOU BEFORE HERE */
+        /* Ensure .tab-content { display: none; } is set by default */
+        .tab-content { display: none; }
+        #dataTab { display: block; } /* Show terminal by default */
     </style>
 </head>
 <body>
 
-<div class="ticker-wrap" id="newsTicker">LOADING LIVE FEED...</div>
+<div class="ticker-wrap" id="newsTicker">SYNCING WITH AFL LIVE...</div>
 
 <nav>
     <button onclick="showTab('dataTab')">📊 TERMINAL</button>
@@ -51,16 +21,6 @@
 </nav>
 
 <div id="dataTab" class="tab-content">
-    <div class="controls">
-        <input type="text" id="playerSearch" placeholder="Filter Players...">
-        <select id="posFilter">
-            <option value="ALL">All Pos</option>
-            <option value="DEF">DEF</option>
-            <option value="MID">MID</option>
-            <option value="RUC">RUC</option>
-            <option value="FWD">FWD</option>
-        </select>
-    </div>
     <div class="table-container">
         <table>
             <thead>
@@ -73,24 +33,18 @@
                     <th>CBA%</th>
                 </tr>
             </thead>
-            <tbody id="playerBody"></tbody>
+            <tbody id="playerBody">
+                </tbody>
         </table>
     </div>
 </div>
 
-<div id="articleTab" class="tab-content" style="display:none;">
+<div id="articleTab" class="tab-content">
     <div id="articleGrid"></div>
 </div>
 
-<div id="articleModal" class="modal" onclick="if(event.target == this) closeArticle()">
-    <div class="modal-content">
-        <span class="close-btn" onclick="closeArticle()">&times;</span>
-        <h2 id="modalTitle" style="color:#38bdf8; margin-bottom:15px;"></h2>
-        <div id="modalContent"></div>
-    </div>
-</div>
+<script src="players.js?v=777"></script>
+<script src="app.js?v=777"></script>
 
-<script src="players.js"></script>
-<script src="app.js"></script>
 </body>
 </html>
