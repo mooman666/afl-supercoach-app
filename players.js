@@ -5,6 +5,5 @@ const playerDatabase = [
     { name: "Harry Sheezel", team: "Kangaroos", pos: "DEF", price: 680000, avg: 128.0 },
     { name: "Jordan Dawson", team: "Crows", pos: "MID", price: 620000, avg: 110.2 },
     { name: "Isaac Heeney", team: "Swans", pos: "FWD", price: 590000, avg: 128.0 },
-    { name: "Hugh Bond", team: "Crows", pos: "DEF", price: 167800, avg: 83.0 },
-    // Add more players here following this structure
+    { name: "Hugh Bond", team: "Crows", pos: "DEF", price: 167800, avg: 83.0 }
 ];
