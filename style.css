@@ -8,7 +8,7 @@
 body {
     background-color: var(--bg);
     color: var(--text);
-    font-family: 'Segoe UI', sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 20px;
 }
@@ -22,12 +22,13 @@ header {
     display: flex;
     justify-content: center;
     gap: 15px;
+    margin-bottom: 20px;
 }
 
 input, select {
     padding: 10px;
     border-radius: 5px;
-    border: none;
+    border: 1px solid #333;
     background: var(--card);
     color: white;
 }
@@ -38,6 +39,7 @@ table {
     margin: 0 auto;
     border-collapse: collapse;
     background: var(--card);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
 }
 
 th, td {
@@ -49,6 +51,8 @@ th, td {
 th {
     background-color: #252525;
     color: var(--accent);
+    text-transform: uppercase;
+    font-size: 14px;
 }
 
 .badge {
@@ -56,6 +60,9 @@ th {
     border-radius: 4px;
     font-size: 12px;
     font-weight: bold;
+    display: inline-block;
+    min-width: 40px;
+    text-align: center;
 }
 
 .DEF { background: #3498db; }
