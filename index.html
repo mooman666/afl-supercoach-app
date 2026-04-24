@@ -3,174 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ARCHITECT v12 // OMNI-SYSTEM</title>
+    <title>ARCHITECT v13 // DATABASE</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { --primary: #38bdf8; --success: #00ff88; --danger: #ef4444; --warning: #facc15; --bg: #020617; --card: #1e293b; --nav: #0f172a; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
-        body { background: var(--bg); color: #f1f5f9; padding-bottom: 90px; overflow-x: hidden; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); color: #f1f5f9; padding-bottom: 90px; }
 
-        /* HEADER & GLOBAL HUD */
-        .header { background: var(--nav); padding: 15px 20px; border-bottom: 2px solid var(--primary); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
-        .header h1 { font-size: 14px; letter-spacing: 2px; font-weight: 900; color: var(--primary); }
-        .live-tag { font-size: 10px; color: var(--success); font-weight: 800; display: flex; align-items: center; }
-        .pulse { height: 6px; width: 6px; background: var(--success); border-radius: 50%; margin-right: 6px; animation: blink 1.5s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        /* SEARCH HEADER */
+        .search-wrap { background: var(--nav); padding: 15px; border-bottom: 2px solid var(--primary); position: sticky; top: 0; z-index: 1000; }
+        #playerSearch { width: 100%; background: #1e293b; border: 1px solid #334155; padding: 12px; border-radius: 8px; color: white; font-weight: 600; outline: none; }
+        #playerSearch:focus { border-color: var(--primary); }
 
-        /* NAVIGATION BAR */
-        nav { position: fixed; bottom: 0; width: 100%; display: flex; background: var(--nav); border-top: 1px solid #334155; z-index: 1000; padding: 10px 5px; }
-        nav button { flex: 1; background: none; border: none; color: #64748b; font-size: 9px; font-weight: 800; text-transform: uppercase; cursor: pointer; transition: 0.2s; }
-        nav button.active { color: var(--primary); transform: translateY(-3px); }
+        /* NAV */
+        nav { position: fixed; bottom: 0; width: 100%; display: flex; background: var(--nav); border-top: 1px solid #334155; z-index: 1000; padding: 10px; }
+        nav button { flex: 1; background: none; border: none; color: #64748b; font-size: 10px; font-weight: 800; cursor: pointer; }
+        nav button.active { color: var(--primary); }
 
-        /* TAB PAGES */
-        .page { display: none; padding: 15px; animation: slideUp 0.3s ease-out; }
+        /* LIST & CARDS */
+        .page { display: none; padding: 15px; }
         .page.active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* COMPONENT STYLES */
-        .card { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid #334155; position: relative; }
-        .section-label { font-size: 11px; color: #94a3b8; letter-spacing: 2px; margin-bottom: 15px; text-transform: uppercase; font-weight: 900; }
+        .player-card { background: var(--card); border-radius: 10px; padding: 15px; margin-bottom: 10px; border: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; }
+        .price-tag { font-family: monospace; color: var(--success); font-weight: bold; }
         
-        .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; }
-        .stat-box { text-align: center; }
-        .stat-box small { font-size: 8px; color: #64748b; font-weight: 800; display: block; }
-        .stat-box strong { font-size: 13px; color: #f1f5f9; }
-
-        .badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 900; position: absolute; top: 12px; right: 12px; }
-        .badge-buy { background: #064e3b; color: var(--success); }
-        .badge-sell { background: #450a0a; color: var(--danger); }
-        .badge-test { background: #451a03; color: var(--warning); }
-
-        /* CHART CONTAINER */
-        .chart-box { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 20px; border: 1px solid #334155; height: 200px; }
+        /* MODAL STATS */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; padding: 20px; }
+        .modal-content { background: var(--card); border-radius: 15px; padding: 20px; max-width: 500px; margin: auto; position: relative; }
+        .close-btn { position: absolute; top: 10px; right: 15px; font-size: 24px; color: #94a3b8; }
+        .stat-line { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #334155; }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <h1>ARCHITECT.v12 // OMNI</h1>
-    <div class="live-tag"><span class="pulse"></span> RD7 LIVE DATA</div>
+<div class="search-wrap">
+    <input type="text" id="playerSearch" placeholder="🔍 Search All Players (Name, Team, Role)..." onkeyup="filterPlayers()">
 </div>
 
-<div id="pTerminal" class="page active">
-    <p class="section-label">Market Intelligence</p>
-    <div id="terminalContent"></div>
+<div id="pList" class="page active">
+    <div id="playerResults"></div>
 </div>
 
-<div id="pPredictor" class="page">
-    <p class="section-label">Breakeven Predictor</p>
-    <div class="chart-box"><canvas id="beChart"></canvas></div>
-    <div id="predictorContent"></div>
-</div>
-
-<div id="pCaptain" class="page">
-    <p class="section-label">Captaincy Matrix</p>
-    <div id="captainContent"></div>
-</div>
-
-<div id="pInjury" class="page">
-    <p class="section-label">Medical Room</p>
-    <div id="injuryContent"></div>
-</div>
-
-<div id="pSim" class="page">
-    <p class="section-label">Trade Simulator</p>
+<div id="pAnalysis" class="page">
     <div class="card">
-        <p style="font-size:12px; margin-bottom:10px;">Projected Bank Balance</p>
-        <h2 id="simBank">$245,300</h2>
-        <button onclick="alert('Trade Saved!')" style="width:100%; margin-top:15px; padding:10px; background:var(--primary); border:none; border-radius:6px; font-weight:900;">EXECUTE TRADES</button>
+        <h3 style="color:var(--primary)">RD 7 MARKET TRENDS</h3>
+        <p style="font-size:12px; margin-top:10px;">• <strong>Cash Cows:</strong> Anderson (-75 BE) and Tsatas (-49 BE) are mandatory.</p>
+        <p style="font-size:12px; margin-top:5px;">• <strong>Value:</strong> Jordan Clark ($524k) and Luke Ryan ($468k) at bottom prices.</p>
+    </div>
+</div>
+
+<div id="playerModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <h2 id="mName" style="color:var(--primary)"></h2>
+        <p id="mTeam" style="font-size:12px; color:#94a3b8; margin-bottom:15px;"></p>
+        
+        <div class="stat-line"><span>PRICE</span><strong id="mPrice"></strong></div>
+        <div class="stat-line"><span>BREAKEVEN</span><strong id="mBE"></strong></div>
+        <div class="stat-line"><span>AVG SCORE</span><strong id="mAvg"></strong></div>
+        <div class="stat-line"><span>LAST 3</span><strong id="mL3" style="color:var(--success)"></strong></div>
+        <div class="stat-line"><span>CBA % (MID)</span><strong id="mCBA"></strong></div>
+        
+        <p style="margin-top:20px; font-size:11px; color:#94a3b8; line-height:1.4;"><strong>ANALYSIS:</strong> <span id="mNotes"></span></p>
     </div>
 </div>
 
 <nav>
-    <button id="bTerminal" class="active" onclick="tab('pTerminal')">Terminal</button>
-    <button id="bPredictor" onclick="tab('pPredictor')">Predict</button>
-    <button id="bCaptain" onclick="tab('pCaptain')">Captain</button>
-    <button id="bInjury" onclick="tab('pInjury')">Injury</button>
-    <button id="bSim" onclick="tab('pSim')">Sim</button>
+    <button onclick="tab('pList')" class="active" id="bList">DATABASE</button>
+    <button onclick="tab('pAnalysis')" id="bAnalysis">INSIGHTS</button>
 </nav>
 
 <script>
-    // 📊 MASTER DATA HUB
+    // 📊 EXPANDED DATA PACK (Top RD7 Relevant Players)
     const players = [
-        { id: 1, name: "Angus Anderson", team: "Magpies", price: 113500, be: -75, proj: 88, status: "IN", grade: "A+", role: "CBA Mid" },
-        { id: 2, name: "Isaac Heeney", team: "Swans", price: 632700, be: 24, proj: 0, status: "OUT", grade: "SELL", role: "N/A" },
-        { id: 3, name: "Harry Sheezel", team: "Kangaroos", price: 645000, be: 112, proj: 124, status: "TEST", grade: "B+", role: "DEF/MID" },
-        { id: 4, name: "Nasiah Wanganeen-Milera", team: "Saints", price: 588300, be: 94, proj: 118, status: "IN", grade: "A", role: "DEF Dist" },
-        { id: 5, name: "Elijah Tsatas", team: "Bombers", price: 223400, be: -49, proj: 92, status: "IN", grade: "A", role: "Wing/Mid" }
+        { name: "Angus Anderson", team: "Magpies", price: 113500, be: -75, avg: 72, l3: "68, 74, 75", cba: "65%", role: "Rookie", notes: "Mandatory cash cow. Highest ROI in Round 7." },
+        { name: "Elijah Tsatas", team: "Bombers", price: 223400, be: -49, avg: 81, l3: "78, 85, 82", cba: "40%", role: "Mid-Price", notes: "Secured role on wing. Perfect price re-ignition play." },
+        { name: "Isaac Heeney", team: "Swans", price: 632700, be: 24, avg: 121, l3: "115, 128, 0", cba: "0%", role: "Premium", notes: "OUT (Calf). Use trade simulator to pivot to Anderson." },
+        { name: "Harry Sheezel", team: "Kangaroos", price: 645000, be: 112, avg: 124, l3: "141, 108, 123", cba: "15%", role: "Premium", notes: "TEST (Shoulder). High ceiling vs West Coast if cleared." },
+        { name: "Jordan Clark", team: "Dockers", price: 524000, be: 61, avg: 105, l3: "88, 92, 146", cba: "0%", role: "Premium Def", notes: "Fallen premium. Massive value after recent price drop." },
+        { name: "Nasiah Wanganeen-Milera", team: "Saints", price: 588300, be: 94, avg: 112, l3: "105, 118, 110", cba: "0%", role: "Elite Def", notes: "The #1 premium upgrade target for Round 7." },
+        { name: "Nick Daicos", team: "Magpies", price: 685200, be: 108, avg: 128, l3: "135, 140, 112", cba: "78%", role: "Elite Mid", notes: "Captaincy favorite for ANZAC day clash." },
+        { name: "Luke Ryan", team: "Dockers", price: 468400, be: 38, avg: 92, l3: "95, 102, 85", cba: "0%", role: "Value Def", notes: "Cheap entry for a former top-6 defender." },
+        { name: "Zak Butters", team: "Power", price: 651000, be: 92, avg: 122, l3: "118, 154, 112", cba: "82%", role: "Elite Mid", notes: "Highest CBA participation at Port. Hold for season." }
     ];
 
-    const injuryList = [
-        { name: "Isaac Heeney", issue: "Calf Tightness", return: "R7 OUT", impact: "Warner/Cootee CBA boost" },
-        { name: "Mitch Hinge", issue: "Hamstring", return: "2-4 WKS", impact: "Adelaide defensive structural hit" },
-        { name: "Jarrod Berry", issue: "Calf", return: "3-4 WKS", impact: "Brisbane midfield depth tested" }
-    ];
+    function filterPlayers() {
+        const query = document.getElementById('playerSearch').value.toLowerCase();
+        const results = players.filter(p => p.name.toLowerCase().includes(query) || p.team.toLowerCase().includes(query));
+        renderList(results);
+    }
 
+    function renderList(list) {
+        document.getElementById('playerResults').innerHTML = list.map(p => `
+            <div class="player-card" onclick="openModal('${p.name}')">
+                <div>
+                    <strong>${p.name}</strong><br>
+                    <small style="color:#94a3b8">${p.team} // ${p.role}</small>
+                </div>
+                <div class="price-tag">$${p.price.toLocaleString()}</div>
+            </div>
+        `).join('');
+    }
+
+    function openModal(name) {
+        const p = players.find(x => x.name === name);
+        document.getElementById('mName').innerText = p.name;
+        document.getElementById('mTeam').innerText = p.team + " | " + p.role;
+        document.getElementById('mPrice').innerText = "$" + p.price.toLocaleString();
+        document.getElementById('mBE').innerText = p.be;
+        document.getElementById('mAvg').innerText = p.avg;
+        document.getElementById('mL3').innerText = p.l3;
+        document.getElementById('mCBA').innerText = p.cba;
+        document.getElementById('mNotes').innerText = p.notes;
+        document.getElementById('playerModal').style.display = 'block';
+    }
+
+    function closeModal() { document.getElementById('playerModal').style.display = 'none'; }
     function tab(id) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
         document.getElementById(id).classList.add('active');
         document.getElementById('b' + id.substring(1)).classList.add('active');
-        if(id === 'pPredictor') initChart();
     }
 
-    function initChart() {
-        const ctx = document.getElementById('beChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: players.slice(0,4).map(p => p.name.split(' ')[1]),
-                datasets: [{
-                    label: 'Breakeven',
-                    data: players.slice(0,4).map(p => p.be),
-                    backgroundColor: players.slice(0,4).map(p => p.be < 0 ? '#00ff88' : '#ef4444')
-                }]
-            },
-            options: { maintainAspectRatio: false, plugins: { legend: { display: false } } }
-        });
-    }
-
-    function boot() {
-        // Render Terminal
-        document.getElementById('terminalContent').innerHTML = players.map(p => `
-            <div class="card">
-                <span class="badge badge-${p.status.toLowerCase()}">${p.status}</span>
-                <strong>${p.name}</strong><br><small>${p.team} // ${p.role}</small>
-                <div class="stat-grid">
-                    <div class="stat-box"><small>PRICE</small><strong>$${p.price.toLocaleString()}</strong></div>
-                    <div class="stat-box"><small>BE</small><strong style="color:${p.be < 0 ? 'var(--success)' : 'var(--danger)'}">${p.be}</strong></div>
-                    <div class="stat-box"><small>GRADE</small><strong>${p.grade}</strong></div>
-                </div>
-            </div>
-        `).join('');
-
-        // Render Captains
-        const captains = [
-            { name: "Brodie Grundy", type: "VC", logic: "Clear ruck advantage vs Dogs" },
-            { name: "Max Gawn", type: "VC", logic: "Friday night bounce-back vs Tigers" },
-            { name: "Nick Daicos", type: "C", logic: "Elite ceiling, thrived last ANZAC" },
-            { name: "Harry Sheezel", type: "C", logic: "Safe 120+ floor vs West Coast" }
-        ];
-        document.getElementById('captainContent').innerHTML = captains.map(c => `
-            <div class="card" style="border-left:4px solid ${c.type === 'VC' ? 'var(--primary)' : 'var(--warning)'}">
-                <strong style="color:${c.type === 'VC' ? 'var(--primary)' : 'var(--warning)'}">${c.type}: ${c.name}</strong>
-                <p style="font-size:11px; margin-top:5px; color:#94a3b8;">${c.logic}</p>
-            </div>
-        `).join('');
-
-        // Render Injuries
-        document.getElementById('injuryContent').innerHTML = injuryList.map(i => `
-            <div class="card" style="border-left: 4px solid var(--danger);">
-                <span style="float:right; font-size:10px; color:var(--danger); font-weight:900;">${i.return}</span>
-                <strong>${i.name}</strong><br><small style="color:var(--danger)">${i.issue}</small>
-                <div style="margin-top:10px; font-size:10px; background:rgba(0,0,0,0.2); padding:8px; border-radius:4px;">
-                    <span style="color:var(--primary)">TACTICAL:</span> ${i.impact}
-                </div>
-            </div>
-        `).join('');
-    }
-
-    window.onload = boot;
+    window.onload = () => renderList(players);
 </script>
 
 </body>
