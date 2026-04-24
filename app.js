@@ -1,5 +1,5 @@
 const SHEET_URL =
-"https://docs.google.com/spreadsheets/d/1O4c-KYHjBPpMX81ZLGRHtzBq31qOdcBghEMA0S8aCjA/gviz/tq?tqx=out:json";
+"https://docs.google.com/spreadsheets/d/1O4c-KYHjBPpMX81ZLGRHtzBq31qOdcBghEMA0S8aCjA/gviz/tq?tqx=out:csv";
 
 let players = [];
 let search = "";
@@ -16,48 +16,47 @@ function tier(avg){
   return "avoid";
 }
 
-function formScore(p){
+/* CORE METRICS */
+function form(p){
   return (p.last - p.avg).toFixed(1);
 }
 
 function projection(p){
-  return Math.round((p.avg * 0.6) + (p.last * 0.4));
+  return Math.round((p.avg * 0.65) + (p.last * 0.35));
+}
+
+function value(p){
+  return (p.avg / (p.games || 1)).toFixed(2);
 }
 
 function filter(list){
   if(!search) return list;
-  return list.filter(p => (p.name || "").toLowerCase().includes(search));
+  return list.filter(p =>
+    (p.name || "").toLowerCase().includes(search)
+  );
 }
 
+/* LOAD DATA FROM SHEET */
 async function load(){
-  try {
-    const res = await fetch(SHEET_URL);
-    const text = await res.text();
+  const res = await fetch(SHEET_URL);
+  const text = await res.text();
 
-    const json = JSON.parse(
-      text.match(/google\.visualization\.Query\.setResponse\((.*)\);/s)[1]
-    );
+  const rows = text.trim().split("\n").map(r => r.split(","));
+  rows.shift(); // headers
 
-    const rows = json.table.rows || [];
+  players = rows.map(r => ({
+    name: r[0],
+    team: r[1],
+    avg: Number(r[2]) || 0,
+    last: Number(r[3]) || 0,
+    high: Number(r[4]) || 0,
+    games: Number(r[5]) || 0
+  })).filter(p => p.name);
 
-    players = rows.map(r => ({
-      name: r.c?.[0]?.v || "",
-      team: r.c?.[1]?.v || "",
-      avg: Number(r.c?.[2]?.v || 0),
-      last: Number(r.c?.[3]?.v || 0),
-      high: Number(r.c?.[4]?.v || 0),
-      games: Number(r.c?.[5]?.v || 0)
-    })).filter(p => p.name);
-
-    render();
-
-  } catch (e) {
-    document.getElementById("app").innerHTML =
-      "Failed to load data — check sheet sharing + headers";
-    console.log(e);
-  }
+  render();
 }
 
+/* UI */
 function render(){
   let list = filter([...players]).sort((a,b)=>b.avg-a.avg);
 
@@ -73,14 +72,15 @@ function render(){
 
     ${list.map(p => `
       <div class="card ${tier(p.avg)}">
-        <b>${p.name}</b> <span class="small">(${p.team})</span><br><br>
+        <b>${p.name}</b> (${p.team})<br><br>
 
         Avg: ${p.avg}<br>
         Last: ${p.last}<br>
         High: ${p.high}<br><br>
 
-        Form: ${formScore(p)}<br>
-        Projection: ${projection(p)}
+        Form: ${form(p)}<br>
+        Projection: ${projection(p)}<br>
+        Value: ${value(p)}
       </div>
     `).join("")}
   `;
