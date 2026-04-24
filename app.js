@@ -1,11 +1,11 @@
 const SHEET_URL =
-"https://opensheet.elk.sh/1O4c-KYHjBPpMX81ZLGRHtzBq31qOdcBghEMA0S8aCjA/AFL_DATA";
+"https://docs.google.com/spreadsheets/d/1O4c-KYHjBPpMX81ZLGRHtzBq31qOdcBghEMA0S8aCjA/gviz/tq?tqx=out:json";
 
 let players = [];
 let search = "";
 
 window.setSearch = (v) => {
-  search = v.toLowerCase();
+  search = (v || "").toLowerCase();
   render();
 };
 
@@ -16,69 +16,60 @@ function tier(avg){
   return "avoid";
 }
 
-/* FORM ENGINE (REAL, NOT RANDOM) */
 function formScore(p){
-  return (p.last - p.avg);
+  return (p.last - p.avg).toFixed(1);
 }
 
-/* PROJECTION */
 function projection(p){
   return Math.round((p.avg * 0.6) + (p.last * 0.4));
 }
 
-/* VALUE */
-function value(p){
-  return (p.avg / (p.games || 1)).toFixed(2);
-}
-
-/* LOAD DATA */
-async function load(){
-  const res = await fetch(SHEET_URL);
-  const data = await res.json();
-
-  players = data.map(p => ({
-    name: p.name,
-    team: p.team,
-    avg: Number(p.avg) || 0,
-    last: Number(p.last) || 0,
-    high: Number(p.high) || 0,
-    games: Number(p.games) || 0
-  }));
-
-  render();
-}
-
-/* FILTER */
 function filter(list){
   if(!search) return list;
-  return list.filter(p =>
-    p.name.toLowerCase().includes(search)
-  );
+  return list.filter(p => (p.name || "").toLowerCase().includes(search));
 }
 
-/* INSIGHTS */
-function insights(list){
-  const best = [...list].sort((a,b)=>b.avg-a.avg)[0];
+async function load(){
+  try {
+    const res = await fetch(SHEET_URL);
+    const text = await res.text();
+
+    const json = JSON.parse(
+      text.match(/google\.visualization\.Query\.setResponse\((.*)\);/s)[1]
+    );
+
+    const rows = json.table.rows || [];
+
+    players = rows.map(r => ({
+      name: r.c?.[0]?.v || "",
+      team: r.c?.[1]?.v || "",
+      avg: Number(r.c?.[2]?.v || 0),
+      last: Number(r.c?.[3]?.v || 0),
+      high: Number(r.c?.[4]?.v || 0),
+      games: Number(r.c?.[5]?.v || 0)
+    })).filter(p => p.name);
+
+    render();
+
+  } catch (e) {
+    document.getElementById("app").innerHTML =
+      "Failed to load data — check sheet sharing + headers";
+    console.log(e);
+  }
+}
+
+function render(){
+  let list = filter([...players]).sort((a,b)=>b.avg-a.avg);
+
+  const best = list[0];
   const captain = [...list].sort((a,b)=>projection(b)-projection(a))[0];
 
-  return `
+  document.getElementById("app").innerHTML = `
     <div class="card">
       <b>🔥 Insights</b><br><br>
-      🏆 Best: ${best?.name || "-"}<br>
-      🎯 Captain: ${captain?.name || "-"}<br>
+      Best: ${best?.name || "-"}<br>
+      Captain: ${captain?.name || "-"}
     </div>
-  `;
-}
-
-/* RENDER */
-function render(){
-  let list = [...players];
-  list = filter(list);
-
-  list.sort((a,b)=>b.avg-a.avg);
-
-  document.getElementById("app").innerHTML = `
-    ${insights(list)}
 
     ${list.map(p => `
       <div class="card ${tier(p.avg)}">
@@ -89,8 +80,7 @@ function render(){
         High: ${p.high}<br><br>
 
         Form: ${formScore(p)}<br>
-        Projection: ${projection(p)}<br>
-        Value: ${value(p)}<br>
+        Projection: ${projection(p)}
       </div>
     `).join("")}
   `;
