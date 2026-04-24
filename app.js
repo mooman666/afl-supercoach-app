@@ -27,10 +27,9 @@ function render(){
   document.getElementById("app").innerHTML =
     state.filtered.map(p => `
       <div class="card">
-        <div class="rank">Rank: ${p.rank}</div>
-        <b>${p.name}</b> (${p.team})<br><br>
-        Total Points: ${p.total}<br>
-        Yearly Average: ${p.avg}
+        <b>#${p.rank} ${p.name}</b> (${p.team})<br><br>
+        Total: ${p.total}<br>
+        Average: ${p.avg}
       </div>
     `).join("");
 }
@@ -48,7 +47,7 @@ function renderChart(list){
     data: {
       labels,
       datasets: [{
-        label: "Yearly Avg",
+        label: "Yearly Average",
         data
       }]
     }
