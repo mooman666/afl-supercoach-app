@@ -20,3 +20,9 @@ const playerDatabase = [
         insight: "Top tier captaincy pivot if your VC fails on Friday night."
     }
 ];
+
+const newsUpdates = [
+    "🚨 GAWN WATCH: Training restricted (finger) but confirmed for R7.",
+    "📈 BUBBLE ALERT: Retschko (74 pts) will be on the bubble next week.",
+    "🩹 LATE MAIL: Tom Stewart testing hamstring; Jack Sinclair is the logical pivot."
+];
