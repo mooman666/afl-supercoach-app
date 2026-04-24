@@ -3,55 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SuperCoach Pro Analyst</title>
+    <title>SuperCoach Elite Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1>SuperCoach Pro 2026</h1>
-        <div class="controls">
-            <input type="text" id="playerSearch" placeholder="Filter Players...">
-            <select id="posFilter">
-                <option value="ALL">All Pos</option>
-                <option value="DEF">DEF</option>
-                <option value="MID">MID</option>
-                <option value="RUC">RUC</option>
-                <option value="FWD">FWD</option>
-            </select>
-            <select id="teamFilter">
-                <option value="ALL">All Teams</option>
-                <option value="Demons">Demons</option>
-                <option value="Swans">Swans</option>
-                <option value="Magpies">Magpies</option>
-                <option value="Kangaroos">Kangaroos</option>
-            </select>
+    <div class="ticker-wrap" id="newsTicker"></div>
+
+    <nav>
+        <button onclick="showTab('dataTab')">📊 Player Data</button>
+        <button onclick="showTab('articleTab')">✍️ Analysis Articles</button>
+    </nav>
+
+    <div id="dataTab" class="tab-content">
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Player</th><th>Pos</th><th>Price</th><th>Avg</th><th>CBA%</th><th>TOG%</th><th>BE</th>
+                    </tr>
+                </thead>
+                <tbody id="playerBody"></tbody>
+            </table>
         </div>
-    </header>
-
-    <div class="news-section">
-        <h3>📢 Latest Analysis & News</h3>
-        <div id="newsFeed"></div>
     </div>
 
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th onclick="handleSort('name')">Player</th>
-                    <th onclick="handleSort('team')">Team</th>
-                    <th onclick="handleSort('pos')">Pos</th>
-                    <th onclick="handleSort('price')">Price</th>
-                    <th onclick="handleSort('avg')">Avg</th>
-                    <th onclick="handleSort('last3')">L3</th>
-                    <th onclick="handleSort('be')">BE</th>
-                    <th onclick="handleSort('bye')">Bye</th>
-                </tr>
-            </thead>
-            <tbody id="playerBody"></tbody>
-        </table>
+    <div id="articleTab" class="tab-content" style="display:none;">
+        <div class="article-grid" id="articleGrid"></div>
     </div>
 
-    <script src="players.js?v=3"></script>
-    <script src="app.js?v=3"></script>
+    <script src="players.js?v=4"></script>
+    <script src="app.js?v=4"></script>
 </body>
 </html>
