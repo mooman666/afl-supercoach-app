@@ -1,29 +1,10 @@
-const SHEET_URL =
-"https://docs.google.com/spreadsheets/d/1ZYNGWyFP74w6ruXFtjLudu8sz6w0Y3KsuOJLm0Ro9fM/gviz/tq?tqx=out:csv";
-
-let players = [];
-
-async function loadPlayers(){
-  const res = await fetch(SHEET_URL);
-  const text = await res.text();
-
-  const rows = text.trim().split("\n").map(r => r.split(","));
-
-  // remove header row (exact match, we don’t rely on names)
-  rows.shift();
-
-  players = rows.map(r => ({
-    rank: Number(r[0]),              // Season Rank
-    name: r[1],                      // Name
-    team: r[2],                      // Team
-    total: Number(r[3]),             // Total yearly points
-    avg: Number(r[4])                // Yearly average
-  }))
-  .filter(p =>
-    p.name && !isNaN(p.avg)
-  );
-
-  window.onPlayersLoaded(players);
-}
-
-loadPlayers();
+const playerDatabase = [
+    { name: "Max Gawn", team: "Demons", pos: "RUC", price: 650000, avg: 134.2 },
+    { name: "Brodie Grundy", team: "Swans", pos: "RUC", price: 645000, avg: 133.0 },
+    { name: "Nick Daicos", team: "Magpies", pos: "MID", price: 710000, avg: 125.4 },
+    { name: "Harry Sheezel", team: "Kangaroos", pos: "DEF", price: 680000, avg: 128.0 },
+    { name: "Jordan Dawson", team: "Crows", pos: "MID", price: 620000, avg: 110.2 },
+    { name: "Isaac Heeney", team: "Swans", pos: "FWD", price: 590000, avg: 128.0 },
+    { name: "Hugh Bond", team: "Crows", pos: "DEF", price: 167800, avg: 83.0 },
+    // Add more players here following this structure
+];
