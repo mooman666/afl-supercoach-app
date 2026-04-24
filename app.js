@@ -40,9 +40,8 @@ function render(){
   document.getElementById("app").innerHTML = list.map(p => `
     <div class="card">
       <b>#${p.rank} ${p.name}</b> (${p.team})<br><br>
-
-      Total Points: ${p.total}<br>
-      Yearly Avg: ${p.avg}
+      Total: ${p.total}<br>
+      Avg: ${p.avg}
     </div>
   `).join("");
 }
