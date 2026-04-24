@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SuperCoach Elite Dashboard</title>
+    <title>SuperCoach Elite</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,15 +11,30 @@
 
     <nav>
         <button onclick="showTab('dataTab')">📊 Player Data</button>
-        <button onclick="showTab('articleTab')">✍️ Analysis Articles</button>
+        <button onclick="showTab('articleTab')">✍️ Articles</button>
     </nav>
 
     <div id="dataTab" class="tab-content">
+        <div class="controls">
+            <input type="text" id="playerSearch" placeholder="Search Player/Team...">
+            <select id="posFilter">
+                <option value="ALL">All Pos</option>
+                <option value="DEF">DEF</option>
+                <option value="MID">MID</option>
+                <option value="RUC">RUC</option>
+                <option value="FWD">FWD</option>
+            </select>
+        </div>
         <div class="table-container">
             <table>
                 <thead>
                     <tr>
-                        <th>Player</th><th>Pos</th><th>Price</th><th>Avg</th><th>CBA%</th><th>TOG%</th><th>BE</th>
+                        <th onclick="handleSort('name')">Player</th>
+                        <th onclick="handleSort('pos')">Pos</th>
+                        <th onclick="handleSort('price')">Price</th>
+                        <th onclick="handleSort('avg')">Avg</th>
+                        <th onclick="handleSort('cba')">CBA%</th>
+                        <th onclick="handleSort('be')">BE</th>
                     </tr>
                 </thead>
                 <tbody id="playerBody"></tbody>
@@ -28,10 +43,10 @@
     </div>
 
     <div id="articleTab" class="tab-content" style="display:none;">
-        <div class="article-grid" id="articleGrid"></div>
+        <div class="article-grid" id="articleGrid" style="padding: 20px;"></div>
     </div>
 
-    <script src="players.js?v=4"></script>
-    <script src="app.js?v=4"></script>
+    <script src="players.js?v=5"></script>
+    <script src="app.js?v=5"></script>
 </body>
 </html>
