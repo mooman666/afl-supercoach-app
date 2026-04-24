@@ -1,22 +1,16 @@
 const playerDatabase = [
-    { name: "Angus Anderson", team: "Magpies", pos: "MID", price: 113500, be: -75, proj: 74, val: "+88k", own: "45%", vcc: "VC" },
-    { name: "Nasiah Wanganeen-Milera", team: "Saints", pos: "DEF", price: 588300, be: 94, proj: 122, val: "+14k", own: "54%", vcc: "C" },
-    { name: "Harry Sheezel", team: "Kangaroos", pos: "DEF", price: 645000, be: 112, proj: 138, val: "+5k", own: "70%", vcc: "C" },
-    { name: "Nick Daicos", team: "Magpies", pos: "MID", price: 636200, be: 129, proj: 140, val: "-2k", own: "35%", vcc: "VC" },
-    { name: "Max Gawn", team: "Demons", pos: "RUC", price: 703700, be: 185, proj: 130, val: "-15k", own: "44%", vcc: "VC" },
-    { name: "Elijah Tsatas", team: "Bombers", pos: "MID", price: 223400, be: -49, proj: 88, val: "+45k", own: "8%", vcc: "" },
-    { name: "Jai Serong", team: "Hawks", pos: "DEF", price: 215600, be: 64, proj: 61, val: "-10k", own: "52%", vcc: "" },
-    { name: "Sam Berry", team: "Crows", pos: "MID", price: 655000, be: 62, proj: 95, val: "+12k", own: "12%", vcc: "" },
-    { name: "Jordan Clark", team: "Dockers", pos: "DEF", price: 524000, be: 61, proj: 115, val: "+22k", own: "14%", vcc: "" }
+    { name: "Angus Anderson", team: "Magpies", pos: "MID", price: 113500, be: -33, status: "IN", own: "15.7%", vestRisk: "LOW" },
+    { name: "Nasiah Wanganeen-Milera", team: "Saints", pos: "DEF", price: 576600, be: 108, status: "IN", own: "31.4%", vestRisk: "ZERO" },
+    { name: "Harry Sheezel", team: "Kangaroos", pos: "DEF", price: 611700, be: 140, status: "IN", own: "99.7%", vestRisk: "ZERO" },
+    { name: "Isaac Heeney", team: "Swans", pos: "MID", price: 632700, be: 24, status: "OUT", own: "10.6%", vestRisk: "HIGH" },
+    { name: "Elijah Tsatas", team: "Bombers", pos: "MID", price: 223400, be: -49, status: "IN", own: "8.1%", vestRisk: "MED" },
+    { name: "Jai Serong", team: "Hawks", pos: "DEF", price: 276100, be: -37, status: "IN", own: "98.0%", vestRisk: "LOW" },
+    { name: "Max Gawn", team: "Demons", pos: "RUC", price: 703700, be: 185, status: "TEST", own: "44.2%", vestRisk: "ZERO" }
 ];
 
-const articles = [
-    { 
-        title: "The -75 Breakeven Hack", 
-        content: "Angus Anderson is the priority trade of R7. Even with a score of 20, he generates massive cash. Lock him in before the price rise." 
-    },
-    { 
-        title: "The NWM 'Fixture God' Run", 
-        content: "St Kilda face WCE, NMFC, and HAW in the next three. Wanganeen-Milera is set to average 120+ in this window. Target him over Stewart." 
-    }
+const injuries = [
+    { name: "Isaac Heeney", team: "Swans", injury: "Hamstring", return: "1-2 weeks" },
+    { name: "Mitch Hinge", team: "Crows", injury: "Hamstring", return: "2-4 weeks" },
+    { name: "Jake Soligo", team: "Crows", injury: "Ankle", return: "TEST" },
+    { name: "Sam Banks", team: "Tigers", injury: "Concussion", return: "1 week" }
 ];
