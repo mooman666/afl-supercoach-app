@@ -1,26 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>AFL Fantasy</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AFL Fantasy Tool</title>
 
-<link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: #0f172a;
+      color: white;
+    }
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    header {
+      position: sticky;
+      top: 0;
+      background: #111827;
+      padding: 10px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 8px 10px;
+      border: none;
+      border-radius: 6px;
+      background: #2563eb;
+      color: white;
+      cursor: pointer;
+    }
+
+    input {
+      padding: 8px;
+      border-radius: 6px;
+      border: none;
+      flex: 1;
+    }
+
+    #app {
+      padding: 12px;
+    }
+
+    .card {
+      background: #1f2937;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 10px;
+    }
+
+    .topbar {
+      padding: 10px;
+      opacity: 0.8;
+      font-size: 14px;
+    }
+  </style>
 </head>
 
 <body>
 
 <header>
-  <input id="search" placeholder="Search player..." />
+  <button onclick="setView('top')">Top</button>
+  <button onclick="setView('value')">Value</button>
+  <button onclick="setView('form')">Form</button>
+  <input placeholder="Search player..." oninput="setSearch(this.value)" />
 </header>
 
 <div id="app">Loading...</div>
 
-<canvas id="chart"></canvas>
-
-<script src="players.js"></script>
 <script src="app.js"></script>
 
 </body>
