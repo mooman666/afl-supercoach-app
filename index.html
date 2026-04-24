@@ -1,65 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>AFL Fantasy Engine</title>
-
-<style>
-body {
-  margin:0;
-  font-family: Arial;
-  background:#0f172a;
-  color:white;
-}
-
-header {
-  position:sticky;
-  top:0;
-  background:#111827;
-  padding:10px;
-  display:flex;
-  gap:8px;
-}
-
-input {
-  flex:1;
-  padding:8px;
-  border-radius:6px;
-  border:none;
-}
-
-#app {
-  padding:10px;
-}
-
-.card {
-  background:#1f2937;
-  padding:12px;
-  margin:8px 0;
-  border-radius:10px;
-  cursor:pointer;
-}
-
-.elite { border-left:4px solid #22c55e; }
-.premium { border-left:4px solid #3b82f6; }
-.value { border-left:4px solid #f59e0b; }
-.avoid { border-left:4px solid #ef4444; }
-
-.small {
-  opacity:0.8;
-  font-size:12px;
-}
-</style>
+  <title>AFL App</title>
+  <style>
+    body { font-family: Arial; background:#0f172a; color:white; }
+    .card { background:#1f2937; padding:10px; margin:10px; border-radius:8px; }
+    button { margin:5px; padding:8px; }
+  </style>
 </head>
 
 <body>
 
-<header>
-  <input placeholder="Search player..." oninput="setSearch(this.value)">
-</header>
+<h2>AFL Dashboard</h2>
 
-<div id="app">Loading...</div>
+<input placeholder="Search player..." oninput="setSearch(this.value)"/>
+
+<button onclick="setMode('mid')">MID</button>
+<button onclick="setMode('def')">DEF</button>
+<button onclick="setMode('for')">FWD</button>
+<button onclick="setMode('all')">ALL</button>
+
+<div id="app"></div>
 
 <script src="app.js"></script>
 
