@@ -1,40 +1,64 @@
+:root {
+    --bg: #121212;
+    --card: #1e1e1e;
+    --text: #ffffff;
+    --accent: #00d2ff;
+}
+
 body {
-  margin:0;
-  font-family: Arial;
-  background:#0f172a;
-  color:white;
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 20px;
 }
 
 header {
-  position:sticky;
-  top:0;
-  background:#111827;
-  padding:10px;
+    text-align: center;
+    margin-bottom: 30px;
 }
 
-input {
-  width:100%;
-  padding:10px;
-  border-radius:6px;
-  border:none;
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
 }
 
-#app {
-  padding:12px;
+input, select {
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background: var(--card);
+    color: white;
 }
 
-.card {
-  background:#1f2937;
-  padding:12px;
-  margin:8px 0;
-  border-radius:10px;
+table {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    border-collapse: collapse;
+    background: var(--card);
 }
 
-.rank {
-  opacity:0.7;
-  font-size:12px;
+th, td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #333;
 }
 
-canvas {
-  padding:10px;
+th {
+    background-color: #252525;
+    color: var(--accent);
 }
+
+.badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.DEF { background: #3498db; }
+.MID { background: #f1c40f; color: #000; }
+.RUC { background: #e67e22; }
+.FWD { background: #e74c3c; }
