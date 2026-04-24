@@ -1,105 +1,39 @@
-let players = [];
-let view = "top";
-let search = "";
-
-/* ✔ YOUR REAL GOOGLE SHEET */
-const SHEET_URL =
-"https://docs.google.com/spreadsheets/d/1ZYNGWyFP74w6ruXFtjLudu8sz6w0Y3KsuOJLm0Ro9fM/gviz/tq?tqx=out:csv";
-
-/* =========================
-   LOAD DATA (FIXED PARSER)
-========================= */
 async function loadData() {
-  const res = await fetch(SHEET_URL);
-  const text = await res.text();
+  try {
+    const res = await fetch(SHEET_URL);
 
-  const rows = text.trim().split("\n").map(r => r.split(","));
-  rows.shift(); // remove headers
+    if (!res.ok) {
+      throw new Error("Sheet not reachable");
+    }
 
-  players = rows.map(r => ({
-    rank: Number(r[0]),
-    name: r[1],
-    team: r[2],
-    points: Number(r[3]) || 0,
-    avg: Number(r[4]) || 0
-  })).filter(p => p.name);
+    const text = await res.text();
 
-  render();
-}
+    const rows = text.trim().split("\n").map(r => r.split(","));
 
-/* =========================
-   NAV
-========================= */
-function setView(v) {
-  view = v;
-  render();
-}
+    if (rows.length < 2) {
+      throw new Error("No data returned from sheet");
+    }
 
-function setSearch(s) {
-  search = s.toLowerCase();
-  render();
-}
+    rows.shift();
 
-window.setView = setView;
-window.setSearch = setSearch;
+    players = rows.map(r => ({
+      rank: Number(r[0]),
+      name: r[1],
+      team: r[2],
+      points: Number(r[3]) || 0,
+      avg: Number(r[4]) || 0
+    })).filter(p => p.name);
 
-/* =========================
-   VALUE MODEL (SAFE VERSION)
-========================= */
-function valueScore(p) {
-  return p.avg / (p.points > 0 ? p.points : 1);
-}
+    render();
 
-/* =========================
-   FILTER
-========================= */
-function applyFilters(list) {
-  if (search) {
-    list = list.filter(p =>
-      p.name.toLowerCase().includes(search)
-    );
-  }
-  return list;
-}
-
-/* =========================
-   RENDER
-========================= */
-function render() {
-  let list = [...players];
-
-  list = applyFilters(list);
-
-  if (view === "top") {
-    list.sort((a, b) => b.avg - a.avg);
-  }
-
-  if (view === "value") {
-    list.sort((a, b) => valueScore(b) - valueScore(a));
-  }
-
-  if (view === "form") {
-    list.sort((a, b) => b.points - a.points);
-  }
-
-  document.getElementById("app").innerHTML = `
-    <div class="topbar">
-      Showing: ${view.toUpperCase()} | Players: ${list.length}
-    </div>
-
-    ${list.map(p => `
+  } catch (err) {
+    document.getElementById("app").innerHTML = `
       <div class="card">
-        <b>${p.name}</b><br>
-        ${p.team}<br><br>
-        Avg: ${p.avg}<br>
-        Points: ${p.points}<br>
-        Value: ${valueScore(p).toFixed(2)}
+        ❌ Error loading data<br><br>
+        ${err.message}
       </div>
-    `).join("")}
-  `;
-}
+    `;
 
-/* =========================
-   START
-========================= */
-loadData();
+    console.log(err);
+  }
+}
