@@ -1,36 +1,71 @@
-<style>
-    .vcc-badge { font-size: 10px; font-weight: 800; color: #eab308; }
-    .fix-chip { font-size: 9px; padding: 2px 4px; border-radius: 3px; background: #2d3748; color: #94a3b8; margin-right: 2px; border: 1px solid transparent; }
-    .easy { color: #00ff88; border-color: #00ff8822; background: #00ff8811; }
-    .hard { color: #ff4d4d; border-color: #ff4d4d22; background: #ff4d4d11; }
-    .info-btn { background: none; border: 1px solid #38bdf8; color: #38bdf8; border-radius: 4px; font-size: 9px; padding: 2px 5px; cursor: pointer; }
-</style>
-
-<script>
-function renderTable(data) {
-    const body = document.getElementById('playerBody');
-    body.innerHTML = data.map(p => {
-        const beClass = p.be < 0 ? 'buy' : (p.be > 150 ? 'sell' : 'hold');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SC Terminal | Elite 2026</title>
+    <style>
+        /* 🌑 FORCED DARK THEME */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0b0f19; color: #f8fafc; font-family: sans-serif; }
         
-        // Generate Fixture Chips
-        const fixHTML = p.fixture ? p.fixture.map(f => {
-            const level = (f.includes('WCE') || f.includes('NMFC')) ? 'easy' : (f.includes('SYD') || f.includes('COL')) ? 'hard' : '';
-            return `<span class="fix-chip ${level}">${f}</span>`;
-        }).join('') : '';
+        .ticker-wrap { background: #1e293b; color: #38bdf8; padding: 12px; font-weight: bold; border-bottom: 2px solid #38bdf8; }
+        nav { display: flex; background: #161e2d; padding: 8px; gap: 8px; }
+        nav button { flex: 1; background: #1e293b; border: 1px solid #38bdf8; color: #38bdf8; padding: 12px; border-radius: 6px; font-weight: bold; }
 
-        return `
+        .table-container { padding: 10px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; background: #161e2d; border-radius: 8px; }
+        th { background: #1e293b; padding: 12px; text-align: left; color: #94a3b8; font-size: 10px; text-transform: uppercase; }
+        td { padding: 12px; border-bottom: 1px solid #2d3748; font-size: 13px; }
+
+        .be-tag { padding: 4px 8px; border-radius: 4px; font-weight: bold; }
+        .buy { background: #00ff8822; color: #00ff88; border: 1px solid #00ff88; }
+        .hold { background: #eab30822; color: #eab308; border: 1px solid #eab308; }
+    </style>
+</head>
+<body>
+
+<div class="ticker-wrap" id="newsTicker">WAITING FOR DATA...</div>
+
+<nav>
+    <button onclick="document.getElementById('dataTab').style.display='block'">📊 TERMINAL</button>
+    <button onclick="alert('Insights Loading...')">✍️ INSIGHTS</button>
+</nav>
+
+<div id="dataTab" class="table-container">
+    <table>
+        <thead>
             <tr>
-                <td class="player-info">
-                    <strong>${p.name}</strong>
-                    <span class="vcc-badge">${p.vcc || ''}</span>
-                </td>
-                <td><span class="badge">${p.pos}</span></td>
-                <td>$${p.price.toLocaleString()}</td>
-                <td><div style="display:flex; flex-direction:column; gap:4px;">${fixHTML}</div></td>
-                <td><span class="be-tag ${beClass}">${p.be}</span></td>
-                <td><button class="info-btn" onclick="alert('${p.insight || 'Hold for Round 7'}')">VIEW</button></td>
+                <th>Player</th>
+                <th>Price</th>
+                <th>BE</th>
+                <th>Run</th>
             </tr>
-        `;
-    }).join('');
-}
+        </thead>
+        <tbody id="playerBody">
+            </tbody>
+    </table>
+</div>
+
+<script src="players.js"></script>
+<script>
+    function render() {
+        const body = document.getElementById('playerBody');
+        if (typeof playerDatabase !== 'undefined') {
+            body.innerHTML = playerDatabase.map(p => `
+                <tr>
+                    <td><strong>${p.name}</strong><br><small>${p.team}</small></td>
+                    <td>$${p.price.toLocaleString()}</td>
+                    <td><span class="be-tag ${p.be < 0 ? 'buy' : 'hold'}">${p.be}</span></td>
+                    <td>${p.fixture ? p.fixture.join(' ') : 'TBD'}</td>
+                </tr>
+            `).join('');
+            document.getElementById('newsTicker').innerHTML = newsUpdates.join(' | ');
+        } else {
+            body.innerHTML = "<tr><td colspan='4' style='text-align:center; padding:50px;'>Error: players.js not found. Check your file name in GitHub!</td></tr>";
+        }
+    }
+    window.onload = render;
 </script>
+</body>
+</html>
