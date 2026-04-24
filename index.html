@@ -8,28 +8,30 @@
 </head>
 <body>
     <header>
-        <h1>SuperCoach Pro Analyst 2026</h1>
+        <h1>SuperCoach Pro 2026</h1>
         <div class="controls">
-            <input type="text" id="playerSearch" placeholder="Search Player...">
+            <input type="text" id="playerSearch" placeholder="Filter Players...">
             <select id="posFilter">
-                <option value="ALL">All Positions</option>
-                <option value="DEF">Defense</option>
-                <option value="MID">Midfield</option>
-                <option value="RUC">Ruck</option>
-                <option value="FWD">Forward</option>
+                <option value="ALL">All Pos</option>
+                <option value="DEF">DEF</option>
+                <option value="MID">MID</option>
+                <option value="RUC">RUC</option>
+                <option value="FWD">FWD</option>
             </select>
             <select id="teamFilter">
                 <option value="ALL">All Teams</option>
-                <option value="Crows">Crows</option>
-                <option value="Magpies">Magpies</option>
                 <option value="Demons">Demons</option>
                 <option value="Swans">Swans</option>
+                <option value="Magpies">Magpies</option>
                 <option value="Kangaroos">Kangaroos</option>
-                <option value="Power">Power</option>
-                <option value="Dockers">Dockers</option>
             </select>
         </div>
     </header>
+
+    <div class="news-section">
+        <h3>📢 Latest Analysis & News</h3>
+        <div id="newsFeed"></div>
+    </div>
 
     <div class="table-container">
         <table>
@@ -40,7 +42,8 @@
                     <th onclick="handleSort('pos')">Pos</th>
                     <th onclick="handleSort('price')">Price</th>
                     <th onclick="handleSort('avg')">Avg</th>
-                    <th onclick="handleSort('value')">Value</th>
+                    <th onclick="handleSort('last3')">L3</th>
+                    <th onclick="handleSort('be')">BE</th>
                     <th onclick="handleSort('bye')">Bye</th>
                 </tr>
             </thead>
@@ -48,7 +51,7 @@
         </table>
     </div>
 
-    <script src="players.js"></script>
-    <script src="app.js"></script>
+    <script src="players.js?v=3"></script>
+    <script src="app.js?v=3"></script>
 </body>
 </html>
