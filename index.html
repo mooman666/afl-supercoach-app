@@ -3,122 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SC Terminal | Elite 2026</title>
+    <title>SC Terminal | OMNI v3.0</title>
     <style>
+        :root { --neon-blue: #38bdf8; --neon-green: #00ff88; --dark-bg: #030712; --card-bg: #111827; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #0b111b; color: #f8fafc; font-family: -apple-system, sans-serif; padding-bottom: 80px; }
+        body { background: var(--dark-bg); color: #f8fafc; font-family: 'Segoe UI', system-ui, sans-serif; padding-bottom: 100px; }
         
-        /* 🚨 PRO HEADER & TICKER */
-        .header { background: #161e2d; padding: 15px; border-bottom: 2px solid #38bdf8; text-align: center; }
-        .ticker { background: #38bdf8; color: #000; padding: 8px; font-weight: 900; font-size: 11px; text-transform: uppercase; overflow: hidden; white-space: nowrap; }
+        /* 🛰️ ANALYTICS HEADER */
+        .header { background: #161e2d; padding: 20px; border-bottom: 1px solid var(--neon-blue); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+        .glitch-text { font-size: 14px; font-weight: 900; letter-spacing: 2px; color: var(--neon-blue); text-transform: uppercase; }
 
-        /* 📱 NAVIGATION */
-        nav { display: flex; background: #161e2d; padding: 10px; gap: 8px; position: fixed; bottom: 0; width: 100%; z-index: 1000; border-top: 1px solid #2d3748; }
-        nav button { flex: 1; background: #1e293b; border: 1px solid #38bdf8; color: #38bdf8; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 10px; }
-        nav button.active { background: #38bdf8; color: #000; }
+        /* 📟 TABS SYSTEM */
+        nav { display: flex; background: #161e2d; padding: 10px; gap: 5px; position: fixed; bottom: 0; width: 100%; z-index: 1000; border-top: 1px solid #1f2937; }
+        nav button { flex: 1; background: transparent; border: none; color: #94a3b8; padding: 15px 5px; font-size: 9px; font-weight: 800; text-transform: uppercase; transition: 0.3s; }
+        nav button.active { color: var(--neon-blue); border-top: 3px solid var(--neon-blue); background: #38bdf80a; }
 
-        /* 📦 PAGES */
-        .page { display: none; padding: 15px; animation: fadeIn 0.3s ease; }
+        .page { display: none; padding: 15px; }
         .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* 📊 DATA CARDS */
-        .card { background: #161e2d; border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #2d3748; }
-        .card h3 { color: #38bdf8; margin-bottom: 10px; font-size: 16px; border-bottom: 1px solid #2d3748; padding-bottom: 5px; }
+        /* 🃏 DATA CARDS */
+        .card { background: var(--card-bg); border-radius: 12px; padding: 15px; margin-bottom: 10px; border: 1px solid #1f2937; position: relative; }
+        .card.hot { border-left: 4px solid var(--neon-green); }
+        .card.cold { border-left: 4px solid #ef4444; }
 
-        /* 🟢 FIXTURE HEATMAP */
-        .fix-row { display: flex; gap: 5px; margin-top: 5px; }
-        .fix-chip { font-size: 10px; padding: 3px 6px; border-radius: 4px; background: #2d3748; }
-        .easy { background: rgba(0, 255, 136, 0.2); color: #00ff88; border: 1px solid #00ff88; }
-        .hard { background: rgba(255, 77, 77, 0.2); color: #ff4d4d; border: 1px solid #ff4d4d; }
+        .stat-row { display: flex; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px solid #374151; }
+        .stat-box { text-align: center; flex: 1; }
+        .label { font-size: 9px; color: #94a3b8; display: block; margin-bottom: 2px; }
+        .val { font-size: 13px; font-weight: bold; }
 
-        /* 🎖️ CAPTAINCY MATRIX */
-        .matrix-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #2d3748; }
-        .score-pill { background: #38bdf8; color: #000; padding: 2px 8px; border-radius: 20px; font-weight: 800; font-size: 12px; }
-
-        /* 💹 TRADE SIMULATOR */
-        .sim-input { background: #0b111b; border: 1px solid #38bdf8; color: white; padding: 10px; width: 100%; border-radius: 8px; margin: 10px 0; }
-        .result-box { background: #00ff8811; border: 1px solid #00ff88; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold; color: #00ff88; }
+        /* 👑 CAPTAINCY LOOPHOLE ENGINE */
+        .loophole-box { background: #1e293b; padding: 15px; border-radius: 12px; border: 1px solid var(--neon-blue); }
+        .status-light { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; }
+        
+        /* ✍️ STRATEGY HUB */
+        .article { background: #1f2937; border-radius: 8px; padding: 15px; margin-bottom: 10px; line-height: 1.5; }
+        .article h4 { color: var(--neon-blue); margin-bottom: 8px; }
     </style>
 </head>
 <body>
 
-<div class="header"><h1>SC TERMINAL PRO</h1></div>
-<div class="ticker" id="mainTicker">SYNCING ROUND 7 DATA...</div>
-
-<div id="pageData" class="page active">
-    <h3>📈 Market Intelligence</h3>
-    <div id="playerList"></div>
+<div class="header">
+    <div class="glitch-text">TERMINAL // OMNI</div>
+    <div style="font-size: 10px; color: var(--neon-green);">● LIVE FEED SYNCED</div>
 </div>
 
-<div id="pageCaptain" class="page">
-    <h3>👑 Captaincy Matrix (R7)</h3>
-    <div class="card">
-        <div class="matrix-row"><span>1. Nick Daicos (VC)</span><span class="score-pill">PROJ: 138</span></div>
-        <div class="matrix-row"><span>2. Max Gawn (VC)</span><span class="score-pill">PROJ: 129</span></div>
-        <div class="matrix-row"><span>3. Harry Sheezel (C)</span><span class="score-pill">PROJ: 134</span></div>
-        <p style="font-size: 11px; color: #94a3b8; margin-top: 10px;">*Based on opponent defensive pressure ratings.</p>
+<div id="pageTerminal" class="page active">
+    <div id="terminalList"></div>
+</div>
+
+<div id="pageStrategy" class="page">
+    <h3 style="margin-bottom:15px; border-left: 4px solid var(--neon-blue); padding-left: 10px;">PRO STRATEGY // R7</h3>
+    <div id="strategyList"></div>
+</div>
+
+<div id="pageLoop" class="page">
+    <h3>👑 Loophole Analyzer</h3>
+    <div class="loophole-box">
+        <p style="font-size:12px; margin-bottom:15px;">Target Score to take VC: <strong style="color:var(--neon-green);">125+</strong></p>
+        <div id="loopResults"></div>
     </div>
 </div>
 
-<div id="pageTrade" class="page">
-    <h3>🛠 Upgrade Simulator</h3>
+<div id="pagePlanner" class="page">
     <div class="card">
-        <label>Player OUT (Selling):</label>
-        <input type="number" id="valOut" class="sim-input" placeholder="Price e.g. 250000">
-        <label>Player IN (Buying):</label>
-        <input type="number" id="valIn" class="sim-input" placeholder="Price e.g. 580000">
-        <div id="simResult" class="result-box">Net Change: $0</div>
+        <label class="label">OUT: PEAKED ASSET</label>
+        <select id="sOut" onchange="calc()" style="width:100%; padding:12px; background:#0f172a; color:#fff; border:1px solid #334155; border-radius:8px;"></select>
+        <div style="height:15px;"></div>
+        <label class="label">IN: UPGRADE TARGET</label>
+        <select id="sIn" onchange="calc()" style="width:100%; padding:12px; background:#0f172a; color:#fff; border:1px solid #334155; border-radius:8px;"></select>
+    </div>
+    <div style="text-align:center; padding:30px; background: #00ff8808; border: 1px dashed var(--neon-green); border-radius: 12px;">
+        <span class="label">PROJECTED BANK IMPACT</span>
+        <div id="bankVal" style="font-size:32px; font-weight:900; color:var(--neon-green);">$0</div>
     </div>
 </div>
 
 <nav>
-    <button onclick="showPage('pageData')" id="btnData" class="active">MARKET</button>
-    <button onclick="showPage('pageCaptain')" id="btnCaptain">CAPTAIN</button>
-    <button onclick="showPage('pageTrade')" id="btnTrade">TRADE</button>
+    <button onclick="nav('pageTerminal')" class="active">TERMINAL</button>
+    <button onclick="nav('pageStrategy')">STRATEGY</button>
+    <button onclick="nav('pageLoop')">LOOP</button>
+    <button onclick="nav('pagePlanner')">PLANNER</button>
 </nav>
 
-<script src="players.js?v=MEGA"></script>
+<script src="players.js"></script>
 <script>
-    function showPage(id) {
+    function nav(id) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        document.querySelector(`button[onclick="showPage('${id}')"]`).classList.add('active');
+        event.currentTarget.classList.add('active');
     }
 
-    function renderApp() {
+    function init() {
         if (typeof playerDatabase === 'undefined') return;
         
-        const list = document.getElementById('playerList');
-        list.innerHTML = playerDatabase.map(p => `
-            <div class="card">
+        // Terminal List
+        document.getElementById('terminalList').innerHTML = playerDatabase.map(p => `
+            <div class="card ${p.be < 50 ? 'hot' : 'cold'}">
                 <div style="display:flex; justify-content:space-between;">
-                    <strong>${p.name}</strong>
-                    <span style="color:#00ff88; font-weight:bold;">$${p.price.toLocaleString()}</span>
+                    <div><strong>${p.name}</strong><br><small style="color:#94a3b8;">${p.team} // ${p.pos}</small></div>
+                    <div style="text-align:right;"><span style="color:var(--neon-blue); font-weight:900;">$${p.price.toLocaleString()}</span><br><span style="font-size:10px; color:${p.be < 50 ? 'var(--neon-green)' : '#ef4444'}">BE: ${p.be}</span></div>
                 </div>
-                <small>${p.team} • BE: ${p.be}</small>
-                <div class="fix-row">
-                    ${p.fixture.map(f => `<span class="fix-chip ${f.includes('WCE') || f.includes('ADE') ? 'easy' : ''}">${f}</span>`).join('')}
+                <div class="stat-row">
+                    <div class="stat-box"><span class="label">PROJ</span><span class="val">${p.proj}</span></div>
+                    <div class="stat-box"><span class="label">VAL</span><span class="val">${p.val}</span></div>
+                    <div class="stat-box"><span class="label">OWN%</span><span class="val">${p.own}</span></div>
                 </div>
             </div>
         `).join('');
 
-        document.getElementById('mainTicker').innerHTML = newsUpdates.join(' • ');
+        // Strategy Articles
+        document.getElementById('strategyList').innerHTML = articles.map(a => `
+            <div class="article"><h4>${a.title}</h4><p style="font-size:12px; color:#cbd5e1;">${a.content}</p></div>
+        `).join('');
+
+        // Loophole Logic
+        document.getElementById('loopResults').innerHTML = playerDatabase.filter(p => p.vcc).map(p => `
+            <div style="padding:10px 0; border-bottom:1px solid #334155;">
+                <span style="font-weight:bold;">${p.name} (${p.vcc})</span>
+                <span style="float:right; color:var(--neon-blue); font-weight:bold;">PROJ: ${p.proj}</span>
+            </div>
+        `).join('');
+
+        // Planner
+        const sOut = document.getElementById('sOut');
+        const sIn = document.getElementById('sIn');
+        const opts = playerDatabase.sort((a,b)=>a.name.localeCompare(b.name)).map(p => `<option value="${p.price}">${p.name} ($${p.price.toLocaleString()})</option>`).join('');
+        sOut.innerHTML = `<option value="0">Select Asset</option>` + opts;
+        sIn.innerHTML = `<option value="0">Select Target</option>` + opts;
     }
 
-    // Live Simulator Logic
-    document.addEventListener('input', () => {
-        const outVal = document.getElementById('valOut').value || 0;
-        const inVal = document.getElementById('valIn').value || 0;
-        const diff = outVal - inVal;
-        const res = document.getElementById('simResult');
-        res.innerText = `Bank Impact: $${diff.toLocaleString()}`;
-        res.style.color = diff >= 0 ? '#00ff88' : '#ff4d4d';
-        res.style.borderColor = diff >= 0 ? '#00ff88' : '#ff4d4d';
-    });
+    function calc() {
+        const diff = document.getElementById('sOut').value - document.getElementById('sIn').value;
+        const res = document.getElementById('bankVal');
+        res.innerText = (diff >= 0 ? "+" : "") + "$" + diff.toLocaleString();
+        res.style.color = diff >= 0 ? "var(--neon-green)" : "#ef4444";
+    }
 
-    window.onload = renderApp;
+    window.onload = init;
 </script>
 </body>
 </html>
