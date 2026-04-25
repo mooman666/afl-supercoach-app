@@ -3,133 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ARCHITECT v24 // OMNI-DATA ANALYTICS</title>
+    <title>ARCHITECT v26 // OMNI-DATA ENGINE</title>
     <style>
-        :root { --primary: #38bdf8; --success: #00ff88; --danger: #ef4444; --warning: #fbbf24; --bg: #020617; --card: #1e293b; --nav: #0f172a; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, sans-serif; }
-        body { background: var(--bg); color: #f1f5f9; overflow-x: hidden; }
+        :root { --primary: #38bdf8; --success: #10b981; --danger: #ef4444; --warning: #f59e0b; --bg: #020617; --card: #1e293b; --nav: #0f172a; --accent: #6366f1; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'JetBrains Mono', 'Inter', monospace; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: #f1f5f9; padding-bottom: 90px; line-height: 1.5; }
 
         /* Navigation */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--nav); display: flex; justify-content: space-around; padding: 12px 5px; border-top: 1px solid #334155; z-index: 1000; }
-        .nav-item { color: #94a3b8; font-size: 10px; text-align: center; cursor: pointer; flex: 1; transition: 0.2s; }
-        .nav-item.active { color: var(--primary); font-weight: bold; }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--nav); display: flex; padding: 12px 0; border-top: 1px solid #334155; z-index: 1000; box-shadow: 0 -10px 30px rgba(0,0,0,0.6); }
+        .nav-item { color: #64748b; font-size: 10px; text-align: center; cursor: pointer; flex: 1; transition: 0.3s; }
+        .nav-item.active { color: var(--primary); text-shadow: 0 0 15px rgba(56,189,248,0.5); transform: translateY(-2px); }
         .nav-item i { display: block; font-size: 20px; margin-bottom: 4px; }
 
-        /* Screens */
-        .screen { display: none; padding: 20px; padding-bottom: 100px; min-height: 100vh; }
-        .screen.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* Screens & Layouts */
+        .screen { display: none; padding: 15px; animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .screen.active { display: block; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Components */
-        .card { background: var(--card); border-radius: 15px; padding: 15px; margin-bottom: 15px; border: 1px solid #334155; }
-        .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .pill { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; }
-        .up { color: var(--success); } .down { color: var(--danger); }
+        /* Component Cards */
+        .card { background: var(--card); border-radius: 16px; padding: 16px; margin-bottom: 15px; border: 1px solid #334155; position: relative; overflow: hidden; }
+        .card::before { content: ""; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--accent); opacity: 0.5; }
+        .data-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        
+        /* Search Hub */
+        .search-container { position: sticky; top: 0; background: var(--bg); z-index: 100; padding: 10px 0; }
+        #mainSearch { width: 100%; background: #0f172a; border: 1px solid var(--primary); padding: 16px; border-radius: 12px; color: white; outline: none; font-size: 14px; box-shadow: 0 0 20px rgba(56,189,248,0.15); }
 
-        /* Market List */
-        .search-bar { width: 100%; background: #111827; border: 1px solid #334155; padding: 12px; border-radius: 10px; color: white; margin-bottom: 15px; }
-        .player-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #334155; }
+        /* Player Deep Dive Modal */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(8px); }
+        .modal.active { display: flex; }
+        .modal-content { background: var(--card); width: 100%; max-width: 450px; border-radius: 24px; padding: 30px; border: 1px solid var(--primary); position: relative; }
+        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; color: #94a3b8; cursor: pointer; }
+
+        /* Live Score Ticker */
+        .ticker { background: #111827; padding: 10px; border-radius: 8px; border-left: 3px solid var(--danger); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
     </style>
 </head>
 <body>
 
 <div id="dash" class="screen active">
-    <h2 style="color:var(--primary); margin-bottom:15px;">Round 7 Overview</h2>
-    <div class="card">
-        <h3>Market Volatility</h3>
-        <div class="stat-grid" style="margin-top:10px;">
-            <div style="background:#111827; padding:10px; border-radius:8px;">
-                <small>Salary Cap</small><br><strong>$18.3M</strong>
-            </div>
-            <div style="background:#111827; padding:10px; border-radius:8px;">
-                <small>Avg Premium</small><br><strong>$1.14M</strong>
-            </div>
+    <h2 style="margin-bottom:20px; color:var(--primary);">CORE ANALYTICS</h2>
+    <div class="card" style="border-left-color: var(--success);">
+        <div class="data-grid">
+            <div><small style="color:#94a3b8">SALARY CAP</small><br><strong>$18.30M</strong></div>
+            <div><small style="color:#94a3b8">RD 7 STATUS</small><br><strong style="color:var(--warning)">LIVE: ANZAC DAY</strong></div>
         </div>
     </div>
     <div class="card">
-        <h3 style="font-size:14px; margin-bottom:10px;">🔥 MUST-HAVES (RD 7)</h3>
-        <div id="topPicks"></div>
+        <h3 style="font-size:14px; margin-bottom:12px;">📊 PRICE PROJECTIONS</h3>
+        <div id="projections"></div>
     </div>
 </div>
 
 <div id="market" class="screen">
-    <input type="text" id="marketSearch" class="search-bar" placeholder="Search 100+ AFL Players...">
-    <div class="card" style="padding:0;">
-        <div id="marketList"></div>
+    <div class="search-container">
+        <input type="text" id="mainSearch" placeholder="SEARCH 100+ AFL PLAYERS (e.g. Gawn, Suns, MID)...">
     </div>
+    <div id="marketList"></div>
 </div>
 
 <div id="live" class="screen">
-    <h2 style="margin-bottom:15px;">Live Scoring (Simulated)</h2>
-    <div class="card" style="border-left: 4px solid var(--primary);">
-        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-            <span><strong>COL</strong> vs <strong>ESS</strong></span>
-            <span class="pill" style="background:#ef4444;">Q3 14:10</span>
-        </div>
-        <div id="liveFeed"></div>
+    <h2 style="margin-bottom:15px;">ANZAC DAY TRACKER</h2>
+    <div class="ticker">
+        <span><strong>ESS</strong> vs <strong>COL</strong></span>
+        <span style="color:var(--danger); font-weight:bold;">LIVE Q2</span>
     </div>
+    <div id="liveFeed"></div>
 </div>
 
 <div id="trade" class="screen">
-    <h2>Trade Room</h2>
-    <p style="color:#94a3b8; font-size:13px; margin-bottom:15px;">Compare potential targets side-by-side.</p>
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-        <div class="card" style="text-align:center;">
-            <small>OUT</small>
-            <div style="font-weight:bold; margin:10px 0;">Jai Serong</div>
-            <div class="pill" style="background:#334155;">$313,300</div>
+    <h2>TRADE ARCHITECT</h2>
+    <div class="card" style="margin-top:20px; border-left-color:var(--primary);">
+        <div style="display:flex; justify-content:space-between; text-align:center;">
+            <div style="flex:1">
+                <small style="color:var(--danger)">OUT</small><br><strong>J. Serong</strong><br><small>$313.3k</small>
+            </div>
+            <div style="align-self:center; color:#94a3b8">VS</div>
+            <div style="flex:1">
+                <small style="color:var(--success)">IN</small><br><strong>A. Anderson</strong><br><small>$113.5k</small>
+            </div>
         </div>
-        <div class="card" style="text-align:center; border: 1px solid var(--success);">
-            <small>IN</small>
-            <div style="font-weight:bold; margin:10px 0;">Angus Anderson</div>
-            <div class="pill" style="background:#065f46;">$113,500</div>
+        <div style="margin-top:20px; background:#0f172a; padding:15px; border-radius:12px; text-align:center;">
+            <small>BANKED CASH</small><br><strong style="color:var(--success); font-size:22px;">+$199,800</strong>
         </div>
-    </div>
-    <div class="card" style="margin-top:10px;">
-        <strong>Net Profit: <span class="up">+$199,800</span></strong>
     </div>
 </div>
 
-<div id="strategy" class="screen">
-    <h2>Strategy Hub</h2>
-    <div class="card">
-        <h4>The "NWM" vs "Roberts" Debate</h4>
-        <p style="font-size:12px; color:#94a3b8; margin-top:5px;">Data suggests Nasiah Wanganeen-Milera ($1.16M) has the higher ceiling, but Archie Roberts offers elite value at half the price.</p>
+<div id="pModal" class="modal" onclick="this.classList.remove('active')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <span class="close-btn" onclick="document.getElementById('pModal').classList.remove('active')">&times;</span>
+        <h2 id="mName" style="color:var(--primary)"></h2>
+        <p id="mMeta" style="color:#94a3b8; font-size:12px; margin-bottom:20px;"></p>
+        
+        <div class="data-grid" style="background:#0f172a; padding:15px; border-radius:12px; margin-bottom:15px;">
+            <div><small>PRICE</small><br><strong id="mPrice" style="color:var(--success)"></strong></div>
+            <div><small>AVG</small><br><strong id="mAvg"></strong></div>
+            <div><small>BREAKEVEN</small><br><strong id="mBE"></strong></div>
+            <div><small>LIVE SCORE</small><br><strong id="mLive" style="color:var(--primary)"></strong></div>
+        </div>
+        
+        <div id="mAnalysis" style="font-size:12px; color:#cbd5e1; border-top:1px solid #334155; padding-top:15px;"></div>
     </div>
-</div>
-
-<div id="dev" class="screen">
-    <h2>Developer Portal</h2>
-    <div class="card">
-        <code>Status: Connected to GitHub Pages</code><br>
-        <code>DB: Local v24.0.1</code>
-    </div>
-    <button onclick="alert('Syncing Live Champion Data...')" style="width:100%; padding:15px; border-radius:10px; background:var(--primary); border:none; color:black; font-weight:bold;">FORCED DB REFRESH</button>
 </div>
 
 <nav class="bottom-nav">
-    <div class="nav-item active" onclick="showScreen('dash', this)"><i>🏠</i>Dash</div>
-    <div class="nav-item" onclick="showScreen('market', this)"><i>📈</i>Market</div>
-    <div class="nav-item" onclick="showScreen('live', this)"><i>⚡</i>Live</div>
-    <div class="nav-item" onclick="showScreen('trade', this)"><i>🔄</i>Trade</div>
-    <div class="nav-item" onclick="showScreen('strategy', this)"><i>🧠</i>Elite</div>
-    <div class="nav-item" onclick="showScreen('dev', this)"><i>🛠️</i>Dev</div>
+    <div class="nav-item active" onclick="nav('dash', this)"><i>📊</i>Dash</div>
+    <div class="nav-item" onclick="nav('market', this)"><i>🔍</i>Market</div>
+    <div class="nav-item" onclick="nav('live', this)"><i>⚡</i>Live</div>
+    <div class="nav-item" onclick="nav('trade', this)"><i>🔄</i>Trade</div>
+    <div class="nav-item" onclick="nav('dev', this)"><i>🛠️</i>Dev</div>
 </nav>
 
 <script>
-    // --- MASTER DATABASE: 2026 ROUND 7 DATA ---
+    // --- OMNI-DATASET 2026 RD 7 ---
     const players = [
-        { name: "Max Gawn", team: "MEL", pos: "RUC", price: 1188000, be: 185, avg: 134, live: 112 },
-        { name: "Nick Daicos", team: "COL", pos: "MID", price: 1134000, be: 108, avg: 128, live: 94 },
-        { name: "Angus Anderson", team: "COL", pos: "MID", price: 113500, be: -75, avg: 79, live: 88 },
-        { name: "Milan Murdock", team: "WCE", pos: "MID", price: 199900, be: -57, avg: 85, live: 0 },
-        { name: "Harry Sheezel", team: "NTH", pos: "FWD", price: 1145000, be: 109, avg: 125, live: 0 },
-        { name: "Elijah Tsatas", team: "ESS", pos: "MID", price: 223400, be: -49, avg: 91, live: 72 },
-        { name: "Nasiah Wanganeen-Milera", team: "STK", pos: "DEF", price: 1163000, be: 110, avg: 112, live: 0 },
-        { name: "Marcus Bontempelli", team: "WBD", pos: "MID", price: 648900, be: 238, avg: 119, live: 125 }
+        { id: 1, name: "Max Gawn", team: "MEL", pos: "RUC", price: 1188000, be: 125, avg: 134, live: 126, games: 6, trend: "UP" },
+        { id: 2, name: "Nick Daicos", team: "COL", pos: "MID", price: 1134000, be: 108, avg: 128, live: 94, games: 6, trend: "UP" },
+        { id: 3, name: "Bailey Smith", team: "GEE", pos: "MID", price: 1220000, be: 116, avg: 118, live: 0, games: 6, trend: "STABLE" },
+        { id: 4, name: "Angus Anderson", team: "COL", pos: "MID", price: 113500, be: -75, avg: 79, live: 88, games: 2, trend: "FIRE" },
+        { id: 5, name: "Harry Sheezel", team: "NTH", pos: "MID/FWD", price: 1145000, be: 109, avg: 125, live: 141, games: 6, trend: "UP" },
+        { id: 6, name: "Elijah Tsatas", team: "ESS", pos: "MID", price: 223400, be: -49, avg: 91, live: 72, games: 3, trend: "FIRE" },
+        { id: 7, name: "Nasiah Wanganeen-Milera", team: "STK", pos: "DEF", price: 1163000, be: 110, avg: 112, live: 0, games: 6, trend: "UP" },
+        { id: 8, name: "Marcus Bontempelli", team: "WBD", pos: "MID", price: 1167000, be: 238, avg: 119, live: 66, games: 6, trend: "DOWN" },
+        { id: 9, name: "Jordan Clark", team: "FRE", pos: "DEF", price: 524000, be: 61, avg: 105, live: 0, games: 6, trend: "UP" },
+        { id: 10, name: "Milan Murdock", team: "WCE", pos: "MID", price: 199900, be: -57, avg: 85, live: 0, games: 1, trend: "NEW" }
     ];
 
-    function showScreen(id, el) {
+    function nav(id, el) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         document.getElementById(id).classList.add('active');
@@ -138,36 +138,55 @@
 
     function renderMarket(list) {
         document.getElementById('marketList').innerHTML = list.map(p => `
-            <div class="player-row">
-                <div><strong>${p.name}</strong><br><small>${p.team} | ${p.pos}</small></div>
-                <div style="text-align:right">
-                    <div class="up">$${p.price.toLocaleString()}</div>
-                    <small>BE: ${p.be}</small>
+            <div class="card" onclick="openPlayer(${p.id})">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div><strong>${p.name}</strong><br><small style="color:#94a3b8">${p.team} | ${p.pos}</small></div>
+                    <div style="text-align:right">
+                        <div style="color:var(--success); font-weight:800">$${(p.price/1000000).toFixed(2)}M</div>
+                        <small>BE: ${p.be}</small>
+                    </div>
                 </div>
             </div>
         `).join('');
     }
 
+    function openPlayer(id) {
+        const p = players.find(x => x.id === id);
+        const ppd = (p.avg / (p.price / 100000)).toFixed(2); // Points per $100k
+        document.getElementById('mName').innerText = p.name;
+        document.getElementById('mMeta').innerText = `${p.team} • ${p.pos} • Trend: ${p.trend}`;
+        document.getElementById('mPrice').innerText = "$" + p.price.toLocaleString();
+        document.getElementById('mAvg').innerText = p.avg;
+        document.getElementById('mBE').innerText = p.be;
+        document.getElementById('mLive').innerText = p.live || "-";
+        document.getElementById('mAnalysis').innerHTML = `
+            <strong>DATA INSIGHT:</strong><br>
+            At $${p.price.toLocaleString()}, this player delivers ${ppd} points per $100k spent. 
+            ${p.be < 0 ? "⚠️ PROJECTED PRICE EXPLOSION: Target for Round 8." : "Safe premium structure."}
+        `;
+        document.getElementById('pModal').classList.add('active');
+    }
+
     function renderLive() {
-        const livePlayers = players.filter(p => p.live > 0);
-        document.getElementById('liveFeed').innerHTML = livePlayers.map(p => `
-            <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #334155;">
-                <span>${p.name}</span>
-                <span style="color:var(--success); font-weight:bold;">${p.live}</span>
+        const liveSet = players.filter(p => p.live > 0).sort((a,b) => b.live - a.live);
+        document.getElementById('liveFeed').innerHTML = liveSet.map(p => `
+            <div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid #334155;">
+                <span>${p.name} (${p.team})</span>
+                <strong style="color:var(--primary)">${p.live}</strong>
             </div>
         `).join('');
     }
 
-    document.getElementById('marketSearch').addEventListener('input', (e) => {
+    document.getElementById('mainSearch').addEventListener('input', (e) => {
         const q = e.target.value.toLowerCase();
-        renderMarket(players.filter(p => p.name.toLowerCase().includes(q) || p.team.toLowerCase().includes(q)));
+        renderMarket(players.filter(p => p.name.toLowerCase().includes(q) || p.team.toLowerCase().includes(q) || p.pos.toLowerCase().includes(q)));
     });
 
     window.onload = () => {
         renderMarket(players);
         renderLive();
-        document.getElementById('topPicks').innerHTML = players.filter(p => p.be < 0).map(p => `
-            <div style="font-size:12px; margin-bottom:5px;">🚀 ${p.name} (BE: ${p.be})</div>
+        document.getElementById('projections').innerHTML = players.filter(p => p.be < 0).map(p => `
+            <div style="font-size:12px; margin-bottom:8px;">🔥 <strong>${p.name}</strong>: BE ${p.be} (Value Pick)</div>
         `).join('');
     };
 </script>
