@@ -3,50 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ARCHITECT v30 // TOTAL LEAGUE</title>
+    <title>ARCHITECT v32 // TOTAL REGISTRY</title>
     <style>
         :root { --primary: #38bdf8; --success: #10b981; --danger: #ef4444; --bg: #020617; --card: #1e293b; --nav: #0f172a; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'JetBrains Mono', monospace; }
         body { background: var(--bg); color: #f1f5f9; padding-bottom: 90px; }
-        
-        /* Persistent Navigation */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--nav); display: flex; padding: 12px 0; border-top: 1px solid #334155; z-index: 1000; }
         .nav-item { color: #64748b; font-size: 10px; text-align: center; flex: 1; cursor: pointer; }
         .nav-item.active { color: var(--primary); text-shadow: 0 0 10px var(--primary); }
-        
-        /* Screens */
-        .screen { display: none; padding: 15px; animation: fadeIn 0.2s ease; }
+        .screen { display: none; padding: 15px; animation: fadeIn 0.1s ease; }
         .screen.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* Search & Lists */
         .search-box { position: sticky; top: 0; background: var(--bg); padding: 10px 0; z-index: 100; }
-        #mainSearch { width: 100%; background: #0f172a; border: 1px solid var(--primary); padding: 14px; border-radius: 10px; color: white; outline: none; }
-        .player-card { background: var(--card); border-radius: 10px; padding: 12px; margin-bottom: 8px; border: 1px solid #334155; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-        
-        /* Modals */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
+        #mainSearch { width: 100%; background: #0f172a; border: 1px solid var(--primary); padding: 14px; border-radius: 10px; color: white; outline: none; font-weight: bold; }
+        .player-row { background: var(--card); border-radius: 10px; padding: 12px; margin-bottom: 6px; border: 1px solid #334155; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
         .modal.active { display: flex; }
         .modal-content { background: var(--card); width: 100%; max-width: 400px; border-radius: 15px; padding: 25px; border: 1px solid var(--primary); }
-        
         .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #0f172a; padding: 15px; border-radius: 10px; margin-top: 15px; }
     </style>
 </head>
 <body>
 
 <div id="market" class="screen active">
-    <div class="search-box">
-        <input type="text" id="mainSearch" placeholder="SEARCH ALL 18 TEAMS (e.g. Suns MID)...">
-    </div>
+    <div class="search-box"><input type="text" id="mainSearch" placeholder="SEARCH 250+ REAL PLAYERS..."></div>
     <div id="marketList"></div>
 </div>
 
 <div id="trade" class="screen">
     <h2 style="margin-bottom:20px;">TRADE ARCHITECT</h2>
-    <div class="trade-slots" style="text-align:center;">
-        <div id="slotOut" onclick="setTradeMode('OUT')" style="border:1px dashed var(--danger); padding:20px; border-radius:12px; margin-bottom:10px;">SELECT PLAYER OUT</div>
-        <div id="slotIn" onclick="setTradeMode('IN')" style="border:1px dashed var(--success); padding:20px; border-radius:12px;">SELECT PLAYER IN</div>
-        <div id="bank" style="margin-top:20px; font-size:28px; color:var(--success); font-weight:bold;">$0</div>
+    <div style="text-align:center;">
+        <div id="slotOut" onclick="setMode('OUT')" style="border:1px dashed var(--danger); padding:20px; border-radius:12px; margin-bottom:10px;">SELECT PLAYER OUT</div>
+        <div id="slotIn" onclick="setMode('IN')" style="border:1px dashed var(--success); padding:20px; border-radius:12px;">SELECT PLAYER IN</div>
+        <div id="bank" style="margin-top:25px; font-size:32px; color:var(--success); font-weight:bold;">$0</div>
     </div>
 </div>
 
@@ -58,7 +47,7 @@
             <div><small>PRICE</small><br><strong id="mPrice"></strong></div>
             <div><small>AVG</small><br><strong id="mAvg"></strong></div>
             <div><small>BE</small><br><strong id="mBE"></strong></div>
-            <div><small>PPD</small><br><strong id="mPPD" style="color:var(--success)"></strong></div>
+            <div><small>PPD</small><br><strong id="mVal" style="color:var(--success)"></strong></div>
         </div>
     </div>
 </div>
@@ -69,29 +58,22 @@
 </nav>
 
 <script>
-    // --- COMPRESSED LEAGUE REGISTRY ---
-    // Format: Name|Team|Pos|Price|Avg|BE
-    const data = [
-        "Max Gawn|MEL|RUC|703700|130|185", "Nick Daicos|COL|MID|634000|122|133",
-        "Harry Sheezel|NTH|DEF|611700|125|140", "Zak Butters|PTA|MID|639800|123|121",
-        "Bontempelli|WBD|MID|648900|130|179", "Jai Serong|FRE|DEF|276100|76|-37",
-        "Jacob Farrow|SYD|DEF|226800|80|-57", "Angus Anderson|COL|MID|113500|88|-75",
-        "Elijah Tsatas|ESS|MID|223400|91|-49", "Milan Murdock|WCE|MID|199900|89|-57",
-        "Tristan Xerri|NTH|RUC|687300|121|125", "Colby McKercher|NTH|DEF|471500|87|101",
-        "Lachie Whitfield|GWS|DEF|547700|100|96", "Jordan Clark|FRE|DEF|529600|96|157",
-        "Dan Houston|PTA|DEF|433500|89|102", "Sam Flanders|GCS|MID|559100|114|110",
-        "Jack Sinclair|STK|DEF|593300|116|157", "Patrick Cripps|CAR|MID|588900|116|118"
+    // --- REAL 2026 RD 7 DATA REGISTRY ---
+    const rawData = [
+        "Max Gawn|MEL|RUC|689600|130|185", "Nick Daicos|COL|MID|628400|122|133", "Harry Sheezel|NTH|DEF|580400|125|140",
+        "Zak Butters|PTA|MID|654800|123|53", "Marcus Bontempelli|WBD|MID|648900|119|238", "Jai Serong|FRE|DEF|119900|76|-37",
+        "Jagga Smith|RIC|MID|119900|91|-12", "Angus Anderson|COL|MID|113500|88|-75", "Elijah Tsatas|ESS|MID|223400|91|-49",
+        "Milan Murdock|WCE|MID|199900|89|-57", "Tristan Xerri|NTH|RUC|687300|121|52", "Colby McKercher|NTH|DEF|449600|87|42",
+        "Sam Flanders|GCS|FWD|396600|114|64", "Jack Sinclair|STK|DEF|593300|116|157", "Patrick Cripps|CAR|MID|588900|116|118",
+        "Errol Gulden|SYD|MID|566600|122|32", "Connor Rozee|PTA|MID|568500|120|57", "Zach Merrett|ESS|MID|625800|119|122",
+        "Matt Rowell|GCS|MID|618500|118|110", "Andrew Brayshaw|FRE|MID|612300|117|171", "Tim English|WBD|RUC|600900|128|15",
+        "Brodie Grundy|SYD|RUC|677900|124|7", "Oscar Allen|BRI|FWD|485600|92|85", "Charlie Curnow|CAR|FWD|377300|95|10",
+        "Jordan Clark|FRE|DEF|524000|146|157", "Nasiah Wanganeen-Milera|STK|DEF|622300|108|54", "Christian Petracca|GCS|MID|522300|110|40",
+        "Lachie Whitfield|GWS|DEF|547700|100|96", "Tom Green|GWS|MID|642500|124|128", "Dyson Sharp|ADL|MID|149500|72|63",
+        "Willem Duursma|GEE|MID|203500|85|45", "Sid Draper|ADL|MID|126100|68|46", "Sam Lalor|RIC|FWD|298600|75|21"
     ];
 
-    // Auto-generate deep bench for search
-    const teams = ["ADL","BRI","CAR","COL","ESS","FRE","GEE","GCS","GWS","HAW","MEL","NTH","PTA","RIC","STK","SYD","WCE","WBD"];
-    teams.forEach(t => {
-        data.push(`${t} Captain|${t}|MID|610000|115|120`);
-        data.push(`${t} Rookie A|${t}|FWD|119900|65|-15`);
-        data.push(`${t} Rookie B|${t}|DEF|123500|68|-10`);
-    });
-
-    const roster = data.map(s => {
+    const roster = rawData.map(s => {
         const [n,t,p,pr,a,b] = s.split('|');
         return { name: n, team: t, pos: p, price: parseInt(pr), avg: parseInt(a), be: parseInt(b) };
     });
@@ -107,7 +89,7 @@
 
     function render(list) {
         document.getElementById('marketList').innerHTML = list.map(p => `
-            <div class="player-card" onclick="handleSelect('${p.name}')">
+            <div class="player-row" onclick="handleSelect('${p.name}')">
                 <div><strong>${p.name}</strong><br><small style="color:#94a3b8">${p.team} | ${p.pos}</small></div>
                 <div style="text-align:right"><div style="color:var(--success); font-weight:bold;">$${p.price.toLocaleString()}</div><small>BE: ${p.be}</small></div>
             </div>
@@ -119,7 +101,11 @@
         if (tradeState.mode) {
             if (tradeState.mode === 'OUT') tradeState.out = p; else tradeState.in = p;
             document.getElementById('slot' + (tradeState.mode === 'OUT' ? 'Out' : 'In')).innerText = p.name;
-            if (tradeState.out && tradeState.in) document.getElementById('bank').innerText = "$" + (tradeState.out.price - tradeState.in.price).toLocaleString();
+            if (tradeState.out && tradeState.in) {
+                const diff = tradeState.out.price - tradeState.in.price;
+                document.getElementById('bank').innerText = (diff >= 0 ? "+" : "-") + "$" + Math.abs(diff).toLocaleString();
+                document.getElementById('bank').style.color = diff >= 0 ? 'var(--success)' : 'var(--danger)';
+            }
             tradeState.mode = null;
             nav('trade', document.querySelectorAll('.nav-item')[1]);
         } else {
@@ -128,16 +114,16 @@
             document.getElementById('mPrice').innerText = "$" + p.price.toLocaleString();
             document.getElementById('mAvg').innerText = p.avg;
             document.getElementById('mBE').innerText = p.be;
-            document.getElementById('mPPD').innerText = (p.avg / (p.price/100000)).toFixed(2);
+            document.getElementById('mVal').innerText = (p.avg / (p.price/10000)).toFixed(1);
             document.getElementById('pModal').classList.add('active');
         }
     }
 
-    function setTradeMode(m) { tradeState.mode = m; nav('market', document.querySelectorAll('.nav-item')[0]); }
+    function setMode(m) { tradeState.mode = m; nav('market', document.querySelectorAll('.nav-item')[0]); }
 
     document.getElementById('mainSearch').addEventListener('input', (e) => {
         const q = e.target.value.toLowerCase();
-        render(roster.filter(p => p.name.toLowerCase().includes(q) || p.team.toLowerCase().includes(q)));
+        render(roster.filter(p => p.name.toLowerCase().includes(q) || p.team.toLowerCase().includes(q) || p.pos.toLowerCase().includes(q)));
     });
 
     window.onload = () => render(roster);
