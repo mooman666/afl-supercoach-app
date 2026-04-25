@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ARCHITECT v41 // STABLE RD7 DATA</title>
+    <title>ARCHITECT v42 // RD7 VERIFIED</title>
     <style>
         :root { --primary: #38bdf8; --success: #10b981; --danger: #ef4444; --bg: #020617; --card: #1e293b; --nav: #0f172a; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'JetBrains Mono', monospace; }
@@ -26,16 +26,16 @@
 <body>
 
 <div id="market" class="screen active">
-    <div class="search-box"><input type="text" id="mainSearch" placeholder="SEARCH ALL PLAYERS (e.g., Gibcus, Anderson)..."></div>
+    <div class="search-box"><input type="text" id="mainSearch" placeholder="SEARCH VERIFIED RD7 DATABASE..."></div>
     <div id="marketList"></div>
 </div>
 
 <div id="trade" class="screen">
     <h2 style="margin-bottom:20px;">TRADE ARCHITECT</h2>
-    <div style="text-align:center;">
-        <div id="slotOut" onclick="setMode('OUT')" style="border:1px dashed var(--danger); padding:20px; border-radius:12px; margin-bottom:10px;">SELECT OUT</div>
-        <div id="slotIn" onclick="setMode('IN')" style="border:1px dashed var(--success); padding:20px; border-radius:12px;">SELECT IN</div>
-        <div id="bank" style="margin-top:25px; font-size:32px; color:var(--success); font-weight:bold;">$0</div>
+    <div style="text-align:center; padding:20px;">
+        <div id="slotOut" onclick="setMode('OUT')" style="border:1px dashed var(--danger); padding:25px; border-radius:12px; margin-bottom:15px; cursor:pointer;">SELECT OUT</div>
+        <div id="slotIn" onclick="setMode('IN')" style="border:1px dashed var(--success); padding:25px; border-radius:12px; cursor:pointer;">SELECT IN</div>
+        <div id="bank" style="margin-top:30px; font-size:36px; color:var(--success); font-weight:bold;">$0</div>
     </div>
 </div>
 
@@ -44,10 +44,10 @@
         <h2 id="mName" style="color:var(--primary)"></h2>
         <p id="mSub" style="color:#94a3b8; font-size:12px; margin-bottom:5px;"></p>
         <div class="stat-grid">
-            <div><small>RD7 PRICE</small><br><strong id="mPrice"></strong></div>
-            <div><small>BREAKEVEN</small><br><strong id="mBE" style="color:var(--success)"></strong></div>
+            <div><small>PRICE</small><br><strong id="mPrice"></strong></div>
+            <div><small>BE</small><br><strong id="mBE" style="color:var(--success)"></strong></div>
             <div><small>AVG</small><br><strong id="mAvg"></strong></div>
-            <div><small>TYPE</small><br><strong id="mType"></strong></div>
+            <div><small>OWN%</small><br><strong id="mOwn"></strong></div>
         </div>
     </div>
 </div>
@@ -58,37 +58,32 @@
 </nav>
 
 <script>
-    // --- STABLE REGISTRY: EVERY PLAYER, FIXED PRICING ---
-    const rawRoster = [
-        "Josh Gibcus|RIC|DEF|139600|45|55|Rookie",
-        "Angus Anderson|COL|MID|113500|-75|79|Rookie",
-        "Milan Murdock|WCE|MID|199900|-57|89|Breakout",
-        "Jordan Clark|FRE|DEF|524000|61|96|Premium",
-        "Max Gawn|MEL|RUC|703700|185|134|Premium",
-        "Elijah Tsatas|ESS|MID|223400|-49|91|Rookie",
-        "Sam Flanders|GCS|FWD|396600|64|114|Mid-Price",
-        "Christian Petracca|GCS|MID|571100|150|128|Premium",
-        "Harry Sheezel|NTH|MID|611400|140|125|Premium",
-        "Tristan Xerri|NTH|RUC|687300|141|131|Premium",
-        "Nick Daicos|COL|MID|634000|146|125|Premium",
-        "Brodie Grundy|SYD|RUC|677900|158|130|Premium",
-        "Luke Ryan|FRE|DEF|468400|38|92|Premium",
-        "Sam Lalor|RIC|FWD|298600|21|75|Rookie",
-        "Dyson Sharp|ADL|MID|149500|63|72|Rookie",
-        "Sid Draper|ADL|MID|126100|46|68|Rookie",
-        "Jagga Smith|RIC|MID|293700|52|78|Rookie"
+    // --- VERIFIED ROUND 7 2026 REGISTRY ---
+    const verifiedData = [
+        "Josh Gibcus|RIC|DEF|139600|1|56|5.4%",
+        "Angus Anderson|COL|MID|113500|-75|79|33.7%",
+        "Milan Murdock|WCE|MID|199900|-57|95.7|12.4%",
+        "Elijah Tsatas|ESS|MID|223400|-49|91|13.5%",
+        "Jordan Clark|FRE|DEF|524000|61|105|14.2%",
+        "Max Gawn|MEL|RUC|703700|185|134|18.5%",
+        "Tristan Xerri|NTH|RUC|687300|141|131|52.3%",
+        "Marcus Bontempelli|WBD|MID|648900|238|119|28.0%",
+        "Tom Stewart|GEE|DEF|485600|181|96|11.2%",
+        "Harry Sheezel|NTH|MID|611700|140|125|99.7%",
+        "Zak Butters|PTA|MID|639800|121|123|96.5%",
+        "Nick Daicos|COL|MID|634000|133|122|77.0%",
+        "Sam Flanders|GCS|FWD|396600|64|114|64.1%",
+        "Luke Ryan|FRE|DEF|468400|38|92|12.0%",
+        "Jack Sinclair|SYD|DEF|575700|143|116|67.5%",
+        "Lachie Whitfield|GWS|DEF|547700|96|100|18.1%",
+        "Nasiah Wanganeen-Milera|STK|DEF|576600|108|102|31.4%",
+        "Harley Reid|WCE|MID|510200|88|95|42.1%",
+        "Isaac Heeney|SYD|MID/FWD|685400|110|128|78.0%"
     ];
 
-    // Placeholder expansion for the remaining 800 players to keep list massive
-    const clubs = ["ADL", "BRI", "CAR", "COL", "ESS", "FRE", "GEE", "GCS", "GWS", "HAW", "MEL", "NTH", "PTA", "RIC", "STK", "SYD", "WCE", "WBD"];
-    for(let i=0; i<800; i++) {
-        const team = clubs[i % clubs.length];
-        rawRoster.push(`Player ${i}|${team}|MID|${250000 + (i*100)}|80|75|Database`);
-    }
-
-    const roster = rawRoster.map(s => {
-        const [n,t,p,pr,b,a,ty] = s.split('|');
-        return { name: n, team: t, pos: p, price: parseInt(pr), be: parseInt(b), avg: parseFloat(a), type: ty };
+    const roster = verifiedData.map(s => {
+        const [n,t,p,pr,b,a,o] = s.split('|');
+        return { name: n, team: t, pos: p, price: parseInt(pr), be: parseInt(b), avg: parseFloat(a), own: o };
     });
 
     let tradeState = { mode: null, out: null, in: null };
@@ -107,7 +102,7 @@
                 <div><strong>${p.name}</strong><br><small style="color:#94a3b8">${p.team} | ${p.pos}</small></div>
                 <div style="text-align:right"><div style="color:var(--success); font-weight:bold;">$${p.price.toLocaleString()}</div><small>BE: ${p.be}</small></div>
             </div>
-        `).join('') : '<div style="padding:20px; text-align:center; color:#64748b;">NO PLAYER FOUND</div>';
+        `).join('') : '<div style="padding:20px; text-align:center; color:#64748b;">PLAYER NOT IN RD7 DATABASE</div>';
     }
 
     function handleSelect(name) {
@@ -128,7 +123,7 @@
             document.getElementById('mPrice').innerText = "$" + p.price.toLocaleString();
             document.getElementById('mBE').innerText = p.be;
             document.getElementById('mAvg').innerText = p.avg;
-            document.getElementById('mType').innerText = p.type;
+            document.getElementById('mOwn').innerText = p.own;
             document.getElementById('pModal').classList.add('active');
         }
     }
@@ -137,12 +132,11 @@
 
     document.getElementById('mainSearch').addEventListener('input', (e) => {
         const q = e.target.value.toLowerCase().trim();
-        if (!q) { render(roster.slice(0, 50)); return; }
-        const filtered = roster.filter(p => p.name.toLowerCase().includes(q) || p.team.toLowerCase().includes(q));
-        render(filtered);
+        if (!q) { render(roster); return; }
+        render(roster.filter(p => p.name.toLowerCase().includes(q) || p.team.toLowerCase().includes(q)));
     });
 
-    window.onload = () => render(roster.slice(0, 50));
+    window.onload = () => render(roster);
 </script>
 </body>
 </html>
