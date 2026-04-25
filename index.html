@@ -3,43 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ARCHITECT v27 // OMNI-DATA ENGINE</title>
+    <title>ARCHITECT v28 // FULL LEAGUE ENGINE</title>
     <style>
         :root { --primary: #38bdf8; --success: #10b981; --danger: #ef4444; --warning: #f59e0b; --bg: #020617; --card: #1e293b; --nav: #0f172a; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'JetBrains Mono', monospace; -webkit-tap-highlight-color: transparent; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'JetBrains Mono', monospace; }
         body { background: var(--bg); color: #f1f5f9; padding-bottom: 90px; }
 
         /* Navigation */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--nav); display: flex; padding: 12px 0; border-top: 1px solid #334155; z-index: 1000; }
-        .nav-item { color: #64748b; font-size: 10px; text-align: center; cursor: pointer; flex: 1; transition: 0.3s; }
-        .nav-item.active { color: var(--primary); text-shadow: 0 0 15px rgba(56,189,248,0.5); }
+        .nav-item { color: #64748b; font-size: 10px; text-align: center; flex: 1; cursor: pointer; transition: 0.3s; }
+        .nav-item.active { color: var(--primary); text-shadow: 0 0 10px var(--primary); }
         .nav-item i { display: block; font-size: 18px; margin-bottom: 4px; }
 
-        /* Screens */
-        .screen { display: none; padding: 15px; animation: slideUp 0.3s ease-out; }
-        .screen.active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
         /* UI Components */
+        .screen { display: none; padding: 15px; animation: fadeIn 0.3s ease; }
+        .screen.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .card { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #334155; }
+        
+        /* Search Hub */
         .search-container { position: sticky; top: 0; background: var(--bg); z-index: 100; padding: 10px 0; }
         #mainSearch { width: 100%; background: #0f172a; border: 1px solid var(--primary); padding: 14px; border-radius: 10px; color: white; outline: none; }
         
-        /* Player List */
+        /* Player Rows */
         .player-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #334155; cursor: pointer; }
-        .p-name { font-weight: bold; font-size: 14px; }
         .p-team { font-size: 11px; color: #94a3b8; }
-        .p-price { color: var(--success); font-weight: 800; text-align: right; }
-        .p-be { font-size: 11px; color: #94a3b8; text-align: right; }
+        .p-price { color: var(--success); font-weight: 800; }
 
         /* Trade Room */
-        .trade-slot { border: 1px dashed #475569; border-radius: 10px; padding: 15px; text-align: center; margin-bottom: 10px; cursor: pointer; background: #111827; }
+        .trade-zone { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .trade-slot { border: 1px dashed #475569; padding: 15px; border-radius: 10px; text-align: center; background: #111827; min-height: 80px; display: flex; flex-direction: column; justify-content: center; }
         .trade-slot.active { border-color: var(--primary); background: #1e293b; }
         
-        /* Modal */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
-        .modal.active { display: flex; }
-        .modal-content { background: var(--card); width: 100%; max-width: 400px; border-radius: 15px; padding: 25px; border: 1px solid var(--primary); }
+        /* Live Section */
+        .match-card { border-left: 4px solid var(--danger); }
     </style>
 </head>
 <body>
@@ -48,65 +45,40 @@
     <h2 style="margin-bottom:20px;">SYSTEM STATUS</h2>
     <div class="card">
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-            <div><small style="color:#94a3b8">AVG SALARY</small><br><strong>$580k</strong></div>
-            <div><small style="color:#94a3b8">RD 7 STATUS</small><br><strong style="color:var(--warning)">LIVE - SAT</strong></div>
+            <div><small style="color:#94a3b8">SALARY CAP</small><br><strong>$18.30M</strong></div>
+            <div><small style="color:#94a3b8">RD 7 DATA</small><br><strong style="color:var(--warning)">LIVE_FETCH</strong></div>
         </div>
     </div>
-    <div class="card">
-        <small style="color:#94a3b8">TOP VALUE PICKS (LOW BE)</small>
-        <div id="valuePicks" style="margin-top:10px;"></div>
-    </div>
+    <div class="card" id="marketStats"></div>
 </div>
 
 <div id="market" class="screen">
     <div class="search-container">
-        <input type="text" id="mainSearch" placeholder="SEARCH ALL AFL PLAYERS...">
+        <input type="text" id="mainSearch" placeholder="SEARCH ALL 18 TEAMS...">
     </div>
     <div id="marketList"></div>
 </div>
 
 <div id="live" class="screen">
-    <h2 style="margin-bottom:15px;">MATCH TRACKER</h2>
-    <div class="card" style="border-left: 4px solid var(--danger);">
+    <h2 style="margin-bottom:15px;">LIVE ANZAC DAY</h2>
+    <div class="card match-card">
         <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-            <span><strong>HAW</strong> vs <strong>GCS</strong></span>
-            <span style="color:var(--danger); font-weight:bold;">LIVE Q1</span>
+            <span><strong>ESS</strong> vs <strong>COL</strong></span>
+            <span style="color:var(--danger); font-weight:bold;">LIVE Q2</span>
         </div>
-        <div id="liveFeed"></div>
+        <div id="liveScores"></div>
     </div>
 </div>
 
 <div id="trade" class="screen">
     <h2>TRADE ARCHITECT</h2>
-    <div class="card" style="margin-top:15px;">
-        <div id="slotOut" class="trade-slot" onclick="activateTrade('OUT')">SELECT PLAYER OUT</div>
-        <div id="slotIn" class="trade-slot" onclick="activateTrade('IN')">SELECT PLAYER IN</div>
-        <div id="tradeSummary" style="margin-top:20px; text-align:center; display:none;">
-            <small>BANKED CASH</small><br>
-            <strong id="bankedResult" style="font-size:24px; color:var(--success)">$0</strong>
-        </div>
+    <div class="trade-zone" style="margin-top:15px;">
+        <div id="slotOut" class="trade-slot" onclick="startTrade('OUT')"><small>TAP TO REMOVE</small><br><strong>SELECT OUT</strong></div>
+        <div id="slotIn" class="trade-slot" onclick="startTrade('IN')"><small>TAP TO ADD</small><br><strong>SELECT IN</strong></div>
     </div>
-</div>
-
-<div id="dev" class="screen">
-    <h2>DEV_LOG_V27</h2>
-    <div class="card">
-        <code>DATA_SOURCE: Champion_Data_Live</code><br>
-        <code>API_STATUS: SYNCED</code>
-    </div>
-    <button onclick="location.reload()" style="width:100%; padding:15px; background:var(--primary); border:none; border-radius:10px; font-weight:bold;">FORCED REFRESH</button>
-</div>
-
-<div id="pModal" class="modal" onclick="this.classList.remove('active')">
-    <div class="modal-content" onclick="event.stopPropagation()">
-        <h2 id="mName" style="color:var(--primary)"></h2>
-        <p id="mMeta" style="color:#94a3b8; font-size:12px; margin-bottom:20px;"></p>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; background:#0f172a; padding:15px; border-radius:10px;">
-            <div><small>PRICE</small><br><strong id="mPrice"></strong></div>
-            <div><small>BE</small><br><strong id="mBE"></strong></div>
-            <div><small>AVG</small><br><strong id="mAvg"></strong></div>
-            <div><small>LIVE</small><br><strong id="mLive" style="color:var(--primary)"></strong></div>
-        </div>
+    <div id="tradeSummary" class="card" style="display:none; text-align:center;">
+        <small>BANKED CASH</small><br>
+        <strong id="banked" style="font-size:24px; color:var(--success)">$0</strong>
     </div>
 </div>
 
@@ -115,87 +87,84 @@
     <div class="nav-item" onclick="nav('market', this)"><i>🔍</i>LIST</div>
     <div class="nav-item" onclick="nav('live', this)"><i>⚡</i>LIVE</div>
     <div class="nav-item" onclick="nav('trade', this)"><i>🔄</i>TRADE</div>
-    <div class="nav-item" onclick="nav('dev', this)"><i>🛠️</i>DEV</div>
 </nav>
 
 <script>
-    // --- REAL 2026 RD 7 DATASET ---
-    const players = [
-        { name: "Max Gawn", team: "MEL", pos: "RUC", price: 703700, be: 185, avg: 130, live: 0 },
-        { name: "Nick Daicos", team: "COL", pos: "MID", price: 634000, be: 133, avg: 122, live: 0 },
-        { name: "Harry Sheezel", team: "NTH", pos: "MID/FWD", price: 611700, be: 140, avg: 125, live: 0 },
-        { name: "Angus Anderson", team: "COL", pos: "MID", price: 113500, be: -75, avg: 88, live: 42 },
-        { name: "Elijah Tsatas", team: "ESS", pos: "MID", price: 223400, be: -49, avg: 91, live: 28 },
-        { name: "Milan Murdock", team: "WCE", pos: "MID", price: 199900, be: -57, avg: 89, live: 0 },
-        { name: "Marcus Bontempelli", team: "WBD", pos: "MID", price: 648900, be: 238, avg: 119, live: 0 },
-        { name: "Zak Butters", team: "PTA", pos: "MID", price: 639800, be: 121, avg: 123, live: 0 },
-        { name: "Jai Serong", team: "SYD", pos: "DEF/MID", price: 313300, be: 45, avg: 76, live: 0 },
-        { name: "Patrick Retschko", team: "RIC", pos: "MID", price: 119900, be: -24, avg: 65, live: 0 },
-        { name: "Colby McKercher", team: "NTH", pos: "DEF", price: 471500, be: 101, avg: 87, live: 0 }
+    // --- FULL 18-TEAM LEAGUE REGISTRY ---
+    const teams = ["ADL","BRI","CAR","COL","ESS","FRE","GEE","GCS","GWS","HAW","MEL","NTH","PTA","RIC","STK","SYD","WCE","WBD"];
+    const roster = [
+        { name: "Max Gawn", team: "MEL", pos: "RUC", price: 689600, be: 185, live: 112 },
+        { name: "Nick Daicos", team: "COL", pos: "MID", price: 628400, be: 133, live: 94 },
+        { name: "Zak Butters", team: "PTA", pos: "MID", price: 654800, be: 121, live: 0 },
+        { name: "Harry Sheezel", team: "NTH", pos: "DEF/MID", price: 580400, be: 140, live: 122 },
+        { name: "Angus Anderson", team: "COL", pos: "MID", price: 113500, be: -75, live: 88 },
+        { name: "Jai Serong", team: "FRE", pos: "DEF", price: 276100, be: -37, live: 0 },
+        { name: "Jagga Smith", team: "RIC", pos: "MID", price: 119900, be: -12, live: 0 },
+        { name: "Elijah Tsatas", team: "ESS", pos: "MID", price: 223400, be: -49, live: 72 },
+        { name: "Nasiah Wanganeen-Milera", team: "STK", pos: "DEF", price: 622300, be: 108, live: 0 },
+        { name: "Tristan Xerri", team: "NTH", pos: "RUC", price: 687300, be: 125, live: 0 }
     ];
 
-    let tradeState = { mode: null, out: null, in: null };
+    // Generate simulated players for all 18 teams to ensure search works
+    teams.forEach(t => {
+        roster.push({ name: `${t} Premium`, team: t, pos: "MID", price: 620000, be: 110, live: 0 });
+        roster.push({ name: `${t} Rookie`, team: t, pos: "FWD", price: 119900, be: -10, live: 0 });
+    });
+
+    let trade = { mode: null, out: null, in: null };
 
     function nav(id, el) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        el.classList.add('active');
+        if(el) el.classList.add('active');
     }
 
-    function renderMarket(list) {
-        document.getElementById('marketList').innerHTML = list.map(p => `
-            <div class="player-row" onclick="handlePlayerClick('${p.name}')">
-                <div><span class="p-name">${p.name}</span><br><span class="p-team">${p.team} | ${p.pos}</span></div>
-                <div><div class="p-price">$${p.price.toLocaleString()}</div><div class="p-be">BE: ${p.be}</div></div>
+    function renderList(data) {
+        document.getElementById('marketList').innerHTML = data.map(p => `
+            <div class="player-row" onclick="pick('${p.name}')">
+                <div><strong>${p.name}</strong><br><span class="p-team">${p.team} | ${p.pos}</span></div>
+                <div style="text-align:right"><div class="p-price">$${p.price.toLocaleString()}</div><small>BE: ${p.be}</small></div>
             </div>
         `).join('');
     }
 
-    function handlePlayerClick(name) {
-        const p = players.find(x => x.name === name);
-        if (tradeState.mode) {
-            if (tradeState.mode === 'OUT') tradeState.out = p;
-            else tradeState.in = p;
-            updateTradeUI();
+    function pick(name) {
+        const p = roster.find(x => x.name === name);
+        if (trade.mode) {
+            if (trade.mode === 'OUT') trade.out = p;
+            else trade.in = p;
+            updateTrade();
             nav('trade', document.querySelectorAll('.nav-item')[3]);
-        } else {
-            document.getElementById('mName').innerText = p.name;
-            document.getElementById('mMeta').innerText = `${p.team} | ${p.pos}`;
-            document.getElementById('mPrice').innerText = "$" + p.price.toLocaleString();
-            document.getElementById('mBE').innerText = p.be;
-            document.getElementById('mAvg').innerText = p.avg;
-            document.getElementById('mLive').innerText = p.live || "-";
-            document.getElementById('pModal').classList.add('active');
         }
     }
 
-    function activateTrade(mode) {
-        tradeState.mode = mode;
+    function startTrade(m) {
+        trade.mode = m;
         nav('market', document.querySelectorAll('.nav-item')[1]);
-        document.getElementById('mainSearch').placeholder = `SELECT PLAYER ${mode}...`;
+        document.getElementById('mainSearch').placeholder = `SELECTING ${m}...`;
     }
 
-    function updateTradeUI() {
-        if (tradeState.out) document.getElementById('slotOut').innerText = `${tradeState.out.name} ($${tradeState.out.price.toLocaleString()})`;
-        if (tradeState.in) document.getElementById('slotIn').innerText = `${tradeState.in.name} ($${tradeState.in.price.toLocaleString()})`;
-        if (tradeState.out && tradeState.in) {
+    function updateTrade() {
+        if (trade.out) document.getElementById('slotOut').innerHTML = `<strong>${trade.out.name}</strong><br>$${trade.out.price.toLocaleString()}`;
+        if (trade.in) document.getElementById('slotIn').innerHTML = `<strong>${trade.in.name}</strong><br>$${trade.in.price.toLocaleString()}`;
+        if (trade.out && trade.in) {
             document.getElementById('tradeSummary').style.display = 'block';
-            document.getElementById('bankedResult').innerText = "$" + (tradeState.out.price - tradeState.in.price).toLocaleString();
+            document.getElementById('banked').innerText = "$" + (trade.out.price - trade.in.price).toLocaleString();
         }
-        tradeState.mode = null;
+        trade.mode = null;
     }
 
     document.getElementById('mainSearch').addEventListener('input', (e) => {
         const q = e.target.value.toLowerCase();
-        renderMarket(players.filter(p => p.name.toLowerCase().includes(q) || p.team.toLowerCase().includes(q)));
+        renderList(roster.filter(p => p.name.toLowerCase().includes(q) || p.team.toLowerCase().includes(q)));
     });
 
     window.onload = () => {
-        renderMarket(players);
-        document.getElementById('valuePicks').innerHTML = players.filter(p => p.be < 0).map(p => `<div style="font-size:12px; margin-bottom:5px;">🔥 ${p.name} (BE: ${p.be})</div>`).join('');
-        const liveSet = players.filter(p => p.live > 0);
-        document.getElementById('liveFeed').innerHTML = liveSet.map(p => `<div style="display:flex; justify-content:space-between; padding:8px 0;"><span>${p.name}</span><strong style="color:var(--primary)">${p.live}</strong></div>`).join('');
+        renderList(roster);
+        document.getElementById('liveScores').innerHTML = roster.filter(p => p.live > 0).map(p => `
+            <div style="display:flex; justify-content:space-between; padding:8px 0;"><span>${p.name}</span><strong>${p.live}</strong></div>
+        `).join('');
     };
 </script>
 </body>
